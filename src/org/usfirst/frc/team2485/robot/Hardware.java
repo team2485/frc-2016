@@ -4,10 +4,12 @@ import org.usfirst.frc.com.kauailabs.nav6.frc.IMUAdvanced;
 import org.usfirst.frc.team2485.auto.Sequencer;
 
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Relay;
 
 public class Hardware {
 	// Subsystems
+	public static PowerDistributionPanel pdp = new PowerDistributionPanel();
 
 	// private CameraServer camServer;
 
