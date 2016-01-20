@@ -10,8 +10,7 @@ import edu.wpi.first.wpilibj.Relay;
 public class Hardware {
 	// Subsystems
 	public static PowerDistributionPanel pdp = new PowerDistributionPanel();
-
-	// private CameraServer camServer;
+//	public static CameraServer camServer;
 
 	// Speed Controllers
 
@@ -19,14 +18,13 @@ public class Hardware {
 	// Solenoids
 
 	// Sensors
-	private Encoder leftEnc, rightEnc;
-
-	private IMUAdvanced imu;
+	public static Encoder leftEnc, rightEnc;
+	public static IMUAdvanced imu;
 	
 	// Sequences && Auto
-	private Sequencer autoSequence;
+	public static Sequencer autoSequence;
 
 	// Compressor
-	private Relay compressorSpike;
+	public static Relay compressorSpike;
 
 }
