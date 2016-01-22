@@ -99,9 +99,8 @@ public class Logger {
 		
 	}
 	
-	public boolean writeAll() {
+	public void writeAll() {
 		
-		boolean failed = false;
 
 		FileWriter writer = null;
 		try {
@@ -113,17 +112,10 @@ public class Logger {
 		while (!queue.isEmpty()) {
 			
 			JSONObject currData = queue.remove();
-			
-			try {
-				currData.write(writer);
-			} catch (JSONException e) {
-				e.printStackTrace();
-				failed = true;
-			}
+			currData.write(writer);	
 			
 		}
 		
-		return !failed;
 		
 	}
 	
