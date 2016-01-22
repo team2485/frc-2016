@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -11,7 +12,6 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.TimerTask;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -42,7 +42,6 @@ public class Logger {
 			@Override
 			public void run() {
 				writeAll();
-				
 			}
 			
 		}, 500, 500);
@@ -50,7 +49,7 @@ public class Logger {
 		
 	}
 	
-	public static Logger getInstance() {
+	public synchronized static Logger getInstance() {
 		
 		if (instance == null) {
 			instance = new Logger();
@@ -69,6 +68,10 @@ public class Logger {
 		
 		queue.add(logData);
 		
+	}
+	
+	public void addLoggable(Loggable l) {
+		components.add(l);
 	}
 	
 	public synchronized void logAll() {
@@ -102,9 +105,9 @@ public class Logger {
 	public void writeAll() {
 		
 
-		FileWriter writer = null;
+		Writer writer = null;
 		try {
-			writer = new FileWriter(file);
+			writer = new BufferedWriter(new FileWriter(file.getAbsoluteFile(), true));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -112,10 +115,15 @@ public class Logger {
 		while (!queue.isEmpty()) {
 			
 			JSONObject currData = queue.remove();
-			currData.write(writer);	
+			currData.write(writer);
 			
 		}
 		
+		try {
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	
