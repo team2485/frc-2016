@@ -2,12 +2,11 @@ package org.usfirst.frc.team2485.auto;
 
 import java.util.Vector;
 
-import org.usfirst.frc.team2485.auto.SequencedPause;
-
 /**
  * Provides a utility to sequence events and actions.
  * @author Bryce Matsumori
- *
+ * @author Patrick Wamsley
+ * 
  * @see SequencedItem
  */
 public class Sequencer {
@@ -50,9 +49,9 @@ public class Sequencer {
      * @see SequencedItem
      * @see SequencedPause
      */
-    public Sequencer(SequencedItem[] initial) {
-        for (int i = 0; i < initial.length; i++) 
-            sequenced.addElement(initial[i]);
+    public Sequencer(SequencedItem... items) {
+        for (int i = 0; i < items.length; i++) 
+            sequenced.addElement(items[i]);
     }
 
     /**
@@ -148,7 +147,9 @@ public class Sequencer {
      * @return {@code true} when finished, otherwise {@code false}.
      */
     public boolean run() {
-        if (!started) start();
+
+        if (!started)
+            start();
 
         if (currIndex >= sequenced.size())
             return true; // finished
@@ -158,18 +159,19 @@ public class Sequencer {
         final long currIndexTime = currTime - currIndexStartTime;
 
         // check if time is greater than duration (convert to ms from s)
-        if (currIndexTime > (long)(currItem.duration()*1000)) {
+        if (currItem != null && currIndexTime > (long)(currItem.duration() * 1000)) {
             // current duration exceeded, continue to next
             currIndex++;
             currIndexStartTime = currTime;
 
+            currItem.finish(); 
+            
             if (currIndex >= sequenced.size())
                 return true; // finished
 
             // execute next
             ((SequencedItem)sequenced.elementAt(currIndex)).run();
-        }
-        else 
+        } else 
             currItem.run();
         
         return false;

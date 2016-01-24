@@ -3,7 +3,6 @@ package org.usfirst.frc.team2485.robot;
 import org.usfirst.frc.com.kauailabs.nav6.frc.IMUAdvanced;
 import org.usfirst.frc.team2485.auto.Sequencer;
 import org.usfirst.frc.team2485.auto.SequencerFactory;
-import org.usfirst.frc.team2485.subsystems.*;
 import org.usfirst.frc.team2485.util.*; 
 
 import edu.wpi.first.wpilibj.*; 
@@ -12,8 +11,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  * @author Aidan Fay
  * @author Ben Clark
+ * @author Anoushka Bose
+ * @author Michael Maunu
+ * @author Patrick Wamsley
  */
-
 public class Robot extends IterativeRobot {
 
 

@@ -1,5 +1,6 @@
 package org.usfirst.frc.team2485.auto;
 
+
 /**
  * Runs a {@code Sequencer} in a separate {@code Thread}.
  *
