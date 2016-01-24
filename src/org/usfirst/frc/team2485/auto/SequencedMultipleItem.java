@@ -51,10 +51,9 @@ public class SequencedMultipleItem implements SequencedItem {
 					System.currentTimeMillis() - startTime + 20 >= curr.duration() * 1000) { //one iritation before the multi item stops
 				curr.finish();
 				return; 
-			}
-			else if (System.currentTimeMillis() - startTime <= curr.duration() * 1000)
+			} else if (System.currentTimeMillis() - startTime <= curr.duration() * 1000) {
 				curr.run(); 
-			else {
+			} else {
 				curr.finish(); 
 				items[currItemIndex] = null;
 			}
@@ -78,11 +77,11 @@ public class SequencedMultipleItem implements SequencedItem {
 
 	/**
 	 * This does nothing, however each SequencedItem inside will call its finish method when its duration expires. 
-	 * If this SequencedMultibleItem is named, then a message will print telling that it has finished. This can be used for debugging.
+	 * If this SequencedMultipleItem is named, then a message will print telling that it has finished. This can be used for debugging.
 	 */
 	@Override
 	public void finish() {
 		if (name != null) 
-			System.out.println("SequencedMultibleItem: " + name + " has finished.");
+			System.out.println("SequencedMultipleItem: " + name + " has finished.");
 	}
 }

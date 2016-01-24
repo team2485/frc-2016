@@ -37,8 +37,5 @@ public final class SequencedPause implements SequencedItem {
     }
 
 	@Override
-	public void finish() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void finish() {}
 }
