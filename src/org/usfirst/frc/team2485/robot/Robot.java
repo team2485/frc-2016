@@ -3,6 +3,7 @@ package org.usfirst.frc.team2485.robot;
 import org.usfirst.frc.com.kauailabs.nav6.frc.IMUAdvanced;
 import org.usfirst.frc.team2485.auto.Sequencer;
 import org.usfirst.frc.team2485.auto.SequencerFactory;
+import org.usfirst.frc.team2485.subsystems.DriveTrain;
 import org.usfirst.frc.team2485.util.*; 
 
 import edu.wpi.first.wpilibj.*; 
@@ -20,7 +21,9 @@ public class Robot extends IterativeRobot {
 
 
 	public void robotInit() {
-
+		new Hardware();
+		Controllers.set(new Joystick(0),new Joystick(1),new Joystick(2));
+		
 		System.out.println("initialized");
 	}
 
@@ -41,9 +44,24 @@ public class Robot extends IterativeRobot {
 
 	public void teleopPeriodic() {
     
-    	
+		Hardware.driveTrain.warlordDrive(
+                Controllers.getAxis(Controllers.XBOX_AXIS_LY, 0.2f),
+                Controllers.getAxis(Controllers.XBOX_AXIS_RX, 0.2f));
+
+        // Quick turn
+        if (Controllers.getButton(Controllers.XBOX_BTN_RBUMP)) {
+        	Hardware.driveTrain.setQuickTurn(true);
+        } else {
+        	Hardware.driveTrain.setQuickTurn(false);
+        }
+
+        if (Controllers.getButton(Controllers.XBOX_BTN_LBUMP)) {
+        	Hardware.driveTrain.setHighSpeed();
+        } else {
+        	Hardware.driveTrain.setNormalSpeed();
+        }
+		
     	updateDashboard();
-	
 	}
 
 	public void disabledInit() {
