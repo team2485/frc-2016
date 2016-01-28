@@ -1,5 +1,6 @@
 package org.usfirst.frc.team2485.auto;
 
+
 /**
  * Runs a {@code Sequencer} as a {@code SequencedItem}.
  * The sequenced item runs until the sequencer has finished.
@@ -34,4 +35,7 @@ public final class InnerSequencer implements SequencedItem {
     public double duration() {
         return finished ? 0 : Double.MAX_VALUE;
     }
+
+	@Override
+	public void finish() {}
 }

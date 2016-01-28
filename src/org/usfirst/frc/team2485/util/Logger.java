@@ -12,8 +12,10 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.TimerTask;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -27,13 +29,14 @@ public class Logger {
 	
 	private ArrayList<Loggable> components;
 	private Queue<JSONObject> queue;
+	private JSONArray allData;
 	
 	private File file;
 	
 	private Logger() {
 		
 		components = new ArrayList<Loggable>();
-		queue = new LinkedList<JSONObject>();
+		allData = new JSONArray();
 		
 		
 		File logDir = new File("/home/lvuser/logs");
@@ -74,12 +77,26 @@ public class Logger {
 	
 	public void printErr(String sender, String message) {
 		
-		JSONObject logData = new JSONObject();
+		JSONObject currData = new JSONObject();
 		
-		logData.put("Time", Timer.getFPGATimestamp());
-		logData.put(sender, message);
+		currData.put("Time", Timer.getFPGATimestamp());
 		
-		queue.add(logData);
+		if (RobotState.isDisabled()) {
+			currData.put("Mode", "Disabled");
+		} else if (RobotState.isAutonomous()) {
+			currData.put("Mode", "Auto");
+		} else if (RobotState.isOperatorControl()) {
+			currData.put("Mode", "Teleop");
+		} else if (RobotState.isTest()) {
+			currData.put("Mode", "Test");
+		} else {
+			currData.put("Mode", "Other");
+		}
+		
+		currData.put("Type", "printErr");
+		currData.put(sender, message);
+		
+		allData.put(currData);
 		
 	}
 	
@@ -89,30 +106,44 @@ public class Logger {
 	
 	public synchronized void logAll() {
 		
-		JSONObject allLogData = new JSONObject();
-		allLogData.put("Time", Timer.getFPGATimestamp());
+		JSONObject thisTimeData = new JSONObject();
+		
+		thisTimeData.put("Time", Timer.getFPGATimestamp());
+		thisTimeData.put("Type", "logAll");
+		
+		if (RobotState.isDisabled()) {
+			thisTimeData.put("Mode", "Disabled");
+		} else if (RobotState.isAutonomous()) {
+			thisTimeData.put("Mode", "Auto");
+		} else if (RobotState.isOperatorControl()) {
+			thisTimeData.put("Mode", "Teleop");
+		} else if (RobotState.isTest()) {
+			thisTimeData.put("Mode", "Test");
+		} else {
+			thisTimeData.put("Mode", "Other");
+		}
+
 		
 		for (Loggable component : components) {
 					
 			Map<String, Object> currData = component.getLogData();
 			String name = (String) currData.get("Name");
 			
-			JSONObject currLogData = new JSONObject();
+			JSONObject thisComponentData = new JSONObject();
 			for (Iterator<String> iterator = currData.keySet().iterator(); iterator.hasNext();) {
 				
 				String key = iterator.next();
 				if (!key.equals("Name")) {
-					currLogData.put(key, currData.get(key));
+					thisComponentData.put(key, currData.get(key));
 				}
 				
 			}
 			
-			allLogData.put(name, currLogData);
+			thisTimeData.put(name, thisComponentData);
 			
 		}
 		
-		queue.add(allLogData);
-		
+		allData.put(thisTimeData);
 	}
 	
 	public void writeAll() {

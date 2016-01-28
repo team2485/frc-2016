@@ -7,5 +7,5 @@ import java.util.Map;
  *
  */
 public interface Loggable {
-	public Map<String, Object> getLogData(); // Must contain key "Name", name may not be "Time"
+	public Map<String, Object> getLogData(); // Must contain key "Name", name may not be "Time", "Mode", or "Type"
 }
