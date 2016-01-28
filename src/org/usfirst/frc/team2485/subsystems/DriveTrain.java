@@ -18,7 +18,7 @@ public class DriveTrain {
     private Encoder encoder;
 
     private final double
-            NORMAL_SPEED_RATING = 1.0,
+            NORMAL_SPEED_RATING = 0.8,
             FAST_SPEED_RATING   = 1.0,
             SLOW_SPEED_RATING   = 0.6;
 
@@ -46,11 +46,11 @@ public class DriveTrain {
     // W.A.R. LORD DRIVE
     private double oldSteering = 0.0;
     private double quickStopAccumulator = 0.0;
-    private final double throttleDeadband = 0.1;
-    private final double SteeringDeadband = 0.1;
+    private final double THROTTLE_DEADBAND = 0.1;
+    private final double STEERING_DEADBAND = 0.1;
 
-    private final double sensitivityHigh = 0.85;
-    private final double sensitivityLow = 0.75;
+    private final double SENSITIVITY_HIGH = 0.85;
+    private final double SENSITIVITY_LOW = 0.75;
     private boolean isQuickTurn = false;
 
     private IMU imu;
@@ -67,11 +67,11 @@ public class DriveTrain {
     public DriveTrain(boolean useIMU) {
         this.leftDrive      = Hardware.leftDrive;
         this.rightDrive     = Hardware.rightDrive;
-        this.encoder        = Hardware.rightEnc;
+        this.encoder        = Hardware.rightDriveEnc;
         this.useIMU 		= useIMU;
         
         
-        if (useIMU){
+        if (useIMU) {
         	this.imu            = Hardware.imu;
         	if (imu != null) {
         		dummyImuOutput = new DummyOutput();
@@ -99,30 +99,30 @@ public class DriveTrain {
     public void warlordDrive(double controllerY, double controllerX) {
         boolean isHighGear = isQuickTurn;
 
-        double SteeringNonLinearity;
+        double steeringNonLinearity;
 
-        double Steering = ThresholdHandler.deadbandAndScale(controllerX, SteeringDeadband,0.01,1);
-        double throttle = -ThresholdHandler.deadbandAndScale(controllerX, throttleDeadband,0.01,1);
+        double steering = ThresholdHandler.deadbandAndScale(controllerX, STEERING_DEADBAND,0.01,1);
+        double throttle = -ThresholdHandler.deadbandAndScale(controllerY, THROTTLE_DEADBAND,0.01,1);
 
-        double negInertia = Steering - oldSteering;
-        oldSteering = Steering;
+        double negInertia = steering - oldSteering;
+        oldSteering = steering;
 
         if (isHighGear) {
-            SteeringNonLinearity = 0.6;
+            steeringNonLinearity = 0.6;
             // Apply a sin function that's scaled to make it feel better.
-            Steering = Math.sin(Math.PI / 2.0 * SteeringNonLinearity * Steering) /
-                    Math.sin(Math.PI / 2.0 * SteeringNonLinearity);
-            Steering = Math.sin(Math.PI / 2.0 * SteeringNonLinearity * Steering) /
-                    Math.sin(Math.PI / 2.0 * SteeringNonLinearity);
+            steering = Math.sin(Math.PI / 2.0 * steeringNonLinearity * steering) /
+                    Math.sin(Math.PI / 2.0 * steeringNonLinearity);
+            steering = Math.sin(Math.PI / 2.0 * steeringNonLinearity * steering) /
+                    Math.sin(Math.PI / 2.0 * steeringNonLinearity);
         } else {
-            SteeringNonLinearity = 0.5;
+            steeringNonLinearity = 0.5;
             // Apply a sin function that's scaled to make it feel better.
-            Steering = Math.sin(Math.PI / 2.0 * SteeringNonLinearity * Steering) /
-                    Math.sin(Math.PI / 2.0 * SteeringNonLinearity);
-            Steering = Math.sin(Math.PI / 2.0 * SteeringNonLinearity * Steering) /
-                    Math.sin(Math.PI / 2.0 * SteeringNonLinearity);
-            Steering = Math.sin(Math.PI / 2.0 * SteeringNonLinearity * Steering) /
-                    Math.sin(Math.PI / 2.0 * SteeringNonLinearity);
+            steering = Math.sin(Math.PI / 2.0 * steeringNonLinearity * steering) /
+                    Math.sin(Math.PI / 2.0 * steeringNonLinearity);
+            steering = Math.sin(Math.PI / 2.0 * steeringNonLinearity * steering) /
+                    Math.sin(Math.PI / 2.0 * steeringNonLinearity);
+            steering = Math.sin(Math.PI / 2.0 * steeringNonLinearity * steering) /
+                    Math.sin(Math.PI / 2.0 * steeringNonLinearity);
         }
 
         double leftPwm, rightPwm, overPower;
@@ -136,32 +136,32 @@ public class DriveTrain {
         double negInertiaScalar;
         if (isHighGear) {
             negInertiaScalar = 5.0;
-            sensitivity = sensitivityHigh;
+            sensitivity = SENSITIVITY_HIGH;
         } else {
-            if (Steering * negInertia > 0) {
+            if (steering * negInertia > 0) {
                 negInertiaScalar = 2.5;
             } else {
-                if (Math.abs(Steering) > 0.65) {
+                if (Math.abs(steering) > 0.65) {
                     negInertiaScalar = 5.0;
                 } else {
                     negInertiaScalar = 3.0;
                 }
             }
-            sensitivity = sensitivityLow;
+            sensitivity = SENSITIVITY_LOW;
         }
         double negInertiaPower = negInertia * negInertiaScalar;
         negInertiaAccumulator += negInertiaPower;
 
-        Steering = Steering + negInertiaAccumulator;
+        steering = steering + negInertiaAccumulator;
         linearPower = throttle;
 
         // Quickturn!
         if (isQuickTurn) {
             if (Math.abs(linearPower) < 0.2) {
                 double alpha = 0.1;
-                Steering = Steering > 1 ? 1.0 : Steering;
+                steering = steering > 1 ? 1.0 : steering;
                 quickStopAccumulator = (1 - alpha) * quickStopAccumulator + alpha *
-                        Steering * 0.5;
+                        steering * 0.5;
             }
             overPower = 1.0;
             if (isHighGear) {
@@ -169,10 +169,10 @@ public class DriveTrain {
             } else {
                 sensitivity = 1.0;
             }
-            angularPower = Steering;
+            angularPower = steering;
         } else {
             overPower = 0.0;
-            angularPower = Math.abs(throttle) * Steering * sensitivity - quickStopAccumulator;
+            angularPower = Math.abs(throttle) * steering * sensitivity - quickStopAccumulator;
             if (quickStopAccumulator > 1) {
                 quickStopAccumulator -= 1;
             } else if (quickStopAccumulator < -1) {
@@ -260,14 +260,14 @@ public class DriveTrain {
     }
     
     public void setPIDGyroDrive() {
-    	if (useIMU){
+    	if (useIMU) {
     		imuPID.setPID(kP_G_Drive, kI_G_Drive, kD_G_Drive);
         	imuPID.setAbsoluteTolerance(AbsTolerance_Imu_DriveTo);
     	}
     }
 
     public void initPIDGyroRotate() {
-    	if (useIMU){
+    	if (useIMU) {
     		imuPID.setPID(kP_G_Rotate, kI_G_Rotate, kD_G_Rotate);
     		imuPID.setAbsoluteTolerance(AbsTolerance_Imu_TurnTo);
     	}
@@ -278,7 +278,7 @@ public class DriveTrain {
     }
 
     public void disableIMUPID() {
-    	if (useIMU){
+    	if (useIMU) {
     		imuPID.disable();
     	}
     }

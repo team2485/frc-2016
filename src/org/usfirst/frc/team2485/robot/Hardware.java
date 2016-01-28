@@ -16,29 +16,32 @@ public class Hardware {
 //	public static CameraServer camServer;
 
 	// Speed Controllers
-	static int [] leftDrivePorts = {1,2,3};
+	static int [] leftDrivePortsPWM = {1,2,3};
+	static int [] leftDriveSlotsPDP = {1,2,3};
 	static VictorSP [] leftDriveVictorSPs = {
-			new VictorSP(leftDrivePorts[0]), 
-			new VictorSP(leftDrivePorts[1]),
-			new VictorSP(leftDrivePorts[2])};
+			new VictorSP(leftDrivePortsPWM[0]), 
+			new VictorSP(leftDrivePortsPWM[1]),
+			new VictorSP(leftDrivePortsPWM[2])};
 	
 	public static SpeedControllerWrapper leftDrive = 
-			new SpeedControllerWrapper(leftDriveVictorSPs,leftDrivePorts);
+			new SpeedControllerWrapper(leftDriveVictorSPs,leftDriveSlotsPDP);
 
 	
-	static int [] rightDrivePorts = {4,5,6};
+	static int [] rightDrivePortsPWM = {1,2,3};
+	static int [] rightDriveSlotsPDP = {1,2,3};
 	static VictorSP [] rightDriveVictorSPs = {
-			new VictorSP(rightDrivePorts[0]), 
-			new VictorSP(rightDrivePorts[1]),
-			new VictorSP(rightDrivePorts[2])};
+			new VictorSP(rightDrivePortsPWM[0]), 
+			new VictorSP(rightDrivePortsPWM[1]),
+			new VictorSP(rightDrivePortsPWM[2])};
 	
 	public static SpeedControllerWrapper rightDrive = 
-			new SpeedControllerWrapper(leftDriveVictorSPs,leftDrivePorts);
+			new SpeedControllerWrapper(rightDriveVictorSPs,rightDriveSlotsPDP);
+
 	// Solenoids
 
 	// Sensors
-	public static Encoder leftEnc = new Encoder(0,1); 
-	public static Encoder rightEnc = new Encoder(2,3);
+	public static Encoder leftDriveEnc = new Encoder(0,1); 
+	public static Encoder rightDriveEnc = new Encoder(2,3);
 	
 	public static IMUAdvanced imu;
 	
