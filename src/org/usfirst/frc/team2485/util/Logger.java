@@ -35,8 +35,21 @@ public class Logger {
 		components = new ArrayList<Loggable>();
 		queue = new LinkedList<JSONObject>();
 		
-		file = new File(System.currentTimeMillis() + ".json");
 		
+		File logDir = new File("/home/lvuser/logs");
+		if (!logDir.exists()) {
+			logDir.mkdirs();
+		}
+		
+		file = new File("/home/lvuser/logs/" + System.currentTimeMillis() + ".json");
+		System.out.println(file);
+		
+		try {	
+			System.out.println(file.getCanonicalPath());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		new java.util.Timer().schedule(new TimerTask() {
 			
 			@Override
@@ -115,7 +128,9 @@ public class Logger {
 		while (!queue.isEmpty()) {
 			
 			JSONObject currData = queue.remove();
+			System.out.println("about to write");
 			currData.write(writer);
+			System.out.println("wrote to " + writer.toString());
 			
 		}
 		
