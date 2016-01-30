@@ -21,9 +21,9 @@ public class BoulderStager extends Hardware{
 	}
 
 
-	public BoulderStager(Solenoid thingy1, Solenoid thingy2) {
-		this.solenoid1=thingy1;
-		this.solenoid2=thingy2;
+	public BoulderStager(Solenoid s1, Solenoid s2) {
+		this.solenoid1=s1;
+		this.solenoid2=s2;
 
 
 	}
