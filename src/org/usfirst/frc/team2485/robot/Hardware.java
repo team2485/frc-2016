@@ -3,16 +3,16 @@ package org.usfirst.frc.team2485.robot;
 import org.usfirst.frc.com.kauailabs.nav6.frc.IMUAdvanced;
 import org.usfirst.frc.team2485.auto.Sequencer;
 import org.usfirst.frc.team2485.subsystems.DriveTrain;
+import org.usfirst.frc.team2485.util.Battery;
 import org.usfirst.frc.team2485.util.SpeedControllerWrapper;
 
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.VictorSP;
 
 public class Hardware {
 	// Subsystems
-	public static PowerDistributionPanel pdp = new PowerDistributionPanel();
+	public static Battery battery = new Battery();
 //	public static CameraServer camServer;
 
 	// Speed Controllers
