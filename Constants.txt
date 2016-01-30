@@ -1,0 +1,9 @@
+# WARLords Constants File 
+# Used to load constants for the robot such PID constants or sensor values 
+# Any line without an equals sign is a comment. 
+# Don't worry about whitespace.
+
+# Test Values
+MY_FIRST_CONSTANT = 1
+MY_SECOND_CONSTANT = 2
+MY_LAST_CONSTANT = 3
