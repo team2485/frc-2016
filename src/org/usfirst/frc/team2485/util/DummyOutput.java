@@ -32,4 +32,16 @@ public class DummyOutput implements SpeedController {
     public void pidWrite(double output) {
         this.output = output;
     }
+
+	@Override
+	public void setInverted(boolean isInverted) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean getInverted() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

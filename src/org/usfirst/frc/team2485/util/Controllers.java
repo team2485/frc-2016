@@ -1,4 +1,4 @@
-package team2485.util;
+package org.usfirst.frc.team2485.util;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
@@ -45,11 +45,11 @@ public final class Controllers {
      * The primary Xbox 360 controller left X-axis.
      * See {@link http://www.chiefdelphi.com/forums/showpost.php?p=1003245&postcount=8}.
      */
-    public static final int XBOX_AXIS_LX = 1;
+    public static final int XBOX_AXIS_LX = 0;
     /**
      * The primary Xbox 360 controller left Y-axis.
      */
-    public static final int XBOX_AXIS_LY = 2;
+    public static final int XBOX_AXIS_LY = 1;
     /**
      * The primary Xbox 360 controller right X-axis.
      */
@@ -63,7 +63,8 @@ public final class Controllers {
      * Left yields a positive value, right yields a negative value.
      * A value of 0 means either both or none are triggered.
      */
-    public static final int XBOX_AXIS_TRIGGER = 3;
+    public static final int XBOX_AXIS_LTRIGGER = 2;
+    public static final int XBOX_AXIS_RTRIGGER = 3;
     /**
      * The primary Xbox 360 controller horizontal directional pad axis.
      */
@@ -281,7 +282,8 @@ public final class Controllers {
         dump.xboxAxisLY           = (float)primary.getRawAxis(XBOX_AXIS_LY);
         dump.xboxAxisRX           = (float)primary.getRawAxis(XBOX_AXIS_RX);
         dump.xboxAxisRY           = (float)primary.getRawAxis(XBOX_AXIS_RY);
-        dump.xboxAxisTrigger      = (float)primary.getRawAxis(XBOX_AXIS_TRIGGER);
+        dump.xboxAxisRTrigger     = (float)primary.getRawAxis(XBOX_AXIS_RTRIGGER);
+        dump.xboxAxisLTrigger     = (float)primary.getRawAxis(XBOX_AXIS_LTRIGGER);
         dump.xboxAxisDPad         = (float)primary.getRawAxis(XBOX_AXIS_DPAD_H);
 
         dump.xboxBtnA             = primary.getRawButton(XBOX_BTN_A);
@@ -312,7 +314,7 @@ public final class Controllers {
      * @see Controllers
      */
     public static final class ControllerDataDump {
-        public float xboxAxisLX, xboxAxisLY, xboxAxisRX, xboxAxisRY, xboxAxisTrigger, xboxAxisDPad;
+        public float xboxAxisLX, xboxAxisLY, xboxAxisRX, xboxAxisRY, xboxAxisLTrigger, xboxAxisRTrigger , xboxAxisDPad;
         public boolean xboxBtnA, xboxBtnB, xboxBtnX, xboxBtnY, xboxBtnLBump, xboxBtnRBump, xboxBtnBack, xboxBtnStart, xboxBtnLStick, xboxBtnRStick;
 
         public float joystickAxisX, joystickAxisY, joystickAxisZ, joystickAxisThrottle;

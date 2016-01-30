@@ -7,9 +7,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
 import java.util.TimerTask;
 
 import org.json.JSONArray;
@@ -28,7 +26,6 @@ public class Logger {
 	private static Logger instance;
 	
 	private ArrayList<Loggable> components;
-	private Queue<JSONObject> queue;
 	private JSONArray allData;
 	
 	private File file;
@@ -147,23 +144,15 @@ public class Logger {
 	}
 	
 	public void writeAll() {
-		
 
 		Writer writer = null;
 		try {
-			writer = new BufferedWriter(new FileWriter(file.getAbsoluteFile(), true));
+			writer = new BufferedWriter(new FileWriter(file.getAbsoluteFile(), false));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 		
-		while (!queue.isEmpty()) {
-			
-			JSONObject currData = queue.remove();
-			System.out.println("about to write");
-			currData.write(writer);
-			System.out.println("wrote to " + writer.toString());
-			
-		}
+		allData.write(writer);
 		
 		try {
 			writer.close();
