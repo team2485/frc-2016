@@ -1,4 +1,3 @@
-package org.usfirst.frc.team2485.util;
 
 
 import java.io.BufferedReader;
@@ -29,7 +28,7 @@ public class LoggerToCSV {
 			}
 			for (Iterator<String> iterator = thisTimeData.keys(); iterator.hasNext();) {
 				String key = iterator.next();
-				if (key.equals("Type") || key.equals("Time")) {
+				if (key.equals("Type") || key.equals("Time") || key.equals("Mode")) {
 					continue;
 				}
 				Set<String> fields = new TreeSet<String>();
@@ -109,13 +108,10 @@ public class LoggerToCSV {
 			BufferedReader reader = new BufferedReader(new FileReader(new File(args[0])));
 			String in = reader.readLine();
 			reader.close();
-			System.out.println(in);
 
 			JSONArray arr = new JSONArray(in);
-			System.out.println(arr.toString());
 			String out = jsonToCSV(arr);
 			
-			System.out.println(out);
 			BufferedWriter writer = new BufferedWriter(new FileWriter( new File(args[1])));
 			writer.write(out);
 			writer.close();

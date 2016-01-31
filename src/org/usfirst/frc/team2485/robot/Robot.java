@@ -3,12 +3,14 @@ package org.usfirst.frc.team2485.robot;
 import org.usfirst.frc.team2485.auto.Sequencer;
 import org.usfirst.frc.team2485.auto.SequencerFactory;
 import org.usfirst.frc.team2485.subsystems.DriveTrain;
+import org.usfirst.frc.team2485.util.ConstantsIO;
 import org.usfirst.frc.team2485.util.Controllers;
 import org.usfirst.frc.team2485.util.Logger;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,7 +28,7 @@ public class Robot extends IterativeRobot {
 //	private Encoder driveEncoder;
 	
 	Sequencer autonomousSequencer;
-
+	
 	public void robotInit() {
 		new Hardware();
 		Controllers.set(new Joystick(0),new Joystick(1));
@@ -70,6 +72,8 @@ public class Robot extends IterativeRobot {
 
 	public void teleopPeriodic() {
 		
+		System.out.println(ConstantsIO.data.toString());
+		
 		//Negative on Y to invert throttle
 		Hardware.driveTrain.warlordDrive(
                 -Controllers.getAxis(Controllers.XBOX_AXIS_LY, 0),
@@ -97,8 +101,8 @@ public class Robot extends IterativeRobot {
 //		leftDriveSC3.set(Controllers.getAxis(Controllers.XBOX_AXIS_LY));
 //		rightDriveSC1.set(Controllers.getAxis(Controllers.XBOX_AXIS_LY));
 //		
-        SmartDashboard.putNumber("Current Slot 5", Hardware.pdp.getCurrent(5));
-        SmartDashboard.putNumber("Total Current", Hardware.pdp.getTotalCurrent());
+        SmartDashboard.putNumber("Current Slot 5", Hardware.battery.getCurrent(5));
+        SmartDashboard.putNumber("Total Current", Hardware.battery.getTotalCurrent());
         
     	updateDashboard();
     	Logger.getInstance().logAll();
@@ -116,15 +120,11 @@ public class Robot extends IterativeRobot {
 	public void testInit() {
 		
 		resetAndDisableSystems();
-		LiveWindow.addActuator("DriveTrain", "rotatePID", Hardware.driveTrain.ahrsPID);
-		
-		NetworkTable.flush();
-
+				
 	}
 	
 	public void testPeriodic() {
 		
-		Hardware.driveTrain.rotateTo(30);
 		LiveWindow.run();
 
 	}

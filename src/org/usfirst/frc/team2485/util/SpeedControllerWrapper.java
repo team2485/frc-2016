@@ -74,7 +74,7 @@ public class SpeedControllerWrapper implements SpeedController {
 	public double getCurrent() {
 		double current = 0.0;
 		for (int slot : pdpSlotsList) {
-			current += Hardware.pdp.getCurrent(slot);
+			current += Hardware.battery.getCurrent(slot);
 		}
 		return current;
 	}

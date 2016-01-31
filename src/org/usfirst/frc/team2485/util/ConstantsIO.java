@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Static class to interface IO between the RoboRio and the Driver Station. 
@@ -17,10 +19,32 @@ import java.util.Scanner;
  */
 public class ConstantsIO {
 
-	public static final String ROBO_RIO_CONSTANTS_FILE_PATH = "", 
-			DRIVER_STATION_CONSTANTS_FILE_PATH = ""; 
+	public static final String ROBO_RIO_CONSTANTS_FILE_PATH = "/home/lvuser/Constants.txt", 
+			DRIVER_STATION_CONSTANTS_FILE_PATH = "C:\\Users\\2485\\Documents\\frc-2016\\Constants.txt";
+	public static HashMap<String, String> data;
+	
+	static {
+		
+		System.out.println("static block");
+		
+		try {
+			data = parseLoadFile(readLocalFile(ROBO_RIO_CONSTANTS_FILE_PATH));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 
-	private ConstantsIO() {} 
+		new Timer().schedule(new TimerTask() {
+			@Override
+			public void run() {
+				try {
+					data = parseLoadFile(readLocalFile(ROBO_RIO_CONSTANTS_FILE_PATH));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}, 0, 500);
+		
+	}
 
 	/**
 	 * Used to read a file locally. 
@@ -78,7 +102,7 @@ public class ConstantsIO {
 		PrintWriter printWriter = null; 
 
 		try {
-			printWriter = new PrintWriter(new FileOutputStream(ROBO_RIO_CONSTANTS_FILE_PATH)); //definitely won't work 
+			printWriter = new PrintWriter(new FileOutputStream("ftp://roborio-2485-frc.local" + ROBO_RIO_CONSTANTS_FILE_PATH)); //definitely won't work 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} 

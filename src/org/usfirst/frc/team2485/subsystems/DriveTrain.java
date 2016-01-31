@@ -239,7 +239,7 @@ public class DriveTrain implements Loggable {
      * @param leftOutput
      * @param rightOutput
      */
-    private void setLeftRight(double leftOutput, double rightOutput) {
+    public void setLeftRight(double leftOutput, double rightOutput) {
     	
     	leftOutput *= driveSpeed;
     	rightOutput *= driveSpeed;

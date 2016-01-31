@@ -28,13 +28,12 @@ public class Logger {
 	private ArrayList<Loggable> components;
 	private JSONArray allData;
 	
-	private File file;
+	private File file, tempFile;
 	
 	private Logger() {
 		
 		components = new ArrayList<Loggable>();
 		allData = new JSONArray();
-		
 		
 		File logDir = new File("/home/lvuser/logs");
 		if (!logDir.exists()) {
@@ -42,14 +41,8 @@ public class Logger {
 		}
 		
 		file = new File("/home/lvuser/logs/" + System.currentTimeMillis() + ".json");
-		System.out.println(file);
-		
-		try {	
-			System.out.println(file.getCanonicalPath());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		tempFile = new File("/home/lvuser/logs/temp.json");
+
 		new java.util.Timer().schedule(new TimerTask() {
 			
 			@Override
@@ -147,7 +140,7 @@ public class Logger {
 
 		Writer writer = null;
 		try {
-			writer = new BufferedWriter(new FileWriter(file.getAbsoluteFile(), false));
+			writer = new BufferedWriter(new FileWriter(tempFile.getAbsoluteFile(), false));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -159,6 +152,8 @@ public class Logger {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		tempFile.renameTo(file);
 		
 	}
 	

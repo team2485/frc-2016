@@ -21,7 +21,7 @@ public class Shooter implements Loggable {
 		shooterMotor1.setPID(P, I, D, F, 0, rampRate, 0);
 		shooterMotor2.setPID(P, I, D, F, 0, rampRate, 0);
 		
-        shooterMotor1.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative); 
+        shooterMotor1.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative); //also possibly CtreMagEncoder_Absolute
         shooterMotor2.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
 
 		shooterMotor1.reverseSensor(false);
