@@ -16,6 +16,16 @@ public class Hardware {
 //	public static CameraServer camServer;
 
 	// Speed Controllers
+	
+	static int [] intakeArmPortsPWM = {1,2};
+	static int [] intakeArmSlotsPDP = {1,2};
+	static VictorSP []  intakeArmVictorSP= {
+			new VictorSP(intakeArmPortsPWM[0]), 
+			new VictorSP(intakeArmPortsPWM[1])};
+	
+	public static SpeedControllerWrapper intakeArm = 
+			new SpeedControllerWrapper(intakeArmVictorSP,intakeArmSlotsPDP);
+			
 	static int [] leftDrivePortsPWM = {1,2,3};
 	static int [] leftDriveSlotsPDP = {1,2,3};
 	static VictorSP [] leftDriveVictorSPs = {
@@ -25,7 +35,6 @@ public class Hardware {
 	
 	public static SpeedControllerWrapper leftDrive = 
 			new SpeedControllerWrapper(leftDriveVictorSPs,leftDriveSlotsPDP);
-
 	
 	static int [] rightDrivePortsPWM = {1,2,3};
 	static int [] rightDriveSlotsPDP = {1,2,3};
