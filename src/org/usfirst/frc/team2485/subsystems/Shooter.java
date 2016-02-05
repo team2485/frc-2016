@@ -18,12 +18,12 @@ public class Shooter implements Loggable {
 		shooterMotor1 = new CANTalon(0);
 		shooterMotor2 = new CANTalon(0);
 		
-		shooterMotor1.setPID(P, I, D, F, 0, rampRate, 0);
-		shooterMotor2.setPID(P, I, D, F, 0, rampRate, 0);
-		
         shooterMotor1.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative); //also possibly CtreMagEncoder_Absolute
-        shooterMotor2.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-
+		shooterMotor1.setPID(P, I, D, F, 0, rampRate, 0);
+		
+		shooterMotor2.changeControlMode(CANTalon.TalonControlMode.Follower);
+		shooterMotor2.set(shooterMotor1.getDeviceID());
+		
 		shooterMotor1.reverseSensor(false);
 		shooterMotor1.reverseOutput(false);
 		shooterMotor2.reverseSensor(true);
@@ -34,39 +34,33 @@ public class Shooter implements Loggable {
 	public void setSetpoint(double setpoint) {
 		
 		shooterMotor1.changeControlMode(CANTalon.TalonControlMode.Speed);
-		shooterMotor2.changeControlMode(CANTalon.TalonControlMode.Speed);
 		shooterMotor1.set(setpoint);
-		shooterMotor2.set(setpoint);
 
 	}
 	
 	public void setPWM(double pwm) {
 		
 		shooterMotor1.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-		shooterMotor2.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 		shooterMotor1.set(pwm);
-		shooterMotor2.set(pwm);
 		
 	}
 	
 	public void disable() {
 		
 		shooterMotor1.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-		shooterMotor2.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 		shooterMotor1.set(0.0);
-		shooterMotor2.set(0.0);
 		
 	}
 
 	public double getRate() {
 		
-		return Math.max(Math.abs(shooterMotor1.getSpeed()), Math.abs(shooterMotor2.getSpeed()));//returns greater of 2 speeds
+		return shooterMotor1.getSpeed();
 		
 	}
 	
 	public double getError() {
 		
-		return shooterMotor1.getSetpoint() - getRate();
+		return shooterMotor1.getSetpoint() - shooterMotor1.getSpeed();
 		
 	}
 	
@@ -89,15 +83,9 @@ public class Shooter implements Loggable {
 		Map<String, Object> logData = new HashMap<String, Object>();
 		
 		logData.put("Name", "Shooter");
-		logData.put("RPM1", shooterMotor1.getEncVelocity());
-		logData.put("RPM2", shooterMotor2.getEncVelocity());
-				
-
-
-
-
-
-
+		logData.put("RPM", shooterMotor1.getEncVelocity());
+		logData.put("Setpoint", shooterMotor1.getSetpoint());
+		logData.put("Control Mode", shooterMotor1.getControlMode());
 		
 		return logData;	
 		
