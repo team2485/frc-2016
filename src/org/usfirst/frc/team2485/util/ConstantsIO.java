@@ -31,6 +31,8 @@ public class ConstantsIO {
 
 	public static int kLeftShooterCAN, kRightShooterCAN;
 
+	public static int kShooterHoodSolenoid1Port, kShooterHoodSolenoid2Port;
+	
 	public static int[] kLeftDrivePWM, kLeftDrivePDP, kRightDrivePWM, kRightDrivePDP;
 
 	public static int[] kLeftDriveEncoder, kRightDriveEncoder;
@@ -67,6 +69,9 @@ public class ConstantsIO {
 		
 		kLeftShooterCAN = Integer.parseInt(data.get("kLeftShooterCAN"));
 		kRightShooterCAN = Integer.parseInt(data.get("kRightShooterCAN"));
+		
+		kShooterHoodSolenoid1Port = Integer.parseInt(data.get("kShooterHoodSolenoid1Port"));
+		kShooterHoodSolenoid2Port = Integer.parseInt(data.get("kShooterHoodSolenoid2Port"));
 		
 		kLeftDrivePWM = parseIntArray(data.get("kLeftDrivePWM"), ",");
 		kLeftDrivePDP = parseIntArray(data.get("kLeftDrivePDP"), ",");

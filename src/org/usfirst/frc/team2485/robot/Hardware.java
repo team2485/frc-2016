@@ -8,9 +8,11 @@ import org.usfirst.frc.team2485.util.SpeedControllerWrapper;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
 
 public class Hardware {
@@ -37,7 +39,13 @@ public class Hardware {
 	public static SpeedControllerWrapper rightDrive = 
 			new SpeedControllerWrapper(rightDriveVictorSPs, ConstantsIO.kRightDrivePDP);
 
+	public static CANTalon leftShooterMotor = new CANTalon(ConstantsIO.kLeftShooterCAN), 
+			rightShooterMotor = new CANTalon(ConstantsIO.kRightShooterCAN);
+	
 	// Solenoids
+	public static Solenoid shooterHoodSolenoid1 = new Solenoid(ConstantsIO.kShooterHoodSolenoid1Port), 
+			shooterHoodSolenoid2 = new Solenoid(ConstantsIO.kShooterHoodSolenoid2Port);
+
 
 	// Sensors
 	public static Encoder leftDriveEnc = 

@@ -3,6 +3,7 @@ package org.usfirst.frc.team2485.subsystems;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.usfirst.frc.team2485.robot.Hardware;
 import org.usfirst.frc.team2485.util.ConstantsIO;
 import org.usfirst.frc.team2485.util.Loggable;
 
@@ -23,14 +24,14 @@ public class Shooter implements Loggable {
 	private Solenoid solenoid1, solenoid2;
 	
 	private HoodPosition currHoodPosition;
-	
+		
 	public Shooter() {
 		
-		leftShooterMotor = new CANTalon(ConstantsIO.kLeftShooterCAN);
-		rightShooterMotor = new CANTalon(ConstantsIO.kRightShooterCAN);
+		leftShooterMotor = Hardware.leftShooterMotor;
+		rightShooterMotor = Hardware.rightShooterMotor;
 		
-		solenoid1 = new Solenoid(0);
-		solenoid2 = new Solenoid(0);
+		solenoid1 = Hardware.shooterHoodSolenoid1;
+		solenoid2 = Hardware.shooterHoodSolenoid1;
 		
         leftShooterMotor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative); //also possibly CtreMagEncoder_Absolute
 		leftShooterMotor.setPID(ConstantsIO.kP_Shooter, ConstantsIO.kI_Shooter, ConstantsIO.kD_Shooter,
@@ -94,9 +95,7 @@ public class Shooter implements Loggable {
 	}
 	
 	public double getError() {
-		
-		System.out.println("Gabi is the best in everything she does...duh!");
-		
+				
 		return leftShooterMotor.getSetpoint() - leftShooterMotor.getSpeed();
 		
 	}

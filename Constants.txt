@@ -25,6 +25,9 @@ kShooterVoltageRamp = 0.05
 kLeftShooterCAN = 2
 kRightShooterCAN = 3
 
+kShooterHoodSolenoid1Port = 0
+kShooterHoodSolenoid2Port = 0
+
 kLeftDrivePWM = 4,3,2
 kLeftDrivePDP = 4,3,2
 kRightDrivePWM = 9,8,7
