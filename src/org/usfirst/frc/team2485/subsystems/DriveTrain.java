@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.usfirst.frc.team2485.robot.Hardware;
+import org.usfirst.frc.team2485.util.ConstantsIO;
 import org.usfirst.frc.team2485.util.DummyOutput;
 import org.usfirst.frc.team2485.util.Loggable;
 import org.usfirst.frc.team2485.util.SpeedControllerWrapper;
@@ -30,7 +31,7 @@ public class DriveTrain implements Loggable {
     private double driveSpeed = NORMAL_SPEED_RATING;
     
     private double lastLeft, lastRight;
-    private final double MAX_PWM_DELTA = 1.0 / 20; // 20 cycles to get to full speed from rest
+//    private final double MAX_PWM_DELTA = 1.0 / 20; // 20 cycles to get to full speed from rest
 
     // AUTONOMOUS
     private DummyOutput dummyAhrsOutput;
@@ -42,15 +43,15 @@ public class DriveTrain implements Loggable {
 	private int ahrsOnTargetCounter = 0;
     private final int MINIMUM_AHRS_ON_TARGET_ITERATIONS = 10;
     
-    public static double
-            kP_G_Rotate = 0.03,
-            kI_G_Rotate = 0.0,
-            kD_G_Rotate = 0.0;
+//    public static double
+//            kP_G_Rotate = 0.03,
+//            kI_G_Rotate = 0.0,
+//            kD_G_Rotate = 0.0;
     public static double kP_G_Drive, kI_G_Drive, kD_G_Drive;
-    public static double
-            kP_E = 0.03,
-            kI_E,
-            kD_E;
+//    public static double
+//            kP_E = 0.03,
+//            kI_E,
+//            kD_E;
 
     private final double AbsTolerance_Imu_DriveTo = 2.0;
     private final double AbsTolerance_Imu_TurnTo = 3.0;
@@ -90,7 +91,8 @@ public class DriveTrain implements Loggable {
         	ahrs = Hardware.ahrs;
         	if (ahrs != null) {
         		dummyAhrsOutput = new DummyOutput();
-        		ahrsPID = new PIDController(kP_G_Rotate, kI_G_Rotate, kD_G_Rotate, ahrs, dummyAhrsOutput);
+        		ahrsPID = new PIDController(ConstantsIO.kP_Rotate, ConstantsIO.kI_Rotate, 
+        				ConstantsIO.kD_Rotate, ahrs, dummyAhrsOutput);
         		ahrsPID.setAbsoluteTolerance(AbsTolerance_Imu_DriveTo);
         	}
         }
@@ -100,7 +102,8 @@ public class DriveTrain implements Loggable {
        
         
         dummyEncoderOutput = new DummyOutput();
-        encPID = new PIDController(kP_E, kI_E, kD_E, encoder, dummyEncoderOutput);
+        encPID = new PIDController(ConstantsIO.kP_DriveTo, ConstantsIO.kI_DriveTo, 
+        		ConstantsIO.kD_DriveTo, encoder, dummyEncoderOutput);
         encPID.setAbsoluteTolerance(AbsTolerance_Enc);
 
         encoder.reset();
@@ -244,16 +247,16 @@ public class DriveTrain implements Loggable {
     	leftOutput *= driveSpeed;
     	rightOutput *= driveSpeed;
     	
-    	if (leftOutput - lastLeft > MAX_PWM_DELTA) {
-			leftOutput = lastLeft + MAX_PWM_DELTA;
-		} else if (leftOutput - lastLeft < - MAX_PWM_DELTA) {
-			leftOutput = lastLeft - MAX_PWM_DELTA;
+    	if (leftOutput - lastLeft > ConstantsIO.kDriveVoltageRamp) {
+			leftOutput = lastLeft + ConstantsIO.kDriveVoltageRamp;
+		} else if (leftOutput - lastLeft < - ConstantsIO.kDriveVoltageRamp) {
+			leftOutput = lastLeft - ConstantsIO.kDriveVoltageRamp;
 		}
     	
-    	if (rightOutput - lastRight > MAX_PWM_DELTA) {
-    		rightOutput = lastRight + MAX_PWM_DELTA;
-		} else if (rightOutput - lastRight < - MAX_PWM_DELTA) {
-			rightOutput = lastRight - MAX_PWM_DELTA;
+    	if (rightOutput - lastRight > ConstantsIO.kDriveVoltageRamp) {
+    		rightOutput = lastRight + ConstantsIO.kDriveVoltageRamp;
+		} else if (rightOutput - lastRight < - ConstantsIO.kDriveVoltageRamp) {
+			rightOutput = lastRight - ConstantsIO.kDriveVoltageRamp;
 		}
     	
     	lastLeft = leftOutput;
@@ -307,13 +310,13 @@ public class DriveTrain implements Loggable {
 
     public void initPIDGyroRotate() {
     	if (ahrs != null) {
-    		ahrsPID.setPID(kP_G_Rotate, kI_G_Rotate, kD_G_Rotate);
+    		ahrsPID.setPID(ConstantsIO.kP_Rotate, ConstantsIO.kI_Rotate, ConstantsIO.kD_Rotate);
     		ahrsPID.setAbsoluteTolerance(AbsTolerance_Imu_TurnTo);
     	}
     }
 
     public void initPIDEncoder() {
-        encPID.setPID(kP_E, kI_E, kD_E);
+        encPID.setPID(ConstantsIO.kP_DriveTo, ConstantsIO.kI_Rotate, ConstantsIO.kD_Rotate);
     }
 
     public void disableAhrsPID() {

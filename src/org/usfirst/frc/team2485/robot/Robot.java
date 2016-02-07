@@ -7,9 +7,11 @@ import org.usfirst.frc.team2485.util.ConstantsIO;
 import org.usfirst.frc.team2485.util.Controllers;
 import org.usfirst.frc.team2485.util.Logger;
 
+import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
@@ -27,6 +29,8 @@ public class Robot extends IterativeRobot {
 //	private SpeedController leftDriveSC1, leftDriveSC2, leftDriveSC3, rightDriveSC1, rightDriveSC2, rightDriveSC3;
 //	private Encoder driveEncoder;
 	
+	private CANTalon shooterSC1, shooterSC2;
+	
 	Sequencer autonomousSequencer;
 	
 	public void robotInit() {
@@ -35,6 +39,9 @@ public class Robot extends IterativeRobot {
 		
 		Logger.getInstance().addLoggable(Hardware.driveTrain);
 
+		shooterSC1 = new CANTalon(2);
+		shooterSC2 = new CANTalon(3);
+		
 //		leftDriveSC1 = new SpeedControllerWrapper(new VictorSP(6), 0);
 //		leftDriveSC2 = new SpeedControllerWrapper(new VictorSP(5), 0);
 //		leftDriveSC3 = new SpeedControllerWrapper(new VictorSP(1), 0);
@@ -49,6 +56,8 @@ public class Robot extends IterativeRobot {
 	public void autonomousInit() {
 		
 		resetAndDisableSystems();
+		
+		ConstantsIO.init();
 		
 		autonomousSequencer = SequencerFactory.createAuto();
 				
@@ -68,6 +77,7 @@ public class Robot extends IterativeRobot {
 	public void teleopInit() {
 		
 		resetAndDisableSystems();
+		ConstantsIO.init();
 	}
 
 	public void teleopPeriodic() {
@@ -120,13 +130,21 @@ public class Robot extends IterativeRobot {
 	public void testInit() {
 		
 		resetAndDisableSystems();
+		ConstantsIO.init();
 				
 	}
 	
 	public void testPeriodic() {
 		
-		LiveWindow.run();
-
+		shooterSC1.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+		shooterSC1.set(0.5);
+		
+//		shooterSC2.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+//		shooterSC2.set(0.5);
+		
+//        shooterSC1.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative); 
+//		System.out.println("Shooter Encoder: " + shooterSC1.getEncVelocity());
+		
 	}
 
 	private void resetAndDisableSystems() {

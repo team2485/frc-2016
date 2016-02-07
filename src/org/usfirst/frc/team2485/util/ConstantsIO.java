@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Static class to interface IO between the RoboRio and the Driver Station. 
@@ -16,34 +14,70 @@ import java.util.TimerTask;
  * 
  * @author Ben Clark
  * @author Patrick Wamsley
+ * @author Jeremy McCulloch
  */
 public class ConstantsIO {
 
 	public static final String ROBO_RIO_CONSTANTS_FILE_PATH = "/home/lvuser/Constants.txt", 
 			DRIVER_STATION_CONSTANTS_FILE_PATH = "C:\\Users\\2485\\Documents\\frc-2016\\Constants.txt";
+	
 	public static HashMap<String, String> data;
 	
+	public static double kP_Shooter, kI_Shooter, kD_Shooter, kF_Shooter;
+	public static double kP_DriveTo, kI_DriveTo, kD_DriveTo;
+	public static double kP_Rotate, kI_Rotate, kD_Rotate;
+
+	public static double kDriveVoltageRamp, kShooterVoltageRamp;
+
+	public static int kLeftShooterCAN, kRightShooterCAN;
+
+	public static int[] kLeftDrivePWM, kLeftDrivePDP, kRightDrivePWM, kRightDrivePDP;
+
+	public static int[] kLeftDriveEncoder, kRightDriveEncoder;
+
+	public static double WHEEL_RADIUS_INCHES;
+
 	static {
-		
-		System.out.println("static block");
+		init();
+	}
+	
+	public static void init() {
 		
 		try {
 			data = parseLoadFile(readLocalFile(ROBO_RIO_CONSTANTS_FILE_PATH));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-
-		new Timer().schedule(new TimerTask() {
-			@Override
-			public void run() {
-				try {
-					data = parseLoadFile(readLocalFile(ROBO_RIO_CONSTANTS_FILE_PATH));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}, 0, 500);
 		
+		kP_Shooter = Double.parseDouble(data.get("kP_Shooter"));
+		kI_Shooter = Double.parseDouble(data.get("kI_Shooter"));
+		kD_Shooter = Double.parseDouble(data.get("kD_Shooter"));
+		kF_Shooter = Double.parseDouble(data.get("kF_Shooter"));
+		
+		kP_DriveTo = Double.parseDouble(data.get("kP_DriveTo"));
+		kI_DriveTo = Double.parseDouble(data.get("kI_DriveTo"));
+		kD_DriveTo = Double.parseDouble(data.get("kD_DriveTo"));
+		
+		kP_Rotate = Double.parseDouble(data.get("kP_Rotate"));
+		kI_Rotate = Double.parseDouble(data.get("kI_Rotate"));
+		kD_Rotate = Double.parseDouble(data.get("kD_Rotate"));
+		
+		kDriveVoltageRamp = Double.parseDouble(data.get("kDriveVoltageRamp"));
+		kShooterVoltageRamp = Double.parseDouble(data.get("kShooterVoltageRamp"));
+		
+		kLeftShooterCAN = Integer.parseInt(data.get("kLeftShooterCAN"));
+		kRightShooterCAN = Integer.parseInt(data.get("kRightShooterCAN"));
+		
+		kLeftDrivePWM = parseIntArray(data.get("kLeftDrivePWM"), ",");
+		kLeftDrivePDP = parseIntArray(data.get("kLeftDrivePDP"), ",");
+		kRightDrivePWM = parseIntArray(data.get("kRightDrivePWM"), ",");
+		kRightDrivePDP = parseIntArray(data.get("kRightDrivePDP"), ",");
+
+		kLeftDriveEncoder = parseIntArray(data.get("kLeftDriveEncoder"), ",");
+		kRightDriveEncoder = parseIntArray(data.get("kRightDriveEncoder"), ",");
+		
+		WHEEL_RADIUS_INCHES = Double.parseDouble(data.get("WHEEL_RADIUS_INCHES"));
+
 	}
 
 	/**
@@ -115,6 +149,19 @@ public class ConstantsIO {
 			System.err.println("PrintWriting failed to init, unable to write constants.");
 		}
 
+	}
+	
+	private static int[] parseIntArray(String s, String delimiter) {
+		
+		String[] split = s.split(delimiter);
+		
+		int[] ret = new int[split.length];
+		for (int i = 0; i < split.length; i++) {
+			ret[i] = Integer.parseInt(split[i]);
+		}
+		
+		return ret;
+		
 	}
 }
 

@@ -3,7 +3,35 @@
 # Any line without an equals sign is a comment. 
 # Don't worry about whitespace.
 
-# Test Values
-MY_FIRST_CONSTANT = 1
-MY_SECOND_CONSTANT = 2
-MY_LAST_CONSTANT = 3
+# PID Gains
+kP_Shooter = 0.04
+kI_Shooter = 0.0
+kD_Shooter = 0.0
+kF_Shooter = 0.0
+
+kP_DriveTo = 0.03
+kI_DriveTo = 0.0
+kD_DriveTo = 0.0
+
+kP_Rotate = 0.03
+kI_Rotate = 0.0
+kD_Rotate = 0.0
+
+# Voltage Ramping
+kDriveVoltageRamp = 0.05
+kShooterVoltageRamp = 0.05
+
+# Electrical Ports
+kLeftShooterCAN = 2
+kRightShooterCAN = 3
+
+kLeftDrivePWM = 4,3,2
+kLeftDrivePDP = 4,3,2
+kRightDrivePWM = 9,8,7
+kRightDrivePDP = 9,10,11
+
+kLeftDriveEncoder = 8,9
+kRightDriveEncoder = 6,7
+
+# Physical Constants
+WHEEL_RADIUS_INCHES = 1.53

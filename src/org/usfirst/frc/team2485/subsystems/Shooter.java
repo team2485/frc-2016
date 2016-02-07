@@ -3,77 +3,126 @@ package org.usfirst.frc.team2485.subsystems;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.usfirst.frc.team2485.util.ConstantsIO;
 import org.usfirst.frc.team2485.util.Loggable;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
+import edu.wpi.first.wpilibj.Solenoid;
 
+/**
+ * @author Jeremy McCulloch
+ */
 public class Shooter implements Loggable {
 	
-	private CANTalon shooterMotor1, shooterMotor2;
-	private static final double P = 0.0001, I = 0.0, D = 0.0, F = 0.5, rampRate = 5;
+	public static enum HoodPosition {
+		LOW_ANGLE, HIGH_ANGLE, STOWED
+	};
+	
+	private CANTalon leftShooterMotor, rightShooterMotor;
+	private Solenoid solenoid1, solenoid2;
+	
+	private HoodPosition currHoodPosition;
 	
 	public Shooter() {
 		
-		shooterMotor1 = new CANTalon(0);
-		shooterMotor2 = new CANTalon(0);
+		leftShooterMotor = new CANTalon(ConstantsIO.kLeftShooterCAN);
+		rightShooterMotor = new CANTalon(ConstantsIO.kRightShooterCAN);
 		
-        shooterMotor1.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative); //also possibly CtreMagEncoder_Absolute
-		shooterMotor1.setPID(P, I, D, F, 0, rampRate, 0);
+		solenoid1 = new Solenoid(0);
+		solenoid2 = new Solenoid(0);
 		
-		shooterMotor2.changeControlMode(CANTalon.TalonControlMode.Follower);
-		shooterMotor2.set(shooterMotor1.getDeviceID());
+        leftShooterMotor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative); //also possibly CtreMagEncoder_Absolute
+		leftShooterMotor.setPID(ConstantsIO.kP_Shooter, ConstantsIO.kI_Shooter, ConstantsIO.kD_Shooter,
+				ConstantsIO.kF_Shooter, 0, ConstantsIO.kShooterVoltageRamp, 0);
 		
-		shooterMotor1.reverseSensor(false);
-		shooterMotor1.reverseOutput(false);
-		shooterMotor2.reverseSensor(true);
-		shooterMotor2.reverseOutput(true);
+		rightShooterMotor.changeControlMode(CANTalon.TalonControlMode.Follower);
+		rightShooterMotor.set(leftShooterMotor.getDeviceID());
+		
+		leftShooterMotor.reverseSensor(false);
+		leftShooterMotor.reverseOutput(false);
+		rightShooterMotor.reverseOutput(true);
+		
+		setHoodPosition(HoodPosition.STOWED);
+		
+		disable();
 
 	}
 	
-	public void setSetpoint(double setpoint) {
+	public void setHoodPosition(HoodPosition newHoodPosition) {
 		
-		shooterMotor1.changeControlMode(CANTalon.TalonControlMode.Speed);
-		shooterMotor1.set(setpoint);
+		solenoid1.set(newHoodPosition == HoodPosition.STOWED);
+		
+		if ((newHoodPosition == HoodPosition.STOWED && currHoodPosition == HoodPosition.LOW_ANGLE) && 
+				(currHoodPosition == HoodPosition.STOWED && newHoodPosition == HoodPosition.LOW_ANGLE)){
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) { }
+		}
+		
+		solenoid2.set(newHoodPosition == HoodPosition.LOW_ANGLE);
+
+		currHoodPosition = newHoodPosition;
+		
+	}
+	
+	public void setTargetSpeed(double setpoint) {
+		
+		leftShooterMotor.changeControlMode(CANTalon.TalonControlMode.Speed);
+		leftShooterMotor.set(setpoint);
 
 	}
 	
 	public void setPWM(double pwm) {
 		
-		shooterMotor1.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-		shooterMotor1.set(pwm);
+		leftShooterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+		leftShooterMotor.set(pwm);
 		
 	}
 	
 	public void disable() {
 		
-		shooterMotor1.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-		shooterMotor1.set(0.0);
+		leftShooterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+		leftShooterMotor.set(0.0);
 		
 	}
 
 	public double getRate() {
 		
-		return shooterMotor1.getSpeed();
+		return leftShooterMotor.getSpeed();
 		
 	}
 	
 	public double getError() {
 		
-		return shooterMotor1.getSetpoint() - shooterMotor1.getSpeed();
+		System.out.println("Gabi is the best in everything she does...duh!");
+		
+		return leftShooterMotor.getSetpoint() - leftShooterMotor.getSpeed();
 		
 	}
 	
 	public boolean isOnTarget(double maxError) {
 		
-		return Math.abs(getError()) < maxError;
+		return isPID() && Math.abs(getError()) < maxError;
+		
+	}
+	
+	public boolean isPID() {
+		
+		return leftShooterMotor.getControlMode() == CANTalon.TalonControlMode.Speed;
+		
+	}
+	
+	public boolean isReadyToFire() {
+		
+		return isOnTarget(leftShooterMotor.get()) && currHoodPosition != HoodPosition.STOWED;
 		
 	}
 	
 	public void setBrakeMode(boolean brakeMode) {
 		
-		shooterMotor1.enableBrakeMode(brakeMode);
-		shooterMotor2.enableBrakeMode(brakeMode);
+		leftShooterMotor.enableBrakeMode(brakeMode);
+		rightShooterMotor.enableBrakeMode(brakeMode);
 		
 	}
 
@@ -83,9 +132,9 @@ public class Shooter implements Loggable {
 		Map<String, Object> logData = new HashMap<String, Object>();
 		
 		logData.put("Name", "Shooter");
-		logData.put("RPM", shooterMotor1.getEncVelocity());
-		logData.put("Setpoint", shooterMotor1.getSetpoint());
-		logData.put("Control Mode", shooterMotor1.getControlMode());
+		logData.put("RPM", leftShooterMotor.getEncVelocity());
+		logData.put("Setpoint", leftShooterMotor.getSetpoint());
+		logData.put("Control Mode", leftShooterMotor.getControlMode());
 		
 		return logData;	
 		

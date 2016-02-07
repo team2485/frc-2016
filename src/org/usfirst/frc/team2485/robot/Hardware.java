@@ -3,6 +3,7 @@ package org.usfirst.frc.team2485.robot;
 import org.usfirst.frc.team2485.auto.Sequencer;
 import org.usfirst.frc.team2485.subsystems.DriveTrain;
 import org.usfirst.frc.team2485.util.Battery;
+import org.usfirst.frc.team2485.util.ConstantsIO;
 import org.usfirst.frc.team2485.util.SpeedControllerWrapper;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -17,35 +18,32 @@ public class Hardware {
 	public static Battery battery = new Battery();
 //	public static CameraServer camServer;
 
-	private static double WHEEL_RADIUS_INCHES = 1.53;
-
 	// Speed Controllers
-	static int [] leftDrivePortsPWM = {4,3,2};
-	static int [] leftDriveSlotsPDP = {4,3,2};
 	static VictorSP [] leftDriveVictorSPs = {
-			new VictorSP(leftDrivePortsPWM[0]), 
-			new VictorSP(leftDrivePortsPWM[1]),
-			new VictorSP(leftDrivePortsPWM[2])};
+			new VictorSP(ConstantsIO.kLeftDrivePWM[0]), 
+			new VictorSP(ConstantsIO.kLeftDrivePWM[1]),
+			new VictorSP(ConstantsIO.kLeftDrivePWM[2])};
 	
 	
 	public static SpeedControllerWrapper leftDrive = 
-			new SpeedControllerWrapper(leftDriveVictorSPs,leftDriveSlotsPDP);
+			new SpeedControllerWrapper(leftDriveVictorSPs, ConstantsIO.kLeftDrivePDP);
 
-	static int [] rightDrivePortsPWM = {9,8,7};
-	static int [] rightDriveSlotsPDP = {9,10,11};
+	
 	static VictorSP [] rightDriveVictorSPs = {
-			new VictorSP(rightDrivePortsPWM[0]), 
-			new VictorSP(rightDrivePortsPWM[1]),
-			new VictorSP(rightDrivePortsPWM[2])};
+			new VictorSP(ConstantsIO.kRightDrivePWM[0]), 
+			new VictorSP(ConstantsIO.kRightDrivePWM[1]),
+			new VictorSP(ConstantsIO.kRightDrivePWM[2])};
 	
 	public static SpeedControllerWrapper rightDrive = 
-			new SpeedControllerWrapper(rightDriveVictorSPs,rightDriveSlotsPDP);
+			new SpeedControllerWrapper(rightDriveVictorSPs, ConstantsIO.kRightDrivePDP);
 
 	// Solenoids
 
 	// Sensors
-	public static Encoder leftDriveEnc = new Encoder(8, 9); 
-	public static Encoder rightDriveEnc = new Encoder(6, 7);
+	public static Encoder leftDriveEnc = 
+			new Encoder(ConstantsIO.kLeftDriveEncoder[0], ConstantsIO.kLeftDriveEncoder[1]); 
+	public static Encoder rightDriveEnc = 
+			new Encoder(ConstantsIO.kRightDriveEncoder[0], ConstantsIO.kRightDriveEncoder[1]);
 	
 	public static AHRS ahrs = new AHRS(SPI.Port.kMXP);
 	
@@ -67,10 +65,11 @@ public class Hardware {
 		leftDriveVictorSPs[1].setInverted(true);
 		leftDriveVictorSPs[2].setInverted(true);
 		
-		leftDriveEnc.setDistancePerPulse(2 * Math.PI * WHEEL_RADIUS_INCHES / 250);
-		rightDriveEnc.setDistancePerPulse(2 * Math.PI * WHEEL_RADIUS_INCHES / 250);
+		leftDriveEnc.setDistancePerPulse(2 * Math.PI * ConstantsIO.WHEEL_RADIUS_INCHES / 250);
+		rightDriveEnc.setDistancePerPulse(2 * Math.PI * ConstantsIO.WHEEL_RADIUS_INCHES / 250);
 
 		ahrs.zeroYaw();
+		
 	}
 
 }
