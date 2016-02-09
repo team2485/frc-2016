@@ -106,63 +106,61 @@ public class Robot extends IterativeRobot {
 
 		System.out.println(ConstantsIO.data.toString());
 
-		//JoyStick Drive
-		
-		// Negative on Y to invert throttle
-		// Hardware.driveTrain.warlordDrive(
-		// -Controllers.getAxis(Controllers.XBOX_AXIS_LY, 0),
-		// Controllers.getAxis(Controllers.XBOX_AXIS_RX, 0));
-		
-		
-		
-		//Trigger Drive
+		// JoyStick Drive
 
+		// Negative on Y to invert throttle
 		Hardware.driveTrain.warlordDrive(
-				Controllers.getAxis(Controllers.XBOX_AXIS_RTRIGGER)
-						- Controllers.getAxis(Controllers.XBOX_AXIS_LTRIGGER),
-				Controllers.getAxis(Controllers.XBOX_AXIS_LX));
+				-Controllers.getAxis(Controllers.XBOX_AXIS_LY, 0),
+				Controllers.getAxis(Controllers.XBOX_AXIS_RX, 0));
+
+		// Trigger Drive
+
+		// Hardware.driveTrain.warlordDrive(
+		// Controllers.getAxis(Controllers.XBOX_AXIS_RTRIGGER)
+		// - Controllers.getAxis(Controllers.XBOX_AXIS_LTRIGGER),
+		// Controllers.getAxis(Controllers.XBOX_AXIS_LX));
 
 		// Quick turn
-		if (Controllers.getButton(Controllers.XBOX_BTN_X)) {
+		if (Controllers.getButton(Controllers.XBOX_BTN_RBUMP)) {
 			Hardware.driveTrain.setQuickTurn(true);
 		} else {
 			Hardware.driveTrain.setQuickTurn(false);
 		}
 
-		if (Controllers.getButton(Controllers.XBOX_BTN_RBUMP)) {
+		if (Controllers.getButton(Controllers.XBOX_BTN_LBUMP)) {
 			Hardware.driveTrain.setHighSpeed();
-		} else if (Controllers.getButton(Controllers.XBOX_BTN_LBUMP)) {
+		} else if (Controllers.getAxis(Controllers.XBOX_AXIS_LTRIGGER) > 0.5) {
 			Hardware.driveTrain.setLowSpeed();
 		} else {
 			Hardware.driveTrain.setNormalSpeed();
 		}
 
-//		if (Controllers.getButton(Controllers.XBOX_BTN_Y)) {
-//			if (!pressed) {
-//				speedTarget += 250;
-//				pressed = true;
-//			}
-//		} else if (Controllers.getButton(Controllers.XBOX_BTN_X)) {
-//			if (!pressed) {
-//				speedTarget -= 250;
-//				pressed = true;
-//			}
-//
-//		} else if (Controllers.getButton(Controllers.XBOX_BTN_A)) {
-//			if (!pressed) {
-//				shooterOn = true;
-//				pressed = true;
-//			}
-//
-//		} else if (Controllers.getButton(Controllers.XBOX_BTN_B)) {
-//			if (!pressed) {
-//				shooterOn = false;
-//				pressed = true;
-//			}
-//
-//		} else {
-//			pressed = false;
-//		}
+		if (Controllers.getAxis(Controllers.XBOX_AXIS_DPAD_H) > 0.5) {
+			if (!pressed) {
+				speedTarget += 250;
+				pressed = true;
+			}
+		} else if (Controllers.getAxis(Controllers.XBOX_AXIS_DPAD_H) < -0.5) {
+			if (!pressed) {
+				speedTarget -= 250;
+				pressed = true;
+			}
+
+		} else if (Controllers.getButton(Controllers.XBOX_BTN_A)) {
+			if (!pressed) {
+				shooterOn = true;
+				pressed = true;
+			}
+
+		} else if (Controllers.getButton(Controllers.XBOX_BTN_B)) {
+			if (!pressed) {
+				shooterOn = false;
+				pressed = true;
+			}
+
+		} else {
+			pressed = false;
+		}
 		if (shooterOn) {
 			Hardware.shooter.setTargetSpeed(speedTarget);
 		} else {
