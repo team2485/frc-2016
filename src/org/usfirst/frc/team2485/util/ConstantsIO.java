@@ -38,10 +38,6 @@ public class ConstantsIO {
 	public static int[] kLeftDriveEncoder, kRightDriveEncoder;
 
 	public static double WHEEL_RADIUS_INCHES;
-
-	static {
-		init();
-	}
 	
 	public static void init() {
 		
@@ -49,7 +45,10 @@ public class ConstantsIO {
 			data = parseLoadFile(readLocalFile(ROBO_RIO_CONSTANTS_FILE_PATH));
 		} catch (IOException e1) {
 			e1.printStackTrace();
+			
 		}
+		
+		System.out.println(data);
 		
 		kP_Shooter = Double.parseDouble(data.get("kP_Shooter"));
 		kI_Shooter = Double.parseDouble(data.get("kI_Shooter"));
