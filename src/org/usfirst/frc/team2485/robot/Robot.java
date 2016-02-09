@@ -135,12 +135,12 @@ public class Robot extends IterativeRobot {
 			Hardware.driveTrain.setNormalSpeed();
 		}
 
-		if (Controllers.getAxis(Controllers.XBOX_AXIS_DPAD_H) > 0.5) {
+		if (Controllers.getButton(Controllers.XBOX_BTN_Y)) {
 			if (!pressed) {
 				speedTarget += 250;
 				pressed = true;
 			}
-		} else if (Controllers.getAxis(Controllers.XBOX_AXIS_DPAD_H) < -0.5) {
+		} else if (Controllers.getButton(Controllers.XBOX_BTN_X)) {
 			if (!pressed) {
 				speedTarget -= 250;
 				pressed = true;
