@@ -7,10 +7,11 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.TimerTask;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import edu.wpi.first.wpilibj.RobotState;
@@ -26,14 +27,14 @@ public class Logger {
 	private static Logger instance;
 	
 	private ArrayList<Loggable> components;
-	private JSONArray allData;
+	private Queue<JSONObject> queue;
 	
-	private File file, tempFile;
+	private File file;
 	
 	private Logger() {
 		
 		components = new ArrayList<Loggable>();
-		allData = new JSONArray();
+		queue = new LinkedList<JSONObject>();
 		
 		File logDir = new File("/home/lvuser/logs");
 		if (!logDir.exists()) {
@@ -41,7 +42,6 @@ public class Logger {
 		}
 		
 		file = new File("/home/lvuser/logs/" + System.currentTimeMillis() + ".json");
-		tempFile = new File("/home/lvuser/logs/temp.json");
 
 		new java.util.Timer().schedule(new TimerTask() {
 			
@@ -86,7 +86,7 @@ public class Logger {
 		currData.put("Type", "printErr");
 		currData.put(sender, message);
 		
-		allData.put(currData);
+		queue.add(currData);
 		
 	}
 	
@@ -133,28 +133,22 @@ public class Logger {
 			
 		}
 		
-		allData.put(thisTimeData);
+		queue.add(thisTimeData);
 	}
 	
 	public void writeAll() {
 
-		Writer writer = null;
 		try {
-			writer = new BufferedWriter(new FileWriter(tempFile.getAbsoluteFile(), false));
+			Writer writer = new BufferedWriter(new FileWriter(file.getAbsoluteFile(), true));
+			while (!queue.isEmpty()) {
+				writer.write(queue.remove().toString() + ",");
+			}
+			writer.close();
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 		
-		allData.write(writer);
-		
-		try {
-			writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		tempFile.renameTo(file);
-		
+				
 	}
 	
 }

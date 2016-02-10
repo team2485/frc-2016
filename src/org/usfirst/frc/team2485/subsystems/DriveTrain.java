@@ -195,7 +195,7 @@ public class DriveTrain implements Loggable {
             angularPower = steering;
         } else {
             overPower = 0.0;
-            angularPower = Math.abs(throttle) * steering * sensitivity - quickStopAccumulator;
+            angularPower = throttle * steering * sensitivity - quickStopAccumulator;//changed from Math.abs(throttle)
             if (quickStopAccumulator > 1) {
                 quickStopAccumulator -= 1;
             } else if (quickStopAccumulator < -1) {

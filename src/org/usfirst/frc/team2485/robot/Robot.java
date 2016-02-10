@@ -1,27 +1,16 @@
 package org.usfirst.frc.team2485.robot;
 
-import javax.net.ssl.SSLHandshakeException;
-
 import org.usfirst.frc.team2485.auto.Sequencer;
 import org.usfirst.frc.team2485.auto.SequencerFactory;
-import org.usfirst.frc.team2485.subsystems.Shooter;
 //import org.usfirst.frc.team2485.subsystems.DriveTrain;
 //import org.usfirst.frc.team2485.subsystems.Shooter;
 import org.usfirst.frc.team2485.util.ConstantsIO;
 import org.usfirst.frc.team2485.util.Controllers;
-import org.usfirst.frc.team2485.util.Loggable;
 import org.usfirst.frc.team2485.util.Logger;
 
 import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.CANTalon.FeedbackDeviceStatus;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
-import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
-import edu.wpi.first.wpilibj.command.PIDSubsystem;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -62,8 +51,9 @@ public class Robot extends IterativeRobot {
 		// driveEncoder.setDistancePerPulse(Math.PI*2*WHEEL_RADIUS_INCHES /
 		// 250.0);
 
-		// Logger.getInstance().addLoggable(Hardware.battery);
-		// Logger.getInstance().addLoggable(Hardware.shooter);
+		 Logger.getInstance().addLoggable(Hardware.battery);
+		 Logger.getInstance().addLoggable(Hardware.driveTrain);
+		 Logger.getInstance().addLoggable(Hardware.shooter);
 
 		System.out.println("initialized");
 	}
@@ -183,6 +173,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Total Current",
 				Hardware.battery.getTotalCurrent());
 
+		Logger.getInstance().logAll();
+		
 		updateDashboard();
 	}
 

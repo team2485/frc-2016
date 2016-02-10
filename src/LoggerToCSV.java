@@ -134,7 +134,8 @@ public class LoggerToCSV {
 			reader.close();
 
 			System.out.println("Constructing array");
-			JSONArray arr = new JSONArray(in);
+			in = in.substring(0, in.length() - 1);
+			JSONArray arr = new JSONArray("[" + in + "]");
 			System.out.println("Converting to CSV");
 			String out = jsonToCSV(arr);
 
