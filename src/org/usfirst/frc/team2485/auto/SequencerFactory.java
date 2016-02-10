@@ -4,11 +4,23 @@ import org.usfirst.frc.team2485.auto.sequenceditems.DriveTo;
 import org.usfirst.frc.team2485.auto.sequenceditems.RotateTo;
 
 public class SequencerFactory {
-	public static Sequencer createAuto() {
+	
+	 enum AutoType {
+			BASIC
+	 }
+	
+	// Auto
+	public static Sequencer createAuto(AutoType autoType) {
 		
-		return new Sequencer(new SequencedItem[] {
-				new RotateTo(30)
-		});
+		switch (autoType) {
+			case BASIC:
+				return new Sequencer(new SequencedItem[] {
+						new RotateTo(30)
+				});
+		}
+		return new Sequencer();
 		
 	}
+	
+	// Teleop Sequences
 }
