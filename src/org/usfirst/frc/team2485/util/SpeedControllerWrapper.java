@@ -179,7 +179,8 @@ public class SpeedControllerWrapper implements SpeedController {
 
 	@Override
 	public void stopMotor() {
-		// TODO Auto-generated method stub
-		
+		for (SpeedController sc : speedControllerList) {
+			sc.stopMotor();
+		}
 	}
 } 
