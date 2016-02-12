@@ -20,31 +20,33 @@ public class Shooter implements Loggable {
 		LOW_ANGLE, HIGH_ANGLE, STOWED
 	};
 	
-	private CANTalon leftShooterMotor, rightShooterMotor;
+	private CANTalon rightShooterMotor, leftShooterMotor;
 	private Solenoid solenoid1, solenoid2;
 	
 	private HoodPosition currHoodPosition;
 		
 	public Shooter() {
 		
-		leftShooterMotor = Hardware.leftShooterMotor;
 		rightShooterMotor = Hardware.rightShooterMotor;
+		leftShooterMotor = Hardware.leftShooterMotor;
 		
 		solenoid1 = Hardware.shooterHoodSolenoid1;
-		solenoid2 = Hardware.shooterHoodSolenoid1;
+		solenoid2 = Hardware.shooterHoodSolenoid2;
 		
-        leftShooterMotor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative); //also possibly CtreMagEncoder_Absolute
-		leftShooterMotor.setPID(ConstantsIO.kP_Shooter, ConstantsIO.kI_Shooter, ConstantsIO.kD_Shooter,
+        rightShooterMotor.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative); //also possibly CtreMagEncoder_Absolute
+		rightShooterMotor.setPID(ConstantsIO.kP_Shooter, ConstantsIO.kI_Shooter, ConstantsIO.kD_Shooter,
 				ConstantsIO.kF_Shooter, 0, ConstantsIO.kShooterVoltageRamp, 0);
+		rightShooterMotor.setVoltageRampRate(ConstantsIO.kShooterVoltageRamp);
+		rightShooterMotor.configPeakOutputVoltage(12.0, -12.0);
 		
-		rightShooterMotor.changeControlMode(CANTalon.TalonControlMode.Follower);
-		rightShooterMotor.set(leftShooterMotor.getDeviceID());
+		leftShooterMotor.changeControlMode(CANTalon.TalonControlMode.Follower);
+		leftShooterMotor.set(rightShooterMotor.getDeviceID());
 		
-		leftShooterMotor.reverseSensor(false);
-		leftShooterMotor.reverseOutput(false);
+		rightShooterMotor.reverseSensor(true);
 		rightShooterMotor.reverseOutput(true);
+		leftShooterMotor.reverseOutput(true);
 		
-		setHoodPosition(HoodPosition.STOWED);
+//		setHoodPosition(HoodPosition.STOWED);
 		
 		disable();
 
@@ -69,34 +71,34 @@ public class Shooter implements Loggable {
 	
 	public void setTargetSpeed(double setpoint) {
 		
-		leftShooterMotor.changeControlMode(CANTalon.TalonControlMode.Speed);
-		leftShooterMotor.set(setpoint);
+		rightShooterMotor.changeControlMode(CANTalon.TalonControlMode.Speed);
+		rightShooterMotor.set(setpoint);
 
 	}
 	
 	public void setPWM(double pwm) {
 		
-		leftShooterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-		leftShooterMotor.set(pwm);
+		rightShooterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+		rightShooterMotor.set(pwm);
 		
 	}
 	
 	public void disable() {
 		
-		leftShooterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-		leftShooterMotor.set(0.0);
+		rightShooterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+		rightShooterMotor.set(0.0);
 		
 	}
 
 	public double getRate() {
 		
-		return leftShooterMotor.getSpeed();
+		return rightShooterMotor.getSpeed();
 		
 	}
 	
 	public double getError() {
 				
-		return leftShooterMotor.getSetpoint() - leftShooterMotor.getSpeed();
+		return rightShooterMotor.getSetpoint() - rightShooterMotor.getSpeed();
 		
 	}
 	
@@ -108,20 +110,24 @@ public class Shooter implements Loggable {
 	
 	public boolean isPID() {
 		
-		return leftShooterMotor.getControlMode() == CANTalon.TalonControlMode.Speed;
+		return rightShooterMotor.getControlMode() == CANTalon.TalonControlMode.Speed;
 		
 	}
 	
 	public boolean isReadyToFire() {
 		
-		return isOnTarget(leftShooterMotor.get()) && currHoodPosition != HoodPosition.STOWED;
+		return isOnTarget(rightShooterMotor.get()) && currHoodPosition != HoodPosition.STOWED;
 		
+	}
+	
+	public double getCurrentPower() {
+		return leftShooterMotor.get();
 	}
 	
 	public void setBrakeMode(boolean brakeMode) {
 		
-		leftShooterMotor.enableBrakeMode(brakeMode);
 		rightShooterMotor.enableBrakeMode(brakeMode);
+		leftShooterMotor.enableBrakeMode(brakeMode);
 		
 	}
 
@@ -131,9 +137,9 @@ public class Shooter implements Loggable {
 		Map<String, Object> logData = new HashMap<String, Object>();
 		
 		logData.put("Name", "Shooter");
-		logData.put("RPM", leftShooterMotor.getEncVelocity());
-		logData.put("Setpoint", leftShooterMotor.getSetpoint());
-		logData.put("Control Mode", leftShooterMotor.getControlMode());
+		logData.put("RPM", rightShooterMotor.getEncVelocity());
+		logData.put("Setpoint", rightShooterMotor.getSetpoint());
+		logData.put("Control Mode", rightShooterMotor.getControlMode());
 		
 		return logData;	
 		

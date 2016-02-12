@@ -146,7 +146,7 @@ public final class Controllers {
     public static float getAxis(int axis, float inputThreshold) {
         if (primary == null)
             throw new ControllerNullException("Primary controller is null");
-        if (axis < 1 || axis > 6)
+        if (axis < 0 || axis > 6)
             throw new IllegalArgumentException("Xbox axis (" + axis + ") is invalid.");
 
         float val = (float)primary.getRawAxis(axis);

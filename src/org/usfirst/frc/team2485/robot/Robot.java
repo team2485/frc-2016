@@ -19,42 +19,51 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * @author Patrick Wamsley
  */
 public class Robot extends IterativeRobot {
-	
-//	private SpeedController leftDriveSC1, leftDriveSC2, leftDriveSC3, rightDriveSC1, rightDriveSC2, rightDriveSC3;
-//	private Encoder driveEncoder;
-	
-	private CANTalon shooterSC1, shooterSC2;
-	
-	Sequencer autonomousSequencer;
-	
+
+	// private SpeedController leftDriveSC1, leftDriveSC2, leftDriveSC3,
+	// rightDriveSC1, rightDriveSC2, rightDriveSC3;
+	// private Encoder driveEncoder;
+
+	private CANTalon shooterSC2, shooterSC3;
+
+	private Sequencer autonomousSequencer;
+
 	public void robotInit() {
-		new Hardware();
-		Controllers.set(new Joystick(0),new Joystick(1));
-		
-		Logger.getInstance().addLoggable(Hardware.driveTrain);
 
-		shooterSC1 = new CANTalon(2);
-		shooterSC2 = new CANTalon(3);
-		
-//		leftDriveSC1 = new SpeedControllerWrapper(new VictorSP(6), 0);
-//		leftDriveSC2 = new SpeedControllerWrapper(new VictorSP(5), 0);
-//		leftDriveSC3 = new SpeedControllerWrapper(new VictorSP(1), 0);
-//		rightDriveSC1 = new SpeedControllerWrapper(new VictorSP(0), 0);
+		ConstantsIO.init();
+		Hardware.init();
 
-//		driveEncoder = new Encoder(0, 0);
-//		driveEncoder.setDistancePerPulse(Math.PI*2*WHEEL_RADIUS_INCHES / 250.0);
-		
+		Controllers.set(new Joystick(0), new Joystick(1));
+
+		// Logger.getInstance().addLoggable(Hardware.driveTrain);
+
+		shooterSC2 = new CANTalon(2);
+		shooterSC3 = new CANTalon(3);
+
+		// leftDriveSC1 = new SpeedControllerWrapper(new VictorSP(6), 0);
+		// leftDriveSC2 = new SpeedControllerWrapper(new VictorSP(5), 0);
+		// leftDriveSC3 = new SpeedControllerWrapper(new VictorSP(1), 0);
+		// rightDriveSC1 = new SpeedControllerWrapper(new VictorSP(0), 0);
+
+		// driveEncoder = new Encoder(0, 0);
+		// driveEncoder.setDistancePerPulse(Math.PI*2*WHEEL_RADIUS_INCHES /
+		// 250.0);
+
+		 Logger.getInstance().addLoggable(Hardware.battery);
+		 Logger.getInstance().addLoggable(Hardware.driveTrain);
+		 Logger.getInstance().addLoggable(Hardware.shooter);
+
 		System.out.println("initialized");
 	}
 
 	public void autonomousInit() {
-		
+
 		resetAndDisableSystems();
-		
+
 		ConstantsIO.init();
-		
+
 		autonomousSequencer = SequencerFactory.createAuto();
-				
+
 	}
 
 	public void autonomousPeriodic() {
@@ -62,54 +71,109 @@ public class Robot extends IterativeRobot {
 			if (autonomousSequencer.run()) {
 				autonomousSequencer = null;
 			}
-		}		
-//		SmartDashboard.putData("PIDController", Hardware.driveTrain.encPID);
-//		System.out.println(((PIDController) SmartDashboard.getData("PIDController")).getP());
+		}
+		// SmartDashboard.putData("PIDController", Hardware.driveTrain.encPID);
+		// System.out.println(((PIDController)
+		// SmartDashboard.getData("PIDController")).getP());
 		updateDashboard();
 	}
 
+	private int speedTarget = 1000;
+	private boolean pressed = false;
+	private boolean shooterOn = false;
+
 	public void teleopInit() {
-		
 		resetAndDisableSystems();
 		ConstantsIO.init();
+		Hardware.init();
+		Hardware.shooter.setBrakeMode(false);
+		shooterOn = false;
 	}
 
 	public void teleopPeriodic() {
-		
+
 		System.out.println(ConstantsIO.data.toString());
-		
-		//Negative on Y to invert throttle
+
+		// JoyStick Drive
+
+		// Negative on Y to invert throttle
 		Hardware.driveTrain.warlordDrive(
-                -Controllers.getAxis(Controllers.XBOX_AXIS_LY, 0),
-                 Controllers.getAxis(Controllers.XBOX_AXIS_RX, 0));
+				-Controllers.getAxis(Controllers.XBOX_AXIS_LY, 0),
+				Controllers.getAxis(Controllers.XBOX_AXIS_RX, 0));
 
-        // Quick turn
-        if (Controllers.getButton(Controllers.XBOX_BTN_RBUMP)) {
-        	Hardware.driveTrain.setQuickTurn(true);
-        } else {
-        	Hardware.driveTrain.setQuickTurn(false);
-        }
+		// Trigger Drive
 
-        if (Controllers.getButton(Controllers.XBOX_BTN_LBUMP)) {
-        	Hardware.driveTrain.setHighSpeed();
-        } else if (Controllers.getAxis(Controllers.XBOX_AXIS_LTRIGGER) > 0.5) {
-			Hardware.driveTrain.setLowSpeed(); 	
-        } else { 
-        	Hardware.driveTrain.setNormalSpeed();
-        }
+		// Hardware.driveTrain.warlordDrive(
+		// Controllers.getAxis(Controllers.XBOX_AXIS_RTRIGGER)
+		// - Controllers.getAxis(Controllers.XBOX_AXIS_LTRIGGER),
+		// Controllers.getAxis(Controllers.XBOX_AXIS_LX));
+
+		// Quick turn
+		if (Controllers.getButton(Controllers.XBOX_BTN_RBUMP)) {
+			Hardware.driveTrain.setQuickTurn(true);
+		} else {
+			Hardware.driveTrain.setQuickTurn(false);
+		}
+
+		if (Controllers.getButton(Controllers.XBOX_BTN_LBUMP)) {
+			Hardware.driveTrain.setHighSpeed();
+		} else if (Controllers.getAxis(Controllers.XBOX_AXIS_LTRIGGER) > 0.5) {
+			Hardware.driveTrain.setLowSpeed();
+		} else {
+			Hardware.driveTrain.setNormalSpeed();
+		}
+
+		if (Controllers.getButton(Controllers.XBOX_BTN_Y)) {
+			if (!pressed) {
+				speedTarget += 250;
+				pressed = true;
+			}
+		} else if (Controllers.getButton(Controllers.XBOX_BTN_X)) {
+			if (!pressed) {
+				speedTarget -= 250;
+				pressed = true;
+			}
+
+		} else if (Controllers.getButton(Controllers.XBOX_BTN_A)) {
+			if (!pressed) {
+				shooterOn = true;
+				pressed = true;
+			}
+
+		} else if (Controllers.getButton(Controllers.XBOX_BTN_B)) {
+			if (!pressed) {
+				shooterOn = false;
+				pressed = true;
+			}
+
+		} else {
+			pressed = false;
+		}
+		if (shooterOn) {
+			Hardware.shooter.setTargetSpeed(speedTarget);
+		} else {
+			Hardware.shooter.disable();
+		}
+
+		SmartDashboard.putNumber("Target Speed", speedTarget);
+
+		SmartDashboard.putNumber("Current Speed", Hardware.shooter.getRate());
+
+		SmartDashboard.putNumber("Current Error", Hardware.shooter.getError());
+
+		SmartDashboard
+				.putNumber("Throttle", Hardware.shooter.getCurrentPower());
+
+		System.out.println("Rate: " + Hardware.leftDriveEnc.getRate());
+
+		SmartDashboard.putNumber("Current Slot 5",
+				Hardware.battery.getCurrent(5));
+		SmartDashboard.putNumber("Total Current",
+				Hardware.battery.getTotalCurrent());
+
+		Logger.getInstance().logAll();
 		
-        System.out.println("Rate: " + Hardware.leftDriveEnc.getRate());
-        
-//		leftDriveSC1.set(Controllers.getAxis(Controllers.XBOX_AXIS_LY));
-//		leftDriveSC2.set(Controllers.getAxis(Controllers.XBOX_AXIS_LY));
-//		leftDriveSC3.set(Controllers.getAxis(Controllers.XBOX_AXIS_LY));
-//		rightDriveSC1.set(Controllers.getAxis(Controllers.XBOX_AXIS_LY));
-//		
-        SmartDashboard.putNumber("Current Slot 5", Hardware.battery.getCurrent(5));
-        SmartDashboard.putNumber("Total Current", Hardware.battery.getTotalCurrent());
-        
-    	updateDashboard();
-    	Logger.getInstance().logAll();
+		updateDashboard();
 	}
 
 	public void disabledInit() {
@@ -120,34 +184,25 @@ public class Robot extends IterativeRobot {
 
 		updateDashboard();
 	}
-	
+
 	public void testInit() {
-		
+
 		resetAndDisableSystems();
 		ConstantsIO.init();
-				
+
 	}
-	
+
 	public void testPeriodic() {
-		
-		shooterSC1.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-		shooterSC1.set(0.5);
-		
-//		shooterSC2.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-//		shooterSC2.set(0.5);
-		
-//        shooterSC1.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative); 
-//		System.out.println("Shooter Encoder: " + shooterSC1.getEncVelocity());
-		
+
 	}
 
 	private void resetAndDisableSystems() {
 
 	}
-	
+
 	public void updateDashboard() {
 
-//		SmartDashboard.putNumber("Battery", DriverStation.getInstance().getBatteryVoltage());
+		// SmartDashboard.putNumber("Battery",
+		// DriverStation.getInstance().getBatteryVoltage());
 	}
 }
-
