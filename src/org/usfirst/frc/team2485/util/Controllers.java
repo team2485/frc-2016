@@ -1,8 +1,6 @@
 package org.usfirst.frc.team2485.util;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
-import java.util.Hashtable;
 
 /**
  * This utility class assists in obtaining values accurately from operator controls.

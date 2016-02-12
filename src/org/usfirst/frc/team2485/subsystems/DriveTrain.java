@@ -291,6 +291,10 @@ public class DriveTrain implements Loggable {
         encoder.reset();
         ahrs.zeroYaw();
     }
+    
+    public void resetEncoder() {
+        encoder.reset();
+    }
 
     public double getEncoderOutput() {
         return encoder.getDistance();
