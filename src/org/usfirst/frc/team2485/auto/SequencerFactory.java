@@ -5,7 +5,7 @@ import org.usfirst.frc.team2485.auto.sequenceditems.RotateTo;
 
 public class SequencerFactory {
 	
-	 enum AutoType {
+	 public enum AutoType {
 			BASIC
 	 }
 	

@@ -176,4 +176,10 @@ public class SpeedControllerWrapper implements SpeedController {
 		
 		return desiredPWM;
 	}
+
+	@Override
+	public void stopMotor() {
+		// TODO Auto-generated method stub
+		
+	}
 } 

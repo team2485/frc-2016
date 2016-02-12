@@ -44,4 +44,10 @@ public class DummyOutput implements SpeedController {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public void stopMotor() {
+		// TODO Auto-generated method stub
+		
+	}
 }

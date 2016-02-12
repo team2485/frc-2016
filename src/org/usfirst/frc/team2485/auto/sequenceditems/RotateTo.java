@@ -28,7 +28,4 @@ public class RotateTo implements SequencedItem {
 	public double duration() {
 		return finished ? 0 : timeout; 
 	}
-
-	@Override
-	public void finish() { }
 }

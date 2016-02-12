@@ -31,7 +31,4 @@ public class DriveTo implements SequencedItem {
 		return finished ? 0 : timeout; 
 	}
 
-	@Override
-	public void finish() { }
-
 }

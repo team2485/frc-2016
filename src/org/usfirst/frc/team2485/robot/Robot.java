@@ -2,6 +2,7 @@ package org.usfirst.frc.team2485.robot;
 
 import org.usfirst.frc.team2485.auto.Sequencer;
 import org.usfirst.frc.team2485.auto.SequencerFactory;
+import org.usfirst.frc.team2485.auto.SequencerFactory.AutoType;
 import org.usfirst.frc.team2485.util.ConstantsIO;
 import org.usfirst.frc.team2485.util.Controllers;
 import org.usfirst.frc.team2485.util.Logger;
@@ -62,7 +63,7 @@ public class Robot extends IterativeRobot {
 
 		ConstantsIO.init();
 
-		autonomousSequencer = SequencerFactory.createAuto();
+		autonomousSequencer = SequencerFactory.createAuto(AutoType.BASIC);
 
 	}
 
