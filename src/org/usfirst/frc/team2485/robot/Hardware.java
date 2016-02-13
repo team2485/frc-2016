@@ -37,7 +37,7 @@ public class Hardware {
 	
 	public static VictorSP lateralVictorSP;
 	public static VictorSP intakeVictorSP;
-	public static VictorSP[] rollerVictorSPs;
+	public static VictorSP[] rollerVictorSPs; 
 	public static SpeedControllerWrapper rollers;
 
 	
@@ -86,11 +86,13 @@ public class Hardware {
 			leftDrive = new SpeedControllerWrapper(
 					leftDriveVictorSPs, ConstantsIO.kLeftDrivePDP);
 			
+			rollerVictorSPs = new VictorSP[2];
 			rollerVictorSPs[0] = lateralVictorSP = new VictorSP(ConstantsIO.kLateralRollerPWM);
 			rollerVictorSPs[1] = intakeVictorSP = new VictorSP(ConstantsIO.kIntakeRollerPWM);
 			int[] rollerPDPs = {ConstantsIO.kLateralRollerPDP, ConstantsIO.kIntakeRollerPDP};
 			rollers = new SpeedControllerWrapper(rollerVictorSPs, rollerPDPs);
 			
+			intakeArmVictorSP = new VictorSP[2];
 			intakeArmVictorSP[0] = new VictorSP(ConstantsIO.kIntakeArmPWM[0]);
 			intakeArmVictorSP[1] = new VictorSP(ConstantsIO.kIntakeArmPWM[1]);
 			intakeArm = new SpeedControllerWrapper(intakeArmVictorSP, ConstantsIO.kIntakeArmPDP);

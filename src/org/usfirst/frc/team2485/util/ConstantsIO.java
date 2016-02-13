@@ -53,7 +53,7 @@ public class ConstantsIO {
 			
 		}
 		
-		System.out.println(data);
+//		System.out.println(data);
 		
 		kP_Shooter = Double.parseDouble(data.get("kP_Shooter"));
 		kI_Shooter = Double.parseDouble(data.get("kI_Shooter"));

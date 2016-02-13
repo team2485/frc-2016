@@ -121,6 +121,9 @@ public class DriveTrain implements Loggable {
      * @param controllerX
      */
     public void warlordDrive(double controllerY, double controllerX) {
+    	
+//    	System.out.println("ControllerY: " + controllerY);
+    	
         boolean isHighGear = isQuickTurn;
 
         double steeringNonLinearity;
@@ -266,6 +269,8 @@ public class DriveTrain implements Loggable {
     	
     	lastLeft = leftOutput;
     	lastRight = rightOutput;
+    	
+    	System.out.println("Left: " + leftOutput + " Right: " + rightOutput);
     	
         leftDrive.set(leftOutput);
         rightDrive.set(rightOutput);

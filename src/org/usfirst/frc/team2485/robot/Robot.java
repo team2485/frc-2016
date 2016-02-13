@@ -10,6 +10,8 @@ import org.usfirst.frc.team2485.util.Logger;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.TalonSRX;
+import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -93,7 +95,7 @@ public class Robot extends IterativeRobot {
 
 	public void teleopPeriodic() {
 
-		System.out.println(ConstantsIO.data.toString());
+//		System.out.println(ConstantsIO.data.toString());
 
 		// JoyStick Drive
 
@@ -101,7 +103,7 @@ public class Robot extends IterativeRobot {
 		Hardware.driveTrain.warlordDrive(
 				-Controllers.getAxis(Controllers.XBOX_AXIS_LY, 0),
 				Controllers.getAxis(Controllers.XBOX_AXIS_RX, 0));
-
+		
 		// Trigger Drive
 
 		// Hardware.driveTrain.warlordDrive(
@@ -165,7 +167,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard
 				.putNumber("Throttle", Hardware.shooter.getCurrentPower());
 
-		System.out.println("Rate: " + Hardware.leftDriveEnc.getRate());
+//		System.out.println("Rate: " + Hardware.leftDriveEnc.getRate());
 
 		SmartDashboard.putNumber("Current Slot 5",
 				Hardware.battery.getCurrent(5));

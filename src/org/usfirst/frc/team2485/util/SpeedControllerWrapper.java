@@ -80,6 +80,7 @@ public class SpeedControllerWrapper implements SpeedController {
 	@Override
 	public void set(double speed) {
 		speed = rampAndMonitorCurrent(speed);
+//		System.out.println("Speed after rampAndMonitorCurrent: " + speed);
 		for (SpeedController s : speedControllerList) 
 			s.set(speed);
 	}
@@ -173,7 +174,7 @@ public class SpeedControllerWrapper implements SpeedController {
 				desiredPWM = lastPWM - rampRate;
 			}
 		}
-		
+		lastPWM = desiredPWM;
 		return desiredPWM;
 	}
 

@@ -29,24 +29,23 @@ kShooterVoltageRamp = 0.05
 kLeftShooterCAN = 2
 kRightShooterCAN = 3
 
-kShooterHoodSolenoid1Port = 0
+kShooterHoodSolenoid1Port = 4
 kShooterHoodSolenoid2Port = 0
 
-kBoulderStagerSolenoid1Port = 0
-kBoulderStagerSolenoid2Port = 0
-
+kBoulderStagerSolenoid1Port = 6
+kBoulderStagerSolenoid2Port = 7
 
 kLeftDrivePWM = 4,3,2
-kLeftDrivePDP = 4,3,2
-kRightDrivePWM = 9,8,7
-kRightDrivePDP = 9,10,11
+kLeftDrivePDP = 15,3,2
+kRightDrivePWM = 7,6,5
+kRightDrivePDP = 12,13,14
 
-kIntakeRollerPWM = 0
-kIntakeRollerPDP = 0
-kLateralRollerPWM = 0
-kLateralRollerPDP = 0
-kIntakeArmPWM = 0, 0
-kIntakeArmPDP = 0, 0
+kIntakeRollerPWM = 1
+kIntakeRollerPDP = 2
+kLateralRollerPWM = 3
+kLateralRollerPDP = 4
+kIntakeArmPWM = 5, 6
+kIntakeArmPDP = 8, 7
 
 kLeftDriveEncoder = 8,9
 kRightDriveEncoder = 6,7
