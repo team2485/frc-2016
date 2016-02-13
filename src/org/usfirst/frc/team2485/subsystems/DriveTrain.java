@@ -252,7 +252,6 @@ public class DriveTrain implements Loggable {
     	leftOutput *= driveSpeed;
     	rightOutput *= driveSpeed;
     	
-<<<<<<< HEAD
     	if (leftOutput - lastLeft > ConstantsIO.kDriveVoltageRamp) {
 			leftOutput = lastLeft + ConstantsIO.kDriveVoltageRamp;
 		} else if (leftOutput - lastLeft < - ConstantsIO.kDriveVoltageRamp) {
@@ -268,8 +267,6 @@ public class DriveTrain implements Loggable {
     	lastLeft = leftOutput;
     	lastRight = rightOutput;
     	
-=======
->>>>>>> 7e251e2794125bcc4a15162e5f2764e6b3b22d07
         leftDrive.set(leftOutput);
         rightDrive.set(rightOutput);
     }
@@ -395,12 +392,11 @@ public class DriveTrain implements Loggable {
 		}
 
 		double ahrsOutput = dummyAhrsOutput.get();
-<<<<<<< HEAD
+
 		setLeftRight(ahrsOutput, -ahrsOutput);
-=======
+
 		//left and right are opposite on porpoise
 		setLeftRight(ahrsOutput, -ahrsOutput);	
->>>>>>> 7e251e2794125bcc4a15162e5f2764e6b3b22d07
 		return false;
 	}
     
