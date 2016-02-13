@@ -42,8 +42,8 @@ public class Intake {
 		
 		pot = new AnalogPotentiometer(3);
 
-		this.intakeVictorSP = Hardware.intake;
-		this.lateralVictorSP = Hardware.lateral;
+		this.intakeVictorSP = Hardware.intakeVictorSP;
+		this.lateralVictorSP = Hardware.lateralVictorSP;
 
 
 		/* rollerMotorVertical = new (775 Pro ?);

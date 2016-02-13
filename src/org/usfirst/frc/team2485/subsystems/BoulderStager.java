@@ -23,14 +23,14 @@ public class BoulderStager {
 
 
 	public BoulderStager() {
+		
 		solenoid1=Hardware.boulderStagerSolenoid1;
 		solenoid2=Hardware.boulderStagerSolenoid2;
-
-
+		
 	}
 
-	public void setPosition(Position pos){
-		switch(pos){
+	public void setPosition(Position pos) {
+		switch(pos) {
 
 		case INTAKE:
 			solenoid1.set(true);
