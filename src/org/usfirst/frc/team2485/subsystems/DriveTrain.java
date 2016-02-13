@@ -333,14 +333,16 @@ public class DriveTrain implements Loggable {
         encPID.disable();
     }
     
-    public boolean driveTo(double inches) {
+    public boolean driveTo(double inches, double maxAbsOutput) {
 
-
+    	
 		if (!encPID.isEnabled()) {
 			encPID.enable();
 			System.out.println("Enabling driveStraight PID in driveTo " + encoder.getDistance() + " , " + inches);
 			encPID.setSetpoint(inches);
 		}
+		
+		encPID.setOutputRange(-maxAbsOutput, maxAbsOutput);
 		
 		System.out.println(encPID.getError());
 
