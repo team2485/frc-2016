@@ -22,22 +22,10 @@ import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.VictorSP;
 
 public class Hardware {
-	// Subsystems
-	public static Battery battery;
-	// public static CameraServer camServer;
-
-	// Speed Controllers
-	// static VictorSP [] leftDriveVictorSPs = {
-	// new VictorSP(ConstantsIO.kLeftDrivePWM[0]),
-	// new VictorSP(ConstantsIO.kLeftDrivePWM[1]),
-	// new VictorSP(ConstantsIO.kLeftDrivePWM[2])};
-
-	// public static SpeedControllerWrapper leftDrive =
-	// new SpeedControllerWrapper(leftDriveVictorSPs,
-	// ConstantsIO.kLeftDrivePDP);
-
-	public static AnalogPotentiometer intakePot;
 	
+	public static Battery battery;
+	
+	//Speed Controllers
 	public static VictorSP[] rightDriveVictorSPs, leftDriveVictorSPs;
 
 	public static SpeedControllerWrapper rightDrive, leftDrive;
@@ -47,8 +35,8 @@ public class Hardware {
 	public static VictorSP []  intakeArmVictorSP;
 	public static SpeedControllerWrapper intakeArm;
 	
-	public static VictorSP lateralVictorSP = new VictorSP(100);
-	public static VictorSP intakeVictorSP = new VictorSP(100);
+	public static VictorSP lateralVictorSP;
+	public static VictorSP intakeVictorSP;
 	public static VictorSP[] rollerVictorSPs;
 	public static SpeedControllerWrapper rollers;
 
@@ -58,7 +46,7 @@ public class Hardware {
 
 	// Sensors
 	public static Encoder leftDriveEnc, rightDriveEnc;
-
+	public static AnalogPotentiometer intakePot;
 	public static AHRS ahrs;
 
 	// Sequences && Auto
@@ -67,6 +55,7 @@ public class Hardware {
 	// Compressor
 	public static Relay compressorSpike;
 
+	//Subsystems
 	public static DriveTrain driveTrain;
 
 	public static Shooter shooter;
@@ -105,15 +94,6 @@ public class Hardware {
 			intakeArmVictorSP[0] = new VictorSP(ConstantsIO.kIntakeArmPWM[0]);
 			intakeArmVictorSP[1] = new VictorSP(ConstantsIO.kIntakeArmPWM[1]);
 			intakeArm = new SpeedControllerWrapper(intakeArmVictorSP, ConstantsIO.kIntakeArmPDP);
-			
-
-//			rightDriveVictorSPs[0].setInverted(false);
-//			rightDriveVictorSPs[1].setInverted(false);
-//			rightDriveVictorSPs[2].setInverted(false);
-//
-//			leftDriveVictorSPs[0].setInverted(true);
-//			leftDriveVictorSPs[1].setInverted(true);
-//			leftDriveVictorSPs[2].setInverted(true);
 
 			leftShooterMotor = new CANTalon(ConstantsIO.kLeftShooterCAN);
 			rightShooterMotor = new CANTalon(ConstantsIO.kRightShooterCAN);
@@ -135,7 +115,6 @@ public class Hardware {
 	
 		}
 
-		
 		rightDrive.setInverted(false);
 		rightDrive.setRampMode(true);
 		rightDrive.setRampRate(ConstantsIO.kDriveVoltageRamp);
@@ -143,6 +122,9 @@ public class Hardware {
 		leftDrive.setInverted(true);
 		leftDrive.setRampMode(true);
 		leftDrive.setRampRate(ConstantsIO.kDriveVoltageRamp);
+		
+		intakeArmVictorSP[0].setInverted(false);
+		intakeArmVictorSP[1].setInverted(true);
 		
 		leftDriveEnc.setDistancePerPulse(2 * Math.PI
 				* ConstantsIO.WHEEL_RADIUS_INCHES / 250);

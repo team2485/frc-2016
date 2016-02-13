@@ -36,14 +36,14 @@ public class BoulderStager implements Loggable {
 		solenoid1 = Hardware.boulderStagerSolenoid1;
 		solenoid2 = Hardware.boulderStagerSolenoid2;
 
-		position = Position.NEUTRAL;
+		setPosition(Position.NEUTRAL);
 	}
 
 	public void setPosition(Position position) {
 		
 		this.position = position;
 		
-		switch(position) {
+		switch (position) {
 
 		case INTAKE:
 			solenoid1.set(true);

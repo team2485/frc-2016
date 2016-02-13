@@ -17,6 +17,7 @@ import com.kauailabs.navx.IMUProtocol.YPRUpdate;
 
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SensorBase;
 import edu.wpi.first.wpilibj.SerialPort;
@@ -183,7 +184,7 @@ public class AHRS extends SensorBase implements PIDSource, LiveWindowSendable {
     IOCompleteNotification  io_complete_sink;
     IOThread                io_thread;
     
-    PIDSourceType			pid_source_type = PIDSource.kDisplacement;
+    PIDSourceType			pid_source_type = PIDSourceType.kDisplacement;
     
     /***********************************************************/
     /* Public Interface Implementation                         */
@@ -1334,4 +1335,6 @@ public class AHRS extends SensorBase implements PIDSource, LiveWindowSendable {
     public String getSmartDashboardType() {
         return "Gyro";
     }
+
+	
 }

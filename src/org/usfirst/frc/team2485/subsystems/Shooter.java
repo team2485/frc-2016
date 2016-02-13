@@ -142,7 +142,6 @@ public class Shooter implements Loggable {
 		logData.put("Control Mode", rightShooterMotor.getControlMode());
 		
 		return logData;	
-		
 	}
 	
 }
