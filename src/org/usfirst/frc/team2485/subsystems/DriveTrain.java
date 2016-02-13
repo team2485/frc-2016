@@ -31,6 +31,7 @@ public class DriveTrain implements Loggable {
     private double driveSpeed = NORMAL_SPEED_RATING;
     
     private double lastLeft, lastRight;
+
 //    private final double MAX_PWM_DELTA = 1.0 / 20; // 20 cycles to get to full speed from rest
 
     // AUTONOMOUS
@@ -239,7 +240,11 @@ public class DriveTrain implements Loggable {
      * Sends outputs values to the left and right side
      * of the drive base.
      *
-     * @param leftOutput
+     * The parameters should both be positive to move forward. One side has
+     * inverted motors...do not send a negative to one side and a positive
+     * to the other for forward or backwards motion.
+     *
+     * @param leftOutput 
      * @param rightOutput
      */
     public void setLeftRight(double leftOutput, double rightOutput) {
@@ -247,6 +252,7 @@ public class DriveTrain implements Loggable {
     	leftOutput *= driveSpeed;
     	rightOutput *= driveSpeed;
     	
+<<<<<<< HEAD
     	if (leftOutput - lastLeft > ConstantsIO.kDriveVoltageRamp) {
 			leftOutput = lastLeft + ConstantsIO.kDriveVoltageRamp;
 		} else if (leftOutput - lastLeft < - ConstantsIO.kDriveVoltageRamp) {
@@ -262,6 +268,8 @@ public class DriveTrain implements Loggable {
     	lastLeft = leftOutput;
     	lastRight = rightOutput;
     	
+=======
+>>>>>>> 7e251e2794125bcc4a15162e5f2764e6b3b22d07
         leftDrive.set(leftOutput);
         rightDrive.set(rightOutput);
     }
@@ -387,7 +395,12 @@ public class DriveTrain implements Loggable {
 		}
 
 		double ahrsOutput = dummyAhrsOutput.get();
+<<<<<<< HEAD
 		setLeftRight(ahrsOutput, -ahrsOutput);
+=======
+		//left and right are opposite on porpoise
+		setLeftRight(ahrsOutput, -ahrsOutput);	
+>>>>>>> 7e251e2794125bcc4a15162e5f2764e6b3b22d07
 		return false;
 	}
     

@@ -103,9 +103,9 @@ public class SpeedControllerWrapper implements SpeedController {
 		return current;
 	}
 
-	public boolean isMoving() {
-		return speedControllerList[0].get() > .05; 
-	}
+//	public boolean isMoving() {
+//		return speedControllerList[0].get() > .05; 
+//	}
 	
 	@Override
 	public void disable() {
