@@ -77,13 +77,13 @@ public class Hardware {
 			leftDrive = new SpeedControllerWrapper(
 					leftDriveVictorSPs, ConstantsIO.kLeftDrivePDP);
 
-			rightDriveVictorSPs[0].setInverted(false);
-			rightDriveVictorSPs[1].setInverted(false);
-			rightDriveVictorSPs[2].setInverted(false);
+			rightDrive.setInverted(false);
+			rightDrive.setRampMode(true);
+			rightDrive.setRampRate(ConstantsIO.kDriveVoltageRamp);
 
-			leftDriveVictorSPs[0].setInverted(true);
-			leftDriveVictorSPs[1].setInverted(true);
-			leftDriveVictorSPs[2].setInverted(true);
+			leftDrive.setInverted(true);
+			leftDrive.setRampMode(true);
+			leftDrive.setRampRate(ConstantsIO.kDriveVoltageRamp);
 
 			leftShooterMotor = new CANTalon(ConstantsIO.kLeftShooterCAN);
 			rightShooterMotor = new CANTalon(ConstantsIO.kRightShooterCAN);
