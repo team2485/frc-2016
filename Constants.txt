@@ -35,6 +35,7 @@ kShooterHoodSolenoid2Port = 0
 kBoulderStagerSolenoid1Port = 0
 kBoulderStagerSolenoid2Port = 0
 
+
 kLeftDrivePWM = 4,3,2
 kLeftDrivePDP = 4,3,2
 kRightDrivePWM = 9,8,7
@@ -51,6 +52,9 @@ kLeftDriveEncoder = 8,9
 kRightDriveEncoder = 6,7
 
 kIntakeArmPot = 421
+
+kLeftDriveEncoder = 8,9
+kRightDriveEncoder = 6,7
 
 # Physical Constants
 WHEEL_RADIUS_INCHES = 1.53

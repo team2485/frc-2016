@@ -68,6 +68,9 @@ public class AlignToTower implements SequencedItem {
 
 	@Override
 	public double duration() {
+
+		if(finished)
+			System.out.println("Finished is true in AlignToTower");
 		return finished ? 0 : timeout;
 	}
 }
