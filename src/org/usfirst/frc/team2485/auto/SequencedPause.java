@@ -1,7 +1,6 @@
 package org.usfirst.frc.team2485.auto;
 
 
-
 /**
  * Represents a pause in a sequence. The sequencer will do nothing for the
  * specified duration.
@@ -35,7 +34,4 @@ public final class SequencedPause implements SequencedItem {
      */
     public void run() {
     }
-
-	@Override
-	public void finish() {}
 }

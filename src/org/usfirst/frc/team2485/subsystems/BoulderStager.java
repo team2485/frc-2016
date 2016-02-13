@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.Solenoid;
  *
  */
 
-public class BoulderStager extends Hardware{
+public class BoulderStager {
 	//Declare different pneumatics parts
 
 	private Solenoid solenoid1, solenoid2;
@@ -22,9 +22,9 @@ public class BoulderStager extends Hardware{
 	}
 
 
-	public BoulderStager(Solenoid s1, Solenoid s2) {
-		this.solenoid1=s1;
-		this.solenoid2=s2;
+	public BoulderStager() {
+		solenoid1=Hardware.boulderStagerSolenoid1;
+		solenoid2=Hardware.boulderStagerSolenoid2;
 
 
 	}

@@ -1,6 +1,5 @@
 package org.usfirst.frc.team2485.auto;
 
-
 /**
  * Represents an item which can be sequenced. The item will be run at least once.
  * 
@@ -9,7 +8,6 @@ package org.usfirst.frc.team2485.auto;
  * 
  * If the item should only be run once, the duration should be set to -1.
  * @author Bryce Matsumori
- * @author Patrick Wamsley
  *
  * @see Sequencer
  */
@@ -33,15 +31,5 @@ public interface SequencedItem {
      * @return the duration, in seconds
      */
     public double duration();
-    
-    /**
-     * This method is called when an item finishes running. This can be used to prevent "phantom PID", 
-     * make sure speed controllers are reset, for debugging, etc. It can also be left blank. 
-     * 
-     * In a <code>SequencedMultibleItem</code> each item calls its finish method when it expires inside the multiple item. 
-     * 
-     * @see Sequencer 
-     */
-    public void finish(); 
     
 }
