@@ -1,6 +1,11 @@
 package org.usfirst.frc.team2485.subsystems;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.usfirst.frc.team2485.robot.Hardware;
+import org.usfirst.frc.team2485.util.ConstantsIO;
+import org.usfirst.frc.team2485.util.Loggable;
 import org.usfirst.frc.team2485.util.SpeedControllerWrapper;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
@@ -8,49 +13,40 @@ import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.VictorSP;
 
-public class Intake {
+public class Intake implements Loggable {
 	//private SpeedControllerWrapper 
 
 	//private (775 Pro ?) rollerMotorVertical, rollerMotorHorizontal, armMotor;
 
-	private boolean rollersOn=false;
+	private boolean rollersOn = false;
 
 	private AnalogPotentiometer pot;
 
 	private PIDController armPID;
 
-	private VictorSP intakeVictorSP, lateralVictorSP;
+	private SpeedControllerWrapper armSpeedControllerWrapper, rollersSpeedControllerWrapper;
 
-	private SpeedControllerWrapper armSpeedControllerWrapper;
+	private static double POT_SLIPPAGE = 100; //better way?
 
-	private static final int POT_SLIPPAGE=100; //better way?
-
-	public double
-	kP = 0.01,
-	kI = 0.0,
-	kD = 0.0;
+	public double kP, kI, kD;
 
 	private double defaultRollerSpeed = 0.5;
 
-	public static final int ABSOLUTE_TOLERANCE = 25;
+	public static final double ABSOLUTE_TOLERANCE = 25;
 
 	public static final double UP_POSITION = 500.0; //assign value using POT_SLIPPAGE
 
 	public Intake() {
-		//  Hardware.   SpeedControllerWrappers
 		this.armSpeedControllerWrapper = Hardware.intakeArm;
 		
-		pot = new AnalogPotentiometer(3);
+		this.pot = Hardware.intakePot;
+		
+		this.rollersSpeedControllerWrapper = Hardware.rollers;
 
-		this.intakeVictorSP = Hardware.intakeVictorSP;
-		this.lateralVictorSP = Hardware.lateralVictorSP;
+		kP = ConstantsIO.kP_IntakeArm;
+		kI = ConstantsIO.kI_IntakeArm;
+		kD = ConstantsIO.kD_IntakeArm;
 
-
-		/* rollerMotorVertical = new (775 Pro ?);
-		 * rollerMotorHorizontal = new (775 Pro ?);
-		 * armMotor = new (775 Pro ?);
-		 * 
-		 */
 		armPID = new PIDController(kP, kI, kD, pot, armSpeedControllerWrapper);
 		armPID.setAbsoluteTolerance(ABSOLUTE_TOLERANCE); //change value of absolute tolerance
 		armPID.setSetpoint(UP_POSITION);
@@ -58,34 +54,30 @@ public class Intake {
 	}
 
 	public void startRollers(double value){
-		intakeVictorSP.set(value);
-		lateralVictorSP.set(value);
+		rollersSpeedControllerWrapper.set(value);
 		rollersOn=true;
 	}
 
 	public void stopRollers(){
-		intakeVictorSP.set(0);
-		lateralVictorSP.set(0);
+		rollersSpeedControllerWrapper.set(0);
 		rollersOn=false;
 	}
 	
 	public void setManual(double i){
-		this.setManual(i, false);
-		
+		armSpeedControllerWrapper.set(i);
+		armPID.disable();		
 	}
 	
 	public void setManual(double i, boolean rollersOn) {
-		armSpeedControllerWrapper.set(i);
-		armPID.disable();
+		
+		setManual(i);
 		
 		if(rollersOn){
 			startRollers(defaultRollerSpeed);
-		}
-		else
+		} else {
 			stopRollers();
-		/*
-		 * use potentiometers to raise/lower intake (cowCatcher)
-		 */
+		}
+		
 	}
 
 	public void setPID(double p, double i, double d){
@@ -98,33 +90,49 @@ public class Intake {
 
 
 	public void setSetpoint(double setpoint) {
-		setSetpoint(setpoint, true);
+		armPID.setSetpoint(setpoint);
+		armPID.enable();
 	}
 
 	/**
 	 * Sets setpoint and turns rollers on or off
 	 * @param setpoint
 	 * @param rollersOn
-	 * @return
 	 */
 	public void setSetpoint(double setpoint, boolean rollersOn) {
+		
 		armPID.setSetpoint(setpoint);
-
-		armPID.enable();
-
-	
+		
         if (rollersOn) {
             startRollers(defaultRollerSpeed );
+        } else {
+        	stopRollers();
         }
-	 
-
 		
 	}
-
-
+	
+	public boolean isOnTarget() {
+		return armPID.onTarget();
+	}
 
 	public void disableArmPID(){
 		armPID.disable();
+	}
+
+	@Override
+	public Map<String, Object> getLogData() {
+		
+		Map<String, Object> logData = new HashMap<String, Object>();
+		
+		logData.put("Name", "Intake");
+		logData.put("Roller Speed", rollersSpeedControllerWrapper.get());
+		logData.put("Arm Setpoint", armPID.getSetpoint());
+		logData.put("Arm Position", pot.get());
+		logData.put("Arm Motor PWM", armSpeedControllerWrapper.get());
+		logData.put("Arm PID isOnTarget", armPID.onTarget());
+
+		return logData;
+		
 	}
 
 }

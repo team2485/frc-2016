@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.VictorSP;
 
 public class Hardware {
@@ -42,24 +43,15 @@ public class Hardware {
 	public static SpeedControllerWrapper rightDrive, leftDrive;
 
 	public static CANTalon leftShooterMotor, rightShooterMotor;
-
-	static int [] intakeArmPortsPWM = {1,2};
 	
-	static int [] intakeArmSlotsPDP = {1,2};
-	
-	static VictorSP []  intakeArmVictorSP= {
-			new VictorSP(intakeArmPortsPWM[0]), 
-			new VictorSP(intakeArmPortsPWM[1])};
-	
-	public static SpeedControllerWrapper intakeArm = 
-			new SpeedControllerWrapper(intakeArmVictorSP,intakeArmSlotsPDP);
-	
-	public static SpeedControllerWrapper rollers;
+	public static VictorSP []  intakeArmVictorSP;
+	public static SpeedControllerWrapper intakeArm;
 	
 	public static VictorSP lateralVictorSP = new VictorSP(100);
 	public static VictorSP intakeVictorSP = new VictorSP(100);
 	public static VictorSP[] rollerVictorSPs;
-	public static int[] rollerPDPs;
+	public static SpeedControllerWrapper rollers;
+
 	
 	// Solenoids
 	public static Solenoid shooterHoodSolenoid1, shooterHoodSolenoid2, boulderStagerSolenoid1, boulderStagerSolenoid2;
@@ -88,8 +80,7 @@ public class Hardware {
 
 			battery = new Battery();
 			
-			intakePot = new AnalogPotentiometer(3);
-
+			// Victor SPs
 			rightDriveVictorSPs = new VictorSP[3];
 			rightDriveVictorSPs[0] = new VictorSP(ConstantsIO.kRightDrivePWM[0]);
 			rightDriveVictorSPs[1] = new VictorSP(ConstantsIO.kRightDrivePWM[1]);
@@ -105,21 +96,24 @@ public class Hardware {
 
 			leftDrive = new SpeedControllerWrapper(
 					leftDriveVictorSPs, ConstantsIO.kLeftDrivePDP);
+			
+			rollerVictorSPs[0] = lateralVictorSP = new VictorSP(ConstantsIO.kLateralRollerPWM);
+			rollerVictorSPs[1] = intakeVictorSP = new VictorSP(ConstantsIO.kIntakeRollerPWM);
+			int[] rollerPDPs = {ConstantsIO.kLateralRollerPDP, ConstantsIO.kIntakeRollerPDP};
+			rollers = new SpeedControllerWrapper(rollerVictorSPs, rollerPDPs);
+			
+			intakeArmVictorSP[0] = new VictorSP(ConstantsIO.kIntakeArmPWM[0]);
+			intakeArmVictorSP[1] = new VictorSP(ConstantsIO.kIntakeArmPWM[1]);
+			intakeArm = new SpeedControllerWrapper(intakeArmVictorSP, ConstantsIO.kIntakeArmPDP);
+			
 
-			rightDriveVictorSPs[0].setInverted(false);
-			rightDriveVictorSPs[1].setInverted(false);
-			rightDriveVictorSPs[2].setInverted(false);
-
-			leftDriveVictorSPs[0].setInverted(true);
-			leftDriveVictorSPs[1].setInverted(true);
-			leftDriveVictorSPs[2].setInverted(true);
-			rightDrive.setInverted(false);
-			rightDrive.setRampMode(true);
-			rightDrive.setRampRate(ConstantsIO.kDriveVoltageRamp);
-
-			leftDrive.setInverted(true);
-			leftDrive.setRampMode(true);
-			leftDrive.setRampRate(ConstantsIO.kDriveVoltageRamp);
+//			rightDriveVictorSPs[0].setInverted(false);
+//			rightDriveVictorSPs[1].setInverted(false);
+//			rightDriveVictorSPs[2].setInverted(false);
+//
+//			leftDriveVictorSPs[0].setInverted(true);
+//			leftDriveVictorSPs[1].setInverted(true);
+//			leftDriveVictorSPs[2].setInverted(true);
 
 			leftShooterMotor = new CANTalon(ConstantsIO.kLeftShooterCAN);
 			rightShooterMotor = new CANTalon(ConstantsIO.kRightShooterCAN);
@@ -127,26 +121,29 @@ public class Hardware {
 			shooterHoodSolenoid1 = new Solenoid(ConstantsIO.kShooterHoodSolenoid1Port);
 			shooterHoodSolenoid2 = new Solenoid(ConstantsIO.kShooterHoodSolenoid2Port);
 			
-			boulderStagerSolenoid1 = new Solenoid(1738);
-			boulderStagerSolenoid2 = new Solenoid(1739);
+			boulderStagerSolenoid1 = new Solenoid(ConstantsIO.kBoulderStagerSolenoid1Port);
+			boulderStagerSolenoid2 = new Solenoid(ConstantsIO.kBoulderStagerSolenoid2Port);
 
 			leftDriveEnc = new Encoder(ConstantsIO.kLeftDriveEncoder[0], 
 					ConstantsIO.kLeftDriveEncoder[1]);
 			rightDriveEnc = new Encoder(ConstantsIO.kRightDriveEncoder[0], 
 					ConstantsIO.kRightDriveEncoder[1]);
-
+			
+			intakePot = new AnalogPotentiometer(ConstantsIO.kIntakeArmPot);
+			
 			ahrs = new AHRS(SPI.Port.kMXP);
-			
-			
-			rollerVictorSPs[0] = lateralVictorSP;
-			rollerVictorSPs[1] = intakeVictorSP;
-			rollerPDPs[0] = 0;
-			rollerPDPs[1] = 1;
-			rollers = new SpeedControllerWrapper(rollerVictorSPs, rollerPDPs);
-
-
+	
 		}
 
+		
+		rightDrive.setInverted(false);
+		rightDrive.setRampMode(true);
+		rightDrive.setRampRate(ConstantsIO.kDriveVoltageRamp);
+
+		leftDrive.setInverted(true);
+		leftDrive.setRampMode(true);
+		leftDrive.setRampRate(ConstantsIO.kDriveVoltageRamp);
+		
 		leftDriveEnc.setDistancePerPulse(2 * Math.PI
 				* ConstantsIO.WHEEL_RADIUS_INCHES / 250);
 		rightDriveEnc.setDistancePerPulse(2 * Math.PI
