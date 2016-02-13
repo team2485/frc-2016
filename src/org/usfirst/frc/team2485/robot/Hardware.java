@@ -1,7 +1,9 @@
 package org.usfirst.frc.team2485.robot;
 
 import org.usfirst.frc.team2485.auto.Sequencer;
+import org.usfirst.frc.team2485.subsystems.BoulderStager;
 import org.usfirst.frc.team2485.subsystems.DriveTrain;
+import org.usfirst.frc.team2485.subsystems.Intake;
 import org.usfirst.frc.team2485.subsystems.Shooter;
 import org.usfirst.frc.team2485.util.Battery;
 import org.usfirst.frc.team2485.util.ConstantsIO;
@@ -10,10 +12,7 @@ import org.usfirst.frc.team2485.util.SpeedControllerWrapper;
 import com.kauailabs.navx.frc.AHRS;
 import com.ni.vision.NIVision.LegFeature;
 
-<<<<<<< HEAD
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
-=======
->>>>>>> 7e251e2794125bcc4a15162e5f2764e6b3b22d07
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Relay;
@@ -36,18 +35,14 @@ public class Hardware {
 	// new SpeedControllerWrapper(leftDriveVictorSPs,
 	// ConstantsIO.kLeftDrivePDP);
 
-<<<<<<< HEAD
 	public static AnalogPotentiometer intakePot;
 	
-=======
->>>>>>> 7e251e2794125bcc4a15162e5f2764e6b3b22d07
 	public static VictorSP[] rightDriveVictorSPs, leftDriveVictorSPs;
 
 	public static SpeedControllerWrapper rightDrive, leftDrive;
 
 	public static CANTalon leftShooterMotor, rightShooterMotor;
 
-<<<<<<< HEAD
 	static int [] intakeArmPortsPWM = {1,2};
 	
 	static int [] intakeArmSlotsPDP = {1,2};
@@ -61,17 +56,13 @@ public class Hardware {
 	
 	public static SpeedControllerWrapper rollers;
 	
-	public static VictorSP lateral=new VictorSP(100);
-	public static VictorSP intake=new VictorSP(100);
+	public static VictorSP lateralVictorSP = new VictorSP(100);
+	public static VictorSP intakeVictorSP = new VictorSP(100);
 	public static VictorSP[] rollerVictorSPs;
 	public static int[] rollerPDPs;
 	
 	// Solenoids
 	public static Solenoid shooterHoodSolenoid1, shooterHoodSolenoid2, boulderStagerSolenoid1, boulderStagerSolenoid2;
-=======
-	// Solenoids
-	public static Solenoid shooterHoodSolenoid1, shooterHoodSolenoid2;
->>>>>>> 7e251e2794125bcc4a15162e5f2764e6b3b22d07
 
 	// Sensors
 	public static Encoder leftDriveEnc, rightDriveEnc;
@@ -87,6 +78,10 @@ public class Hardware {
 	public static DriveTrain driveTrain;
 
 	public static Shooter shooter;
+	
+	public static Intake intake;
+
+	public static BoulderStager boulderStager;
 
 	public static void init() {
 		if (battery == null) {
@@ -143,8 +138,8 @@ public class Hardware {
 			ahrs = new AHRS(SPI.Port.kMXP);
 			
 			
-			rollerVictorSPs[0] = lateral;
-			rollerVictorSPs[1] = intake;
+			rollerVictorSPs[0] = lateralVictorSP;
+			rollerVictorSPs[1] = intakeVictorSP;
 			rollerPDPs[0] = 0;
 			rollerPDPs[1] = 1;
 			rollers = new SpeedControllerWrapper(rollerVictorSPs, rollerPDPs);
@@ -161,6 +156,8 @@ public class Hardware {
 
 		driveTrain = new DriveTrain(true);
 		shooter = new Shooter();
+		intake = new Intake();
+		boulderStager = new BoulderStager();
 
 
 	}
