@@ -42,7 +42,7 @@ public class DriveTrain implements Loggable {
     public PIDController encPID;
     
 	private int ahrsOnTargetCounter = 0;
-    private final int MINIMUM_AHRS_ON_TARGET_ITERATIONS = 10;
+    private final int MINIMUM_AHRS_ON_TARGET_ITERATIONS = 50;
     
 //    public static double
 //            kP_G_Rotate = 0.03,
@@ -55,7 +55,7 @@ public class DriveTrain implements Loggable {
 //            kD_E;
 
     private final double AbsTolerance_Imu_DriveTo = 2.0;
-    private final double AbsTolerance_Imu_TurnTo = 3.0;
+    private final double AbsTolerance_Imu_TurnTo = 1;
     private final double AbsTolerance_Enc = 5;
     
 	private double lowEncRate = 5;
@@ -85,7 +85,7 @@ public class DriveTrain implements Loggable {
     public DriveTrain(boolean useAhrs) {
         this.leftDrive      = Hardware.leftDrive;
         this.rightDrive     = Hardware.rightDrive;
-        this.encoder        = Hardware.rightDriveEnc;
+        this.encoder        = Hardware.leftDriveEnc;
         
         
         if (useAhrs) {
@@ -95,6 +95,7 @@ public class DriveTrain implements Loggable {
         		ahrsPID = new PIDController(ConstantsIO.kP_Rotate, ConstantsIO.kI_Rotate, 
         				ConstantsIO.kD_Rotate, ahrs, dummyAhrsOutput);
         		ahrsPID.setAbsoluteTolerance(AbsTolerance_Imu_DriveTo);
+        		ahrsPID.setOutputRange(-0.8, 0.8);
         	}
         }
         else {
@@ -269,9 +270,7 @@ public class DriveTrain implements Loggable {
     	
     	lastLeft = leftOutput;
     	lastRight = rightOutput;
-    	
-    	System.out.println("Left: " + leftOutput + " Right: " + rightOutput);
-    	
+    	    	
         leftDrive.set(leftOutput);
         rightDrive.set(rightOutput);
     }
@@ -357,6 +356,9 @@ public class DriveTrain implements Loggable {
 		System.out.println(encPID.getError());
 
 		double encoderOutput = dummyEncoderOutput.get();
+		
+		System.out.println("Encoder Output: " + encoderOutput);
+		
 		double leftOutput  = encoderOutput;
 		double rightOutput = encoderOutput;
 		
@@ -383,7 +385,7 @@ public class DriveTrain implements Loggable {
 
 		// Check to see if we're on target
 		
-		System.out.println(ahrsPID.getError());
+		System.out.println("Angle Error: " + ahrsPID.getError());
 		
 		if (ahrsPID.onTarget()) 
 			ahrsOnTargetCounter++;
@@ -397,8 +399,6 @@ public class DriveTrain implements Loggable {
 		}
 
 		double ahrsOutput = dummyAhrsOutput.get();
-
-		setLeftRight(ahrsOutput, -ahrsOutput);
 
 		//left and right are opposite on porpoise
 		setLeftRight(ahrsOutput, -ahrsOutput);	

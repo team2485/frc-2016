@@ -1,5 +1,6 @@
 package org.usfirst.frc.team2485.util;
 
+import org.usfirst.frc.team2485.robot.Constants;
 import org.usfirst.frc.team2485.robot.Hardware;
 
 /**
@@ -13,8 +14,8 @@ public class CurrentMonitor {
 	
 	private CurrentMonitor() {
 		
-		leftDriveMonitor = new CurrentMonitorGroup(ConstantsIO.kLeftDrivePDP, 60);
-		rightDriveMonitor = new CurrentMonitorGroup(ConstantsIO.kRightDrivePDP, 60);
+		leftDriveMonitor = new CurrentMonitorGroup(Constants.kLeftDrivePDP, 60);
+		rightDriveMonitor = new CurrentMonitorGroup(Constants.kRightDrivePDP, 60);
 
 	}
 	

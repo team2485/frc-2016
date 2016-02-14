@@ -4,16 +4,16 @@
 # Don't worry about whitespace.
 
 # PID Gains
-kP_Shooter = 0.04
+kP_Shooter = 0.01
 kI_Shooter = 0.0
 kD_Shooter = 0.0
-kF_Shooter = 0.0
+kF_Shooter = 0.027
 
 kP_DriveTo = 0.03
 kI_DriveTo = 0.0
 kD_DriveTo = 0.0
 
-kP_Rotate = 0.03
+kP_Rotate = 0.025
 kI_Rotate = 0.0
 kD_Rotate = 0.0
 
@@ -24,36 +24,3 @@ kD_IntakeArm = 0.00
 # Voltage Ramping
 kDriveVoltageRamp = 0.05
 kShooterVoltageRamp = 0.05
-
-# Electrical Ports
-kLeftShooterCAN = 2
-kRightShooterCAN = 3
-
-kShooterHoodSolenoid1Port = 4
-kShooterHoodSolenoid2Port = 0
-
-kBoulderStagerSolenoid1Port = 6
-kBoulderStagerSolenoid2Port = 7
-
-kLeftDrivePWM = 4,3,2
-kLeftDrivePDP = 15,3,2
-kRightDrivePWM = 7,6,5
-kRightDrivePDP = 12,13,14
-
-kIntakeRollerPWM = 1
-kIntakeRollerPDP = 2
-kLateralRollerPWM = 3
-kLateralRollerPDP = 4
-kIntakeArmPWM = 5, 6
-kIntakeArmPDP = 8, 7
-
-kLeftDriveEncoder = 8,9
-kRightDriveEncoder = 6,7
-
-kIntakeArmPot = 421
-
-kLeftDriveEncoder = 8,9
-kRightDriveEncoder = 6,7
-
-# Physical Constants
-WHEEL_RADIUS_INCHES = 1.53

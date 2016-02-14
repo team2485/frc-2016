@@ -29,20 +29,6 @@ public class ConstantsIO {
 	public static double kP_IntakeArm, kI_IntakeArm, kD_IntakeArm;
 
 	public static double kDriveVoltageRamp, kShooterVoltageRamp;
-
-	public static int kLeftShooterCAN, kRightShooterCAN;
-
-	public static int kShooterHoodSolenoid1Port, kShooterHoodSolenoid2Port;
-	public static int kBoulderStagerSolenoid1Port, kBoulderStagerSolenoid2Port;
-	
-	public static int[] kLeftDrivePWM, kLeftDrivePDP, kRightDrivePWM, kRightDrivePDP;
-	public static int[] kIntakeArmPWM, kIntakeArmPDP;
-	public static int kLateralRollerPWM, kLateralRollerPDP, kIntakeRollerPWM, kIntakeRollerPDP;
-	
-	public static int[] kLeftDriveEncoder, kRightDriveEncoder;
-	public static int kIntakeArmPot;
-
-	public static double WHEEL_RADIUS_INCHES;
 	
 	public static void init() {
 		
@@ -76,38 +62,6 @@ public class ConstantsIO {
 		kDriveVoltageRamp = Double.parseDouble(data.get("kDriveVoltageRamp"));
 		kShooterVoltageRamp = Double.parseDouble(data.get("kShooterVoltageRamp"));
 		
-		kLeftShooterCAN = Integer.parseInt(data.get("kLeftShooterCAN"));
-		kRightShooterCAN = Integer.parseInt(data.get("kRightShooterCAN"));
-		
-		
-		kShooterHoodSolenoid1Port = Integer.parseInt(data.get("kShooterHoodSolenoid1Port"));
-		kShooterHoodSolenoid2Port = Integer.parseInt(data.get("kShooterHoodSolenoid2Port"));
-		
-		kBoulderStagerSolenoid1Port = Integer.parseInt(data.get("kBoulderStagerSolenoid1Port"));
-		kBoulderStagerSolenoid2Port = Integer.parseInt(data.get("kBoulderStagerSolenoid2Port"));
-		
-		
-		kLeftDrivePWM = parseIntArray(data.get("kLeftDrivePWM"), ",");
-		kLeftDrivePDP = parseIntArray(data.get("kLeftDrivePDP"), ",");
-		kRightDrivePWM = parseIntArray(data.get("kRightDrivePWM"), ",");
-		kRightDrivePDP = parseIntArray(data.get("kRightDrivePDP"), ",");
-		
-		kIntakeArmPWM = parseIntArray(data.get("kIntakeArmPWM"), ",");
-		kIntakeArmPDP = parseIntArray(data.get("kIntakeArmPDP"), ",");
-		
-		kLateralRollerPWM = Integer.parseInt(data.get("kLateralRollerPWM"));
-		kLateralRollerPDP = Integer.parseInt(data.get("kLateralRollerPDP"));
-		kIntakeRollerPWM = Integer.parseInt(data.get("kIntakeRollerPWM"));
-		kIntakeRollerPDP = Integer.parseInt(data.get("kIntakeRollerPDP"));
-
-		
-		kLeftDriveEncoder = parseIntArray(data.get("kLeftDriveEncoder"), ",");
-		kRightDriveEncoder = parseIntArray(data.get("kRightDriveEncoder"), ",");
-		
-		kIntakeArmPot = Integer.parseInt(data.get("kIntakeArmPot"));
-		
-		
-		WHEEL_RADIUS_INCHES = Double.parseDouble(data.get("WHEEL_RADIUS_INCHES"));
 
 	}
 
@@ -156,6 +110,7 @@ public class ConstantsIO {
 				constantsMap.put(constantName, constantValue);
 			}
 		}
+		scanner.close();
 		return constantsMap; 
 	}
 
@@ -182,17 +137,5 @@ public class ConstantsIO {
 
 	}
 	
-	private static int[] parseIntArray(String s, String delimiter) {
-		
-		String[] split = s.split(delimiter);
-		
-		int[] ret = new int[split.length];
-		for (int i = 0; i < split.length; i++) {
-			ret[i] = Integer.parseInt(split[i]);
-		}
-		
-		return ret;
-		
-	}
 }
 

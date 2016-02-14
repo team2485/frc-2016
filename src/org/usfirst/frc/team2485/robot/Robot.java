@@ -7,11 +7,8 @@ import org.usfirst.frc.team2485.util.ConstantsIO;
 import org.usfirst.frc.team2485.util.Controllers;
 import org.usfirst.frc.team2485.util.Logger;
 
-import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.TalonSRX;
-import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -27,8 +24,6 @@ public class Robot extends IterativeRobot {
 	// rightDriveSC1, rightDriveSC2, rightDriveSC3;
 	// private Encoder driveEncoder;
 
-	private CANTalon shooterSC2, shooterSC3;
-
 	private Sequencer autonomousSequencer;
 
 	public void robotInit() {
@@ -39,9 +34,6 @@ public class Robot extends IterativeRobot {
 		Controllers.set(new Joystick(0), new Joystick(1));
 
 		// Logger.getInstance().addLoggable(Hardware.driveTrain);
-
-		shooterSC2 = new CANTalon(2);
-		shooterSC3 = new CANTalon(3);
 
 		// leftDriveSC1 = new SpeedControllerWrapper(new VictorSP(6), 0);
 		// leftDriveSC2 = new SpeedControllerWrapper(new VictorSP(5), 0);
@@ -64,6 +56,10 @@ public class Robot extends IterativeRobot {
 		resetAndDisableSystems();
 
 		ConstantsIO.init();
+		Hardware.init();
+		
+		Hardware.ahrs.zeroYaw();
+		System.out.println("Robot - ahrs reading: " + Hardware.ahrs.getYaw());
 
 		autonomousSequencer = SequencerFactory.createAuto(AutoType.BASIC);
 
@@ -71,6 +67,7 @@ public class Robot extends IterativeRobot {
 
 	public void autonomousPeriodic() {
 		if (autonomousSequencer != null) {
+			
 			if (autonomousSequencer.run()) {
 				autonomousSequencer = null;
 			}
@@ -200,7 +197,7 @@ public class Robot extends IterativeRobot {
 	}
 
 	private void resetAndDisableSystems() {
-
+		Hardware.driveTrain.disableAhrsPID();
 	}
 
 	public void updateDashboard() {

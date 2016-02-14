@@ -71,47 +71,47 @@ public class Hardware {
 			
 			// Victor SPs
 			rightDriveVictorSPs = new VictorSP[3];
-			rightDriveVictorSPs[0] = new VictorSP(ConstantsIO.kRightDrivePWM[0]);
-			rightDriveVictorSPs[1] = new VictorSP(ConstantsIO.kRightDrivePWM[1]);
-			rightDriveVictorSPs[2] = new VictorSP(ConstantsIO.kRightDrivePWM[2]);
+			rightDriveVictorSPs[0] = new VictorSP(Constants.kRightDrivePWM[0]);
+			rightDriveVictorSPs[1] = new VictorSP(Constants.kRightDrivePWM[1]);
+			rightDriveVictorSPs[2] = new VictorSP(Constants.kRightDrivePWM[2]);
 
 			leftDriveVictorSPs = new VictorSP[3];
-			leftDriveVictorSPs[0] = new VictorSP(ConstantsIO.kLeftDrivePWM[0]);
-			leftDriveVictorSPs[1] = new VictorSP(ConstantsIO.kLeftDrivePWM[1]);
-			leftDriveVictorSPs[2] = new VictorSP(ConstantsIO.kLeftDrivePWM[2]);
+			leftDriveVictorSPs[0] = new VictorSP(Constants.kLeftDrivePWM[0]);
+			leftDriveVictorSPs[1] = new VictorSP(Constants.kLeftDrivePWM[1]);
+			leftDriveVictorSPs[2] = new VictorSP(Constants.kLeftDrivePWM[2]);
 
 			rightDrive = new SpeedControllerWrapper(
-					rightDriveVictorSPs, ConstantsIO.kRightDrivePDP);
+					rightDriveVictorSPs, Constants.kRightDrivePDP);
 
 			leftDrive = new SpeedControllerWrapper(
-					leftDriveVictorSPs, ConstantsIO.kLeftDrivePDP);
+					leftDriveVictorSPs, Constants.kLeftDrivePDP);
 			
 			rollerVictorSPs = new VictorSP[2];
-			rollerVictorSPs[0] = lateralVictorSP = new VictorSP(ConstantsIO.kLateralRollerPWM);
-			rollerVictorSPs[1] = intakeVictorSP = new VictorSP(ConstantsIO.kIntakeRollerPWM);
-			int[] rollerPDPs = {ConstantsIO.kLateralRollerPDP, ConstantsIO.kIntakeRollerPDP};
+			rollerVictorSPs[0] = lateralVictorSP = new VictorSP(Constants.kLateralRollerPWM);
+			rollerVictorSPs[1] = intakeVictorSP = new VictorSP(Constants.kIntakeRollerPWM);
+			int[] rollerPDPs = {Constants.kLateralRollerPDP, Constants.kIntakeRollerPDP};
 			rollers = new SpeedControllerWrapper(rollerVictorSPs, rollerPDPs);
 			
 			intakeArmVictorSP = new VictorSP[2];
-			intakeArmVictorSP[0] = new VictorSP(ConstantsIO.kIntakeArmPWM[0]);
-			intakeArmVictorSP[1] = new VictorSP(ConstantsIO.kIntakeArmPWM[1]);
-			intakeArm = new SpeedControllerWrapper(intakeArmVictorSP, ConstantsIO.kIntakeArmPDP);
+			intakeArmVictorSP[0] = new VictorSP(Constants.kIntakeArmPWM[0]);
+			intakeArmVictorSP[1] = new VictorSP(Constants.kIntakeArmPWM[1]);
+			intakeArm = new SpeedControllerWrapper(intakeArmVictorSP, Constants.kIntakeArmPDP);
 
-			leftShooterMotor = new CANTalon(ConstantsIO.kLeftShooterCAN);
-			rightShooterMotor = new CANTalon(ConstantsIO.kRightShooterCAN);
+			leftShooterMotor = new CANTalon(Constants.kLeftShooterCAN);
+			rightShooterMotor = new CANTalon(Constants.kRightShooterCAN);
 
-			shooterHoodSolenoid1 = new Solenoid(ConstantsIO.kShooterHoodSolenoid1Port);
-			shooterHoodSolenoid2 = new Solenoid(ConstantsIO.kShooterHoodSolenoid2Port);
+			shooterHoodSolenoid1 = new Solenoid(Constants.kShooterHoodSolenoid1Port);
+			shooterHoodSolenoid2 = new Solenoid(Constants.kShooterHoodSolenoid2Port);
 			
-			boulderStagerSolenoid1 = new Solenoid(ConstantsIO.kBoulderStagerSolenoid1Port);
-			boulderStagerSolenoid2 = new Solenoid(ConstantsIO.kBoulderStagerSolenoid2Port);
+			boulderStagerSolenoid1 = new Solenoid(Constants.kBoulderStagerSolenoid1Port);
+			boulderStagerSolenoid2 = new Solenoid(Constants.kBoulderStagerSolenoid2Port);
 
-			leftDriveEnc = new Encoder(ConstantsIO.kLeftDriveEncoder[0], 
-					ConstantsIO.kLeftDriveEncoder[1]);
-			rightDriveEnc = new Encoder(ConstantsIO.kRightDriveEncoder[0], 
-					ConstantsIO.kRightDriveEncoder[1]);
+			leftDriveEnc = new Encoder(Constants.kLeftDriveEncoder[0], 
+					Constants.kLeftDriveEncoder[1]);
+			rightDriveEnc = new Encoder(Constants.kRightDriveEncoder[0], 
+					Constants.kRightDriveEncoder[1]);
 			
-			intakePot = new AnalogPotentiometer(ConstantsIO.kIntakeArmPot);
+			intakePot = new AnalogPotentiometer(Constants.kIntakeArmPot);
 			
 			ahrs = new AHRS(SPI.Port.kMXP);
 	
@@ -129,9 +129,9 @@ public class Hardware {
 		intakeArmVictorSP[1].setInverted(true);
 		
 		leftDriveEnc.setDistancePerPulse(2 * Math.PI
-				* ConstantsIO.WHEEL_RADIUS_INCHES / 250);
+				* Constants.WHEEL_RADIUS_INCHES / 250);
 		rightDriveEnc.setDistancePerPulse(2 * Math.PI
-				* ConstantsIO.WHEEL_RADIUS_INCHES / 250);
+				* Constants.WHEEL_RADIUS_INCHES / 250);
 
 		ahrs.zeroYaw();
 

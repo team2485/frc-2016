@@ -45,7 +45,7 @@ public class Intake implements Loggable {
 		armPID = new PIDController(ConstantsIO.kP_IntakeArm, ConstantsIO.kI_IntakeArm, 
 				ConstantsIO.kD_IntakeArm, pot, armSpeedControllerWrapper);
 		armPID.setAbsoluteTolerance(ABSOLUTE_TOLERANCE); //change value of absolute tolerance
-		armPID.setSetpoint(UP_POSITION);
+		armPID.setSetpoint(pot.get());
 
 	}
 

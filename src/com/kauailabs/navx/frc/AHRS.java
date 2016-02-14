@@ -541,6 +541,21 @@ public class AHRS extends SensorBase implements PIDSource, LiveWindowSendable {
     }
 
     /**
+	 * Indicates whether the current altitude (and barometric pressure) data is 
+	 * valid. This value will only be true for a sensor with an onboard
+	 * pressure sensor installed.
+	 *<p>
+	 * If this value is false for a board with an installed pressure sensor, 
+	 * this indicates a malfunction of the onboard pressure sensor.
+	 *<p>
+	 * @return Returns true if a working pressure sensor is installed.
+	 */
+	public boolean isAltitudeValid()
+	{
+	    return this.altitude_valid;
+	}
+
+	/**
      * Returns the current altitude, based upon calibrated readings
      * from a barometric pressure sensor, and the currently-configured
      * sea-level barometric pressure [navX Aero only].  This value is in units of meters.
@@ -555,21 +570,6 @@ public class AHRS extends SensorBase implements PIDSource, LiveWindowSendable {
     public float getAltitude()
     {
         return altitude;
-    }
-
-    /**
-     * Indicates whether the current altitude (and barometric pressure) data is 
-     * valid. This value will only be true for a sensor with an onboard
-     * pressure sensor installed.
-     *<p>
-     * If this value is false for a board with an installed pressure sensor, 
-     * this indicates a malfunction of the onboard pressure sensor.
-     *<p>
-     * @return Returns true if a working pressure sensor is installed.
-     */
-    public boolean isAltitudeValid()
-    {
-        return this.altitude_valid;
     }
 
     /**

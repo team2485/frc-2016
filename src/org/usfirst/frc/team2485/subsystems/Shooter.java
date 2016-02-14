@@ -42,8 +42,8 @@ public class Shooter implements Loggable {
 		leftShooterMotor.changeControlMode(CANTalon.TalonControlMode.Follower);
 		leftShooterMotor.set(rightShooterMotor.getDeviceID());
 		
-		rightShooterMotor.reverseSensor(false);
-		rightShooterMotor.reverseOutput(false);
+		rightShooterMotor.reverseSensor(true);
+		rightShooterMotor.reverseOutput(true);
 		leftShooterMotor.reverseOutput(true);
 		
 //		setHoodPosition(HoodPosition.STOWED);
