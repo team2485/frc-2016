@@ -30,6 +30,8 @@ public class Constants {
 
 	public static double WHEEL_RADIUS_INCHES = 2.25;
 	
+	public static float kMoveIntakeManuallyDeadband = 0.3f;
+	
 	private static HashMap<String, String> constantsMap;
 	
 	public static enum Type {INT, DOUBLE, STRING, BOOLEAN}  

@@ -12,17 +12,17 @@ public class ThresholdHandler {
 	
 	public static final double STANDARD_THRESHOLD = 0.1; 
 	
-	@Deprecated
-	public static double handleThreshold(double val, double threshold) {
-		return (Math.abs(val) > Math.abs(threshold)) ? (val / Math.abs(val) * (Math.abs(val) - threshold) / (1 - threshold)) : 0.0;
-	}
-	@Deprecated
-	public static double handleThresholdNonLinear(double val, double threshold) {
-		double returnValue = (Math.abs(val) > Math.abs(threshold)) ?
-				(val / Math.abs(val) * (Math.abs(val) - threshold) / (1-threshold)) : 0.0;
-		returnValue *= Math.abs(returnValue);
-		return returnValue;
-	}
+//	@Deprecated
+//	public static double handleThreshold(double val, double threshold) {
+//		return (Math.abs(val) > Math.abs(threshold)) ? (val / Math.abs(val) * (Math.abs(val) - threshold) / (1 - threshold)) : 0.0;
+//	}
+//	@Deprecated
+//	public static double handleThresholdNonLinear(double val, double threshold) {
+//		double returnValue = (Math.abs(val) > Math.abs(threshold)) ?
+//				(val / Math.abs(val) * (Math.abs(val) - threshold) / (1-threshold)) : 0.0;
+//		returnValue *= Math.abs(returnValue);
+//		return returnValue;
+//	}
 	
 	/**
 	 * Thresholds and scales values linearly.                                                                      

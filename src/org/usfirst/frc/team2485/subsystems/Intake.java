@@ -3,10 +3,12 @@ package org.usfirst.frc.team2485.subsystems;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.usfirst.frc.team2485.robot.Constants;
 import org.usfirst.frc.team2485.robot.Hardware;
 import org.usfirst.frc.team2485.util.ConstantsIO;
 import org.usfirst.frc.team2485.util.Loggable;
 import org.usfirst.frc.team2485.util.SpeedControllerWrapper;
+import org.usfirst.frc.team2485.util.ThresholdHandler;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 
@@ -70,9 +72,11 @@ public class Intake implements Loggable {
 
 	}
 
-	public void setManual(double i) {
+	public void setManual(double pwm) {
 
-		armSpeedControllerWrapper.set(i);
+		pwm = ThresholdHandler.deadbandAndScale(pwm, Constants.kMoveIntakeManuallyDeadband, 0.05, 0.5);
+		
+		armSpeedControllerWrapper.set(pwm);
 		armPID.disable();
 
 	}

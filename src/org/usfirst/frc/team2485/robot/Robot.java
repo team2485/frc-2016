@@ -101,6 +101,13 @@ public class Robot extends IterativeRobot {
 				-Controllers.getAxis(Controllers.XBOX_AXIS_LY, 0),
 				Controllers.getAxis(Controllers.XBOX_AXIS_RX, 0));
 		
+		if (Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, Constants.kMoveIntakeManuallyDeadband) != 0) {//if the joystick is moved
+    		
+			Hardware.intake.setManual((Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, 
+    				Constants.kMoveIntakeManuallyDeadband)));//setmanual deadbands & scales 
+			//TODO add nonlinear ramp to allow driver to lift robot up
+			
+		}
 		// Trigger Drive
 
 		// Hardware.driveTrain.warlordDrive(
