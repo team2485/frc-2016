@@ -41,7 +41,7 @@ public class LidarWrapper extends SensorBase {
 			boolean nack = m_i2c.writeBulk(testSignal);
 			
 			if (nack) {
-				throw new BadLidarDataException("WriteBulk failed to write");
+				throw new BadLidarDataException("WriteBulk failed to write (in bulk)");
 			}
 			
 			byte testBuffer[] = new byte[1];
