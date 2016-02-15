@@ -1,5 +1,6 @@
 package org.usfirst.frc.team2485.util;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -102,7 +103,6 @@ public class GRIPReciever {
 
 	}
 	
-	@SuppressWarnings("serial")
 	public static class GRIPTargetNotFoundException extends Exception {
 
 		GRIPTargetNotFoundException(String message) {

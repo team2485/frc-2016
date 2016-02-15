@@ -347,7 +347,7 @@ public class DriveTrain implements Loggable {
     	
 		if (!encPID.isEnabled()) {
 			encPID.enable();
-			System.out.println("Enabling driveStraight PID in driveTo " + encoder.getDistance() + " , " + inches);
+			System.out.println("|DriveTrain.driveTo| Enabling driveStraight PID in driveTo " + encoder.getDistance() + " , " + inches);
 			encPID.setSetpoint(inches);
 		}
 		
@@ -357,7 +357,7 @@ public class DriveTrain implements Loggable {
 
 		double encoderOutput = dummyEncoderOutput.get();
 		
-		System.out.println("Encoder Output: " + encoderOutput);
+		System.out.println("|DriveTrain.driveTo| Encoder Output: " + encoderOutput);
 		
 		double leftOutput  = encoderOutput;
 		double rightOutput = encoderOutput;
@@ -385,7 +385,7 @@ public class DriveTrain implements Loggable {
 
 		// Check to see if we're on target
 		
-		System.out.println("Angle Error: " + ahrsPID.getError());
+		System.out.println("|DriveTrain.rotateTo| Angle Error: " + ahrsPID.getError());
 		
 		if (ahrsPID.onTarget()) 
 			ahrsOnTargetCounter++;
@@ -422,6 +422,4 @@ public class DriveTrain implements Loggable {
 		return logData;
 		
 	}
-
-
 }

@@ -20,7 +20,7 @@ public class SpinUpShooter implements SequencedItem {
 	@Override
 	public void run() {
 		Hardware.shooter.setTargetSpeed(rpm);
-		finished = Hardware.shooter.isOnTarget(0.2*rpm);//better way to do this??
+		finished = Hardware.shooter.isOnTargetPercentage(0.05);//no
 	}
 
 	@Override

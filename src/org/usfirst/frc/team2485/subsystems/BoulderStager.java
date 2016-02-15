@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Ultrasonic;
 
 /**
- *  also known as RockYourPebblesOff
+ * also known as RockYourPebblesOff
  * 
  * @author Amanda Wasserman
  * @author Vicky Comunale
@@ -19,30 +19,29 @@ import edu.wpi.first.wpilibj.Ultrasonic;
  */
 
 public class BoulderStager implements Loggable {
-	//Declare different pneumatics parts
+	// Declare different pneumatics parts
 
-	private Ultrasonic sonic;
-	
 	private Solenoid solenoid1, solenoid2;
-	
+
 	private Position position;
 
 	public enum Position {
 		INTAKE, NEUTRAL, SHOOTING;
 	}
 
-
 	public BoulderStager() {
 		solenoid1 = Hardware.boulderStagerSolenoid1;
 		solenoid2 = Hardware.boulderStagerSolenoid2;
 
 		setPosition(Position.NEUTRAL);
+
+		new BoulderDetector();
 	}
 
 	public void setPosition(Position position) {
-		
+
 		this.position = position;
-		
+
 		switch (position) {
 
 		case INTAKE:
@@ -63,11 +62,11 @@ public class BoulderStager implements Loggable {
 		}
 
 	}
-	
+
 	public Position getPosition() {
 		return position;
 	}
-	
+
 	public String getPositionString() {
 		if (position == Position.INTAKE) {
 			return "Intake";
@@ -77,21 +76,16 @@ public class BoulderStager implements Loggable {
 			return "Shooting";
 		}
 	}
-	
-	public boolean hasBoulder() {
-		return sonic.getRangeInches() < 20; // TODO how far makes this work
-	}
 
 	@Override
 	public Map<String, Object> getLogData() {
 
 		Map<String, Object> logData = new HashMap<String, Object>();
-		
+
 		logData.put("Name", "BoulderStager");
 		logData.put("Position", getPositionString());
-		logData.put("Has boulder?", hasBoulder());
-		
+
 		return logData;
 	}
-	
+
 }

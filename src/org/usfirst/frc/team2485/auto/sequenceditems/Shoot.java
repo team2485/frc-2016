@@ -12,6 +12,7 @@ public class Shoot implements SequencedItem {
 
 	@Override
 	public void run() {
+		
 		if (Hardware.shooter.isReadyToFire()) {
 			Hardware.boulderStager.setPosition(Position.SHOOTING);
 		}
@@ -21,6 +22,4 @@ public class Shoot implements SequencedItem {
 	public double duration() {
 		return 0.05;
 	}
-	
-
 }
