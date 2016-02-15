@@ -24,7 +24,7 @@ public class Constants {
 	
 	public static int[] kLeftDriveEncoder = {8, 9}, 
 			kRightDriveEncoder = {6, 7};
-	public static int kIntakeArmPot = 2;//incorrect
+	public static int kIntakeArmAbsEncoder = 2;//incorrect
 	
 	public static int[] kUltrasonicDIO = {2, 3};
 

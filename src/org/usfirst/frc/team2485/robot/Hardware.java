@@ -47,7 +47,7 @@ public class Hardware {
 
 	// Sensors
 	public static Encoder leftDriveEnc, rightDriveEnc;
-	public static AnalogPotentiometer intakePot;
+	public static AnalogPotentiometer intakeAbsEncoder;
 	public static AHRS ahrs;
 	public static Ultrasonic sonic;
 
@@ -113,7 +113,7 @@ public class Hardware {
 			rightDriveEnc = new Encoder(Constants.kRightDriveEncoder[0], 
 					Constants.kRightDriveEncoder[1]);
 			
-			intakePot = new AnalogPotentiometer(Constants.kIntakeArmPot);
+			intakeAbsEncoder = new AnalogPotentiometer(Constants.kIntakeArmAbsEncoder);
 			
 			sonic = new Ultrasonic(Constants.kUltrasonicDIO[0], Constants.kUltrasonicDIO[1]);
 			

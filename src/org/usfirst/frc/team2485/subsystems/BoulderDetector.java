@@ -52,7 +52,7 @@ public class BoulderDetector implements Loggable {
 
 						@Override
 						public void run() {
-							Hardware.intake.stopRollers();
+							Hardware.intake.setSetpoint(Intake.LOW_NO_INTAKE_POSITION, false);
 							stopTimer = null;
 						}
 					}, 250);
