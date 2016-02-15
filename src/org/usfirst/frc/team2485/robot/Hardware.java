@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.VictorSP;
 
@@ -48,6 +49,7 @@ public class Hardware {
 	public static Encoder leftDriveEnc, rightDriveEnc;
 	public static AnalogPotentiometer intakePot;
 	public static AHRS ahrs;
+	public static Ultrasonic sonic;
 
 	// Sequences && Auto
 	public static Sequencer autoSequence;
@@ -112,6 +114,8 @@ public class Hardware {
 					Constants.kRightDriveEncoder[1]);
 			
 			intakePot = new AnalogPotentiometer(Constants.kIntakeArmPot);
+			
+			sonic = new Ultrasonic(Constants.kUltrasonicDIO[0], Constants.kUltrasonicDIO[1]);
 			
 			ahrs = new AHRS(SPI.Port.kMXP);
 	

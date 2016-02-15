@@ -17,31 +17,35 @@ public class BoulderDetector implements Loggable {
 
 	private boolean stop;
 
+	private Timer stopTimer = null;
+
+	private boolean hasBoulder;
+
 	public BoulderDetector() {
 
-		sonic = new Ultrasonic(Constants.kUltrasonicDIO[0], Constants.kUltrasonicDIO[1]);
-		
+		sonic = Hardware.sonic;
+
 		new TimingSystem().start();
 	}
 
-	public boolean hasBoulder() {
+	public boolean boulderDetected() {
 		return sonic.getRangeInches() < 10;
 	}
 
-	public void stopListeningForBalls() {
-		stop = true;
-	}
+	// public void stopListeningForBalls() {
+	// stop = true;
+	// }
 
 	private class TimingSystem extends Thread {
-
-		private Timer stopTimer = null;
 
 		@Override
 		public void run() {
 
 			while (!stop) {
 
-				if (hasBoulder() && stopTimer == null) {
+				if (boulderDetected() && !hasBoulder) {
+
+					hasBoulder = true;
 
 					stopTimer = new Timer();
 					stopTimer.schedule(new TimerTask() {
@@ -49,8 +53,17 @@ public class BoulderDetector implements Loggable {
 						@Override
 						public void run() {
 							Hardware.intake.stopRollers();
+							stopTimer = null;
 						}
 					}, 250);
+				} else if (!boulderDetected()) {
+					hasBoulder = false;
+				}
+
+				try {
+					Thread.sleep(20);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 			}
 		}
@@ -58,12 +71,15 @@ public class BoulderDetector implements Loggable {
 
 	@Override
 	public Map<String, Object> getLogData() {
-		
+
 		Map<String, Object> logData = new HashMap<String, Object>();
-		
+
 		logData.put("Name", "BoulderDetector");
-		logData.put("Has boulder?", hasBoulder());
-		
+		logData.put("Detected Boulder", boulderDetected());
+		logData.put("Has Boulder", hasBoulder);
+		logData.put("Timer", stopTimer);
+		logData.put("Distance", sonic.getRangeInches());
+
 		return logData;
 	}
 }
