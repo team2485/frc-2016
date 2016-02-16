@@ -11,22 +11,25 @@ public class Constants {
 	
 	public static int kLeftShooterCAN = 3, kRightShooterCAN = 2;
 
-	public static int kShooterHoodSolenoid1Port = 4, kShooterHoodSolenoid2Port = 0;
+	public static int kShooterHoodSolenoid1Port = 4, kShooterHoodSolenoid2Port = 5;
 	public static int kBoulderStagerSolenoid1Port = 6, kBoulderStagerSolenoid2Port = 7;
 	
 	public static int[] kLeftDrivePWM = {4, 3, 2}, 
-			kLeftDrivePDP = {15, 3, 2}, 
-			kRightDrivePWM = {5, 6, 7}, 
-			kRightDrivePDP = {12, 13, 14};
-	public static int[] kIntakeArmPWM = {11, 12} , kIntakeArmPDP = {0, 0};//incorrect
-	public static int kLateralRollerPWM = 10, kLateralRollerPDP = 0, 
+						kLeftDrivePDP = {15, 3, 2}, 
+						kRightDrivePWM = {5, 6, 7}, 
+						kRightDrivePDP = {12, 13, 14};
+	
+	public static int[] kIntakeArmPWM = {11, 12} , kIntakeArmPDP = {0, 1};
+	
+	public static int kLateralRollerPWM = 10, kLateralRollerPDP = 0, //TODO: correct port numbers
 			kIntakeRollerPWM = 0, kIntakeRollerPDP = 0;
 	
-	public static int[] kLeftDriveEncoder = {8, 9}, 
-			kRightDriveEncoder = {6, 7};
-	public static int kIntakeArmAbsEncoder = 2;//incorrect
+	public static int[] kLeftDriveEncoder = {2, 3}, 
+			kRightDriveEncoder = {4, 5};
 	
-	public static int[] kUltrasonicDIO = {2, 3};
+	public static int kIntakeArmAbsEncoder = 6; //TODO: correct port number
+	
+	public static int[] kUltrasonicDIO = {0, 1};
 
 	public static double WHEEL_RADIUS_INCHES = 2.25;
 	
