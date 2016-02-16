@@ -3,12 +3,14 @@ package org.usfirst.frc.team2485.robot;
 import org.usfirst.frc.team2485.auto.Sequencer;
 import org.usfirst.frc.team2485.auto.SequencerFactory;
 import org.usfirst.frc.team2485.auto.SequencerFactory.AutoType;
+import org.usfirst.frc.team2485.subsystems.Shooter.HoodPosition;
 import org.usfirst.frc.team2485.util.ConstantsIO;
 import org.usfirst.frc.team2485.util.Controllers;
 import org.usfirst.frc.team2485.util.Logger;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -44,9 +46,9 @@ public class Robot extends IterativeRobot {
 		// driveEncoder.setDistancePerPulse(Math.PI*2*WHEEL_RADIUS_INCHES /
 		// 250.0);
 
-		 Logger.getInstance().addLoggable(Hardware.battery);
-		 Logger.getInstance().addLoggable(Hardware.driveTrain);
-		 Logger.getInstance().addLoggable(Hardware.shooter);
+		Logger.getInstance().addLoggable(Hardware.battery);
+		Logger.getInstance().addLoggable(Hardware.driveTrain);
+		Logger.getInstance().addLoggable(Hardware.shooter);
 
 		System.out.println("initialized");
 	}
@@ -57,7 +59,7 @@ public class Robot extends IterativeRobot {
 
 		ConstantsIO.init();
 		Hardware.init();
-		
+
 		Hardware.ahrs.zeroYaw();
 		System.out.println("Robot - ahrs reading: " + Hardware.ahrs.getYaw());
 
@@ -67,7 +69,7 @@ public class Robot extends IterativeRobot {
 
 	public void autonomousPeriodic() {
 		if (autonomousSequencer != null) {
-			
+
 			if (autonomousSequencer.run()) {
 				autonomousSequencer = null;
 			}
@@ -79,7 +81,6 @@ public class Robot extends IterativeRobot {
 	}
 
 	private int speedTarget = 1000;
-	private boolean pressed = false;
 	private boolean shooterOn = false;
 
 	public void teleopInit() {
@@ -91,29 +92,53 @@ public class Robot extends IterativeRobot {
 	}
 
 	public void teleopPeriodic() {
+		
+		driverTeleopControl();
+		
+		operatorTeleopControl();
 
-//		System.out.println(ConstantsIO.data.toString());
+		if (shooterOn) {
+			Hardware.shooter.setTargetSpeed(speedTarget);
+		} else {
+			Hardware.shooter.disable();
+		}
+
+		SmartDashboard.putNumber("Target Speed", speedTarget);
+
+		SmartDashboard.putNumber("Current Speed", Hardware.shooter.getRate());
+
+		SmartDashboard.putNumber("Current Error", Hardware.shooter.getError());
+
+		SmartDashboard.putNumber("Throttle", Hardware.shooter.getCurrentPower());
+
+		// System.out.println("Rate: " + Hardware.leftDriveEnc.getRate());
+
+		SmartDashboard.putNumber("Current Slot 5", Hardware.battery.getCurrent(5));
+		SmartDashboard.putNumber("Total Current", Hardware.battery.getTotalCurrent());
+
+		Logger.getInstance().logAll();
+
+		updateDashboard();
+	}
+
+	private boolean XBOXPressed = false;
+
+	private void driverTeleopControl() {
 
 		// JoyStick Drive
 
 		// Negative on Y to invert throttle
-		Hardware.driveTrain.warlordDrive(
-				-Controllers.getAxis(Controllers.XBOX_AXIS_LY, 0),
+		Hardware.driveTrain.warlordDrive(-Controllers.getAxis(Controllers.XBOX_AXIS_LY, 0),
 				Controllers.getAxis(Controllers.XBOX_AXIS_RX, 0));
 		
-		if (Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, Constants.kMoveIntakeManuallyDeadband) != 0) {//if the joystick is moved
-    		
-			Hardware.intake.setManual((Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, 
-    				Constants.kMoveIntakeManuallyDeadband)));//setmanual deadbands & scales 
-			//TODO add nonlinear ramp to allow driver to lift robot up
-			
-		}
+		
 		// Trigger Drive
 
 		// Hardware.driveTrain.warlordDrive(
 		// Controllers.getAxis(Controllers.XBOX_AXIS_RTRIGGER)
 		// - Controllers.getAxis(Controllers.XBOX_AXIS_LTRIGGER),
 		// Controllers.getAxis(Controllers.XBOX_AXIS_LX));
+
 
 		// Quick turn
 		if (Controllers.getButton(Controllers.XBOX_BTN_RBUMP)) {
@@ -130,59 +155,61 @@ public class Robot extends IterativeRobot {
 			Hardware.driveTrain.setNormalSpeed();
 		}
 
-		if (Controllers.getButton(Controllers.XBOX_BTN_Y)) {
-			if (!pressed) {
-				speedTarget += 250;
-				pressed = true;
-			}
-		} else if (Controllers.getButton(Controllers.XBOX_BTN_X)) {
-			if (!pressed) {
-				speedTarget -= 250;
-				pressed = true;
-			}
-
-		} else if (Controllers.getButton(Controllers.XBOX_BTN_A)) {
-			if (!pressed) {
-				shooterOn = true;
-				pressed = true;
+		if (Controllers.getButton(Controllers.XBOX_BTN_A)) {
+			if (!XBOXPressed) {
+				SequencerFactory.createAuto(AutoType.AUTO_AIM_NO_THANKS_LIDAR).run();
+				XBOXPressed = true;
 			}
 
 		} else if (Controllers.getButton(Controllers.XBOX_BTN_B)) {
-			if (!pressed) {
-				shooterOn = false;
-				pressed = true;
+			if (!XBOXPressed) {
+				SequencerFactory.createAuto(AutoType.AUTO_AIM_YES_PLEASE_LIDAR).run();
+				XBOXPressed = true;
 			}
-
 		} else {
-			pressed = false;
+			XBOXPressed = false;
 		}
-		if (shooterOn) {
-			Hardware.shooter.setTargetSpeed(speedTarget);
-		} else {
-			Hardware.shooter.disable();
-		}
-
-		SmartDashboard.putNumber("Target Speed", speedTarget);
-
-		SmartDashboard.putNumber("Current Speed", Hardware.shooter.getRate());
-
-		SmartDashboard.putNumber("Current Error", Hardware.shooter.getError());
-
-		SmartDashboard
-				.putNumber("Throttle", Hardware.shooter.getCurrentPower());
-
-//		System.out.println("Rate: " + Hardware.leftDriveEnc.getRate());
-
-		SmartDashboard.putNumber("Current Slot 5",
-				Hardware.battery.getCurrent(5));
-		SmartDashboard.putNumber("Total Current",
-				Hardware.battery.getTotalCurrent());
-
-		Logger.getInstance().logAll();
-		
-		updateDashboard();
 	}
+	
+	private boolean joystickPressed = false;
+	
+	private void operatorTeleopControl() {
+		
+		if (Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, Constants.kMoveIntakeManuallyDeadband) != 0) {//if the joystick is moved
+    		
+			Hardware.intake.setManual((Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, 
+    				Constants.kMoveIntakeManuallyDeadband)));//setmanual deadbands & scales 
+			//TODO add nonlinear ramp to allow driver to lift robot up
+			
+		}
 
+		if (Controllers.getJoystickButton(3)) {
+			if (!joystickPressed) {
+				Hardware.shooter.setHoodPosition(HoodPosition.HIGH_ANGLE);
+				Hardware.shooter.setTargetSpeed(4500);
+				joystickPressed = true;
+			}
+		} else if (Controllers.getJoystickButton(5)) {
+			if (!joystickPressed) {
+				Hardware.shooter.setHoodPosition(HoodPosition.LOW_ANGLE);
+				Hardware.shooter.setTargetSpeed(5500);
+				joystickPressed = true;
+			}	
+		} else if (Controllers.getJoystickButton(0)) {
+			if (!joystickPressed) {
+				SequencerFactory.createAuto(AutoType.SHOOT_HIGH_GOAL);
+				joystickPressed = true;
+			}	
+		} else if (Controllers.getJoystickButton(1)) {
+			if (!joystickPressed) {
+				SequencerFactory.createAuto(AutoType.SHOOT_LOW_GOAL);
+				joystickPressed = true;
+			}	
+		} else {
+			joystickPressed = false;
+		}						//int main = void();
+	}
+	
 	public void disabledInit() {
 		resetAndDisableSystems();
 	}
