@@ -186,19 +186,19 @@ public final class Controllers {
     /**
      * The secondary joystick X (horizontal) axis.
      */
-    public static final int JOYSTICK_AXIS_X = 1;
+    public static final int JOYSTICK_AXIS_X = 0;
     /**
      * The secondary joystick Y (vertical) axis.
      */
-    public static final int JOYSTICK_AXIS_Y = 2;
+    public static final int JOYSTICK_AXIS_Y = 1;
     /**
      * The secondary joystick Z (twist) axis.
      */
-    public static final int JOYSTICK_AXIS_Z = 3;
+    public static final int JOYSTICK_AXIS_Z = 2;
     /**
      * The secondary joystick throttle axis.
      */
-    public static final int JOYSTICK_AXIS_THROTTLE = 4;
+    public static final int JOYSTICK_AXIS_THROTTLE = 3;
 
     // </editor-fold>
 
@@ -232,7 +232,7 @@ public final class Controllers {
     public static float getJoystickAxis(int axis, float inputThreshold) {
         if (secondary == null)
             throw new ControllerNullException("Secondary controller is null");
-        if (axis < 1 || axis > 6)
+        if (axis < 0 || axis > 6)
             throw new IllegalArgumentException("Joystick axis (" + axis + ") is invalid.");
 
         float val = (float)secondary.getRawAxis(axis);

@@ -18,13 +18,14 @@ public class Constants {
 			kLeftDrivePDP = {15, 3, 2}, 
 			kRightDrivePWM = {5, 6, 7}, 
 			kRightDrivePDP = {12, 13, 14};
-	public static int[] kIntakeArmPWM = {11, 12} , kIntakeArmPDP = {0, 0};//incorrect
+	public static int[] kIntakeArmPWM = {0, 1} , kIntakeArmPDP = {0, 0};//incorrect
 	public static int kLateralRollerPWM = 10, kLateralRollerPDP = 0, 
-			kIntakeRollerPWM = 0, kIntakeRollerPDP = 0;
+			kIntakeRollerPWM = 9, kIntakeRollerPDP = 0;
 	
 	public static int[] kLeftDriveEncoder = {8, 9}, 
 			kRightDriveEncoder = {6, 7};
 	public static int kIntakeArmPot = 2;//incorrect
+	public static int[] kUltrasonic = {10, 11}; //ping, echo
 
 	public static double WHEEL_RADIUS_INCHES = 2.25;
 	

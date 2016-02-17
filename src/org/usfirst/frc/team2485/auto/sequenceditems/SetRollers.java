@@ -8,16 +8,17 @@ import org.usfirst.frc.team2485.robot.Hardware;
  */
 public class SetRollers implements SequencedItem {
 	
-	private double speed, time;
+	private double lateralSpeed, intakeSpeed, time;
 	
-	public SetRollers(double speed, double time) {
-		this.speed = speed;
+	public SetRollers(double lateralSpeed, double intakeSpeed, double time) {
+		this.lateralSpeed = lateralSpeed;
+		this.intakeSpeed = intakeSpeed;
 		this.time = time;
 	}
 
 	@Override
 	public void run() {
-		Hardware.intake.startRollers(speed);
+		Hardware.intake.startRollers(lateralSpeed, intakeSpeed);
 	}
 
 	@Override

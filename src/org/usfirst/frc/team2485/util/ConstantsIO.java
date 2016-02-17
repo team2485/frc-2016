@@ -29,6 +29,8 @@ public class ConstantsIO {
 	public static double kP_IntakeArm, kI_IntakeArm, kD_IntakeArm;
 
 	public static double kDriveVoltageRamp, kShooterVoltageRamp;
+
+	public static double kIntakeRollerSpeed, kLateralRollerSpeed;
 	
 	public static void init() {
 		
@@ -57,11 +59,13 @@ public class ConstantsIO {
 		kP_IntakeArm = Double.parseDouble(data.get("kP_IntakeArm"));
 		kI_IntakeArm = Double.parseDouble(data.get("kI_IntakeArm"));
 		kD_IntakeArm = Double.parseDouble(data.get("kD_IntakeArm"));
-		
-		
+				
 		kDriveVoltageRamp = Double.parseDouble(data.get("kDriveVoltageRamp"));
 		kShooterVoltageRamp = Double.parseDouble(data.get("kShooterVoltageRamp"));
 		
+		kIntakeRollerSpeed = Double.parseDouble(data.get("kIntakeRollerSpeed"));
+		kLateralRollerSpeed = Double.parseDouble(data.get("kLateralRollerSpeed"));
+
 
 	}
 

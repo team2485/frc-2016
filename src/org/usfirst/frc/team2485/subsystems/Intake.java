@@ -18,17 +18,15 @@ public class Intake implements Loggable {
 
 	//private (775 Pro ?) rollerMotorVertical, rollerMotorHorizontal, armMotor;
 
-	private boolean rollersOn = false;
-
 	private AnalogPotentiometer pot;
 
 	private PIDController armPID;
 
-	private SpeedControllerWrapper armSpeedControllerWrapper, rollersSpeedControllerWrapper;
+	private SpeedControllerWrapper armSpeedControllerWrapper;
+	
+	private VictorSP intakeVictorSP, lateralVictorSP;
 
-	private static double POT_SLIPPAGE = 100; //better way?
-
-	private double defaultRollerSpeed = 0.5;
+	private double POT_SLIPPAGE = 100; //better way?
 
 	public static final double ABSOLUTE_TOLERANCE = 25;
 
@@ -40,7 +38,8 @@ public class Intake implements Loggable {
 		
 		this.pot = Hardware.intakePot;
 		
-		this.rollersSpeedControllerWrapper = Hardware.rollers;
+		this.intakeVictorSP = Hardware.intakeVictorSP;
+		this.lateralVictorSP = Hardware.lateralVictorSP;
 
 		armPID = new PIDController(ConstantsIO.kP_IntakeArm, ConstantsIO.kI_IntakeArm, 
 				ConstantsIO.kD_IntakeArm, pot, armSpeedControllerWrapper);
@@ -49,35 +48,34 @@ public class Intake implements Loggable {
 
 	}
 
-	public void startRollers(double value) {
+	public void startRollers(double lateralValue, double intakeValue) {
 		
-		rollersSpeedControllerWrapper.set(value);
-		rollersOn = true;
+		lateralVictorSP.set(lateralValue);
+		intakeVictorSP.set(intakeValue);
 		
 	}
 
 	public void stopRollers() {
 		
-		rollersSpeedControllerWrapper.set(0);
-		rollersOn = false;
+		startRollers(0, 0);
 	
 	}
 	
 	public void setManual(double i) {
-		
 		armSpeedControllerWrapper.set(i);
-		armPID.disable();		
-	
+//		armPID.disable();		
 	}
 	
 	public void setManual(double i, boolean rollersOn) {
 		
 		setManual(i);
 		
+		
 		if (rollersOn) {
-			startRollers(defaultRollerSpeed);
+			startRollers(ConstantsIO.kLateralRollerSpeed, ConstantsIO.kIntakeRollerSpeed);
 		} else {
 			stopRollers();
+			
 		}
 		
 	}
@@ -95,6 +93,10 @@ public class Intake implements Loggable {
 		armPID.enable();
 		
 	}
+	
+	public double getSetpoint() {
+		return armPID.getSetpoint();
+	}
 
 	/**
 	 * Sets setpoint and turns rollers on or off
@@ -106,7 +108,7 @@ public class Intake implements Loggable {
 		armPID.setSetpoint(setpoint);
 		
         if (rollersOn) {
-            startRollers(defaultRollerSpeed );
+			startRollers(ConstantsIO.kLateralRollerSpeed, ConstantsIO.kIntakeRollerSpeed);
         } else {
         	stopRollers();
         }
@@ -127,7 +129,8 @@ public class Intake implements Loggable {
 		Map<String, Object> logData = new HashMap<String, Object>();
 		
 		logData.put("Name", "Intake");
-		logData.put("Roller Speed", rollersSpeedControllerWrapper.get());
+		logData.put("Intake Roller Speed", intakeVictorSP.get());
+		logData.put("Lateral Roller Speed", lateralVictorSP.get());
 		logData.put("Arm Setpoint", armPID.getSetpoint());
 		logData.put("Arm Position", pot.get());
 		logData.put("Arm Motor PWM", armSpeedControllerWrapper.get());

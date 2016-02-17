@@ -24,3 +24,6 @@ kD_IntakeArm = 0.00
 # Voltage Ramping
 kDriveVoltageRamp = 0.05
 kShooterVoltageRamp = 0.05
+
+kIntakeRollerSpeed = 0.5
+kLateralRollerSpeed = 0.5

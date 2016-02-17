@@ -44,9 +44,9 @@ public class Robot extends IterativeRobot {
 		// driveEncoder.setDistancePerPulse(Math.PI*2*WHEEL_RADIUS_INCHES /
 		// 250.0);
 
-		 Logger.getInstance().addLoggable(Hardware.battery);
-		 Logger.getInstance().addLoggable(Hardware.driveTrain);
-		 Logger.getInstance().addLoggable(Hardware.shooter);
+		Logger.getInstance().addLoggable(Hardware.battery);
+		Logger.getInstance().addLoggable(Hardware.driveTrain);
+		Logger.getInstance().addLoggable(Hardware.shooter);
 
 		System.out.println("initialized");
 	}
@@ -57,7 +57,7 @@ public class Robot extends IterativeRobot {
 
 		ConstantsIO.init();
 		Hardware.init();
-		
+
 		Hardware.ahrs.zeroYaw();
 		System.out.println("Robot - ahrs reading: " + Hardware.ahrs.getYaw());
 
@@ -67,7 +67,7 @@ public class Robot extends IterativeRobot {
 
 	public void autonomousPeriodic() {
 		if (autonomousSequencer != null) {
-			
+
 			if (autonomousSequencer.run()) {
 				autonomousSequencer = null;
 			}
@@ -92,21 +92,12 @@ public class Robot extends IterativeRobot {
 
 	public void teleopPeriodic() {
 
-//		System.out.println(ConstantsIO.data.toString());
-
 		// JoyStick Drive
 
 		// Negative on Y to invert throttle
 		Hardware.driveTrain.warlordDrive(
 				-Controllers.getAxis(Controllers.XBOX_AXIS_LY, 0),
 				Controllers.getAxis(Controllers.XBOX_AXIS_RX, 0));
-		
-		// Trigger Drive
-
-		// Hardware.driveTrain.warlordDrive(
-		// Controllers.getAxis(Controllers.XBOX_AXIS_RTRIGGER)
-		// - Controllers.getAxis(Controllers.XBOX_AXIS_LTRIGGER),
-		// Controllers.getAxis(Controllers.XBOX_AXIS_LX));
 
 		// Quick turn
 		if (Controllers.getButton(Controllers.XBOX_BTN_RBUMP)) {
@@ -134,18 +125,28 @@ public class Robot extends IterativeRobot {
 				pressed = true;
 			}
 
-		} else if (Controllers.getButton(Controllers.XBOX_BTN_A)) {
+		} else if (Controllers.getButton(Controllers.JOYSTICK_AXIS_Z)) {
 			if (!pressed) {
 				shooterOn = true;
 				pressed = true;
 			}
 
-		} else if (Controllers.getButton(Controllers.XBOX_BTN_B)) {
+		} else if (Controllers.getButton(Controllers.XBOX_BTN_BACK)) {
 			if (!pressed) {
 				shooterOn = false;
 				pressed = true;
 			}
 
+//		} else if (Controllers.getButton(Controllers.XBOX_BTN_B)) {
+//			if (!pressed) {
+//				Hardware.intake.setSetpoint(Hardware.intake.getSetpoint() + 0.05);
+//				pressed = true;
+//			}
+//		} else if (Controllers.getButton(Controllers.XBOX_BTN_BACK)) {
+//			if (!pressed) {
+//				Hardware.intake.setSetpoint(Hardware.intake.getSetpoint() - 0.05);
+//				pressed = true;
+//			}
 		} else {
 			pressed = false;
 		}
@@ -154,6 +155,16 @@ public class Robot extends IterativeRobot {
 		} else {
 			Hardware.shooter.disable();
 		}
+		
+		double power = -Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y) * 0.2;
+		System.out.println(power);		
+		
+//		Hardware.intakeArmVictorSP[0].set(power);
+//		Hardware.intakeArmVictorSP[1].set(power);
+//		Hardware.intakeArm.set(power);
+		Hardware.intake.setManual(power);
+		
+		System.out.println("has ball:" + Hardware.boulderStager.hasBoulder());
 
 		SmartDashboard.putNumber("Target Speed", speedTarget);
 
@@ -164,7 +175,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard
 				.putNumber("Throttle", Hardware.shooter.getCurrentPower());
 
-//		System.out.println("Rate: " + Hardware.leftDriveEnc.getRate());
+		// System.out.println("Rate: " + Hardware.leftDriveEnc.getRate());
 
 		SmartDashboard.putNumber("Current Slot 5",
 				Hardware.battery.getCurrent(5));
@@ -172,7 +183,7 @@ public class Robot extends IterativeRobot {
 				Hardware.battery.getTotalCurrent());
 
 		Logger.getInstance().logAll();
-		
+
 		updateDashboard();
 	}
 
@@ -201,8 +212,5 @@ public class Robot extends IterativeRobot {
 	}
 
 	public void updateDashboard() {
-
-		// SmartDashboard.putNumber("Battery",
-		// DriverStation.getInstance().getBatteryVoltage());
 	}
 }

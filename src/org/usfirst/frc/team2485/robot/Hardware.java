@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.VictorSP;
 
@@ -48,6 +49,7 @@ public class Hardware {
 	public static Encoder leftDriveEnc, rightDriveEnc;
 	public static AnalogPotentiometer intakePot;
 	public static AHRS ahrs;
+	public static Ultrasonic ultrasonic;
 
 	// Sequences && Auto
 	public static Sequencer autoSequence;
@@ -114,7 +116,9 @@ public class Hardware {
 			intakePot = new AnalogPotentiometer(Constants.kIntakeArmPot);
 			
 			ahrs = new AHRS(SPI.Port.kMXP);
-	
+			
+			ultrasonic = new Ultrasonic(Constants.kUltrasonic[0], Constants.kUltrasonic[1]);
+			
 		}
 
 		rightDrive.setInverted(false);
@@ -126,7 +130,7 @@ public class Hardware {
 		leftDrive.setRampRate(ConstantsIO.kDriveVoltageRamp);
 		
 		intakeArmVictorSP[0].setInverted(false);
-		intakeArmVictorSP[1].setInverted(true);
+		intakeArmVictorSP[1].setInverted(false);
 		
 		leftDriveEnc.setDistancePerPulse(2 * Math.PI
 				* Constants.WHEEL_RADIUS_INCHES / 250);
