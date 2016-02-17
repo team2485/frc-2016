@@ -16,7 +16,7 @@ import org.usfirst.frc.team2485.util.GRIPReciever.GRIPTargetNotFoundException;
 
 public class AlignToTower implements SequencedItem {
 
-	private int timeout = 5;
+	private double timeout = 5;
 	private boolean finished = false;
 	private boolean firstTime = true;
 
@@ -25,6 +25,8 @@ public class AlignToTower implements SequencedItem {
 	private double angleTarget;
 
 	private Timer refreshTimer;
+	
+	private boolean curTurnDone = true;
 
 	public AlignToTower() {
 		
@@ -37,9 +39,8 @@ public class AlignToTower implements SequencedItem {
 			angleTarget = Hardware.ahrs.getYaw();
 			firstTime = false;
 		}
-		double currentAngle = Hardware.ahrs.getYaw();
 
-		if (Math.abs(angleTarget - currentAngle) <= 0.5) {
+		if (curTurnDone) {
 			if (refreshTimer == null) {
 				refreshTimer = new Timer();
 				refreshTimer.schedule(new TimerTask() {
@@ -47,10 +48,14 @@ public class AlignToTower implements SequencedItem {
 					@Override
 					public void run() {
 						try {
-							angleTarget = Hardware.ahrs.getYaw() + GRIPReciever.getAngle();
+							
+							double angleOffset = GRIPReciever.getAngle();
+							
+							angleTarget = Hardware.ahrs.getYaw() + angleOffset;
 							refreshTimer = null;
+							curTurnDone = false;
 
-							if (Math.abs(angleTarget) <= 0.5) {
+							if (Math.abs(angleOffset) <= 1) {
 								//GRIPReciever.resetCameraSettings();
 								finished = true;
 							}
@@ -62,7 +67,7 @@ public class AlignToTower implements SequencedItem {
 				}, 250);
 			}
 		} else {
-			Hardware.driveTrain.rotateTo(angleTarget);
+			curTurnDone = Hardware.driveTrain.rotateTo(angleTarget);
 		}
 	}
 

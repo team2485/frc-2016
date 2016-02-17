@@ -10,7 +10,7 @@ public class SetIntakeArm implements SequencedItem {
 	
 	private double position, timeout;
 	private boolean finished;
-	
+		
 	public SetIntakeArm(double position, double timeout) {
 		this.position = position;
 		this.timeout = timeout;

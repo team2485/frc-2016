@@ -12,17 +12,17 @@ public class ThresholdHandler {
 	
 	public static final double STANDARD_THRESHOLD = 0.1; 
 	
-	@Deprecated
-	public static double handleThreshold(double val, double threshold) {
-		return (Math.abs(val) > Math.abs(threshold)) ? (val / Math.abs(val) * (Math.abs(val) - threshold) / (1 - threshold)) : 0.0;
-	}
-	@Deprecated
-	public static double handleThresholdNonLinear(double val, double threshold) {
-		double returnValue = (Math.abs(val) > Math.abs(threshold)) ?
-				(val / Math.abs(val) * (Math.abs(val) - threshold) / (1-threshold)) : 0.0;
-		returnValue *= Math.abs(returnValue);
-		return returnValue;
-	}
+//	@Deprecated
+//	public static double handleThreshold(double val, double threshold) {
+//		return (Math.abs(val) > Math.abs(threshold)) ? (val / Math.abs(val) * (Math.abs(val) - threshold) / (1 - threshold)) : 0.0;
+//	}
+//	@Deprecated
+//	public static double handleThresholdNonLinear(double val, double threshold) {
+//		double returnValue = (Math.abs(val) > Math.abs(threshold)) ?
+//				(val / Math.abs(val) * (Math.abs(val) - threshold) / (1-threshold)) : 0.0;
+//		returnValue *= Math.abs(returnValue);
+//		return returnValue;
+//	}
 	
 	/**
 	 * Thresholds and scales values linearly.                                                                      
@@ -48,5 +48,35 @@ public class ThresholdHandler {
 		
 		return val > 0 ? returnVal : -returnVal; 
 	}
+	
+	/**
+	 * Thresholds and scales linearly using linear ramps with potentially different slopes
+	 * @param val = raw input from controllers/joysticks
+	 * @param threshold = deadband threshold  (values less than this are ignored) 
+	 * @param absoluteMin = absolute value of min range (must be greater than 0)
+	 * @param absoluteMidOut = absolute value of what absoluteMidIn should map to
+	 * @param absoluteMidIn = ramps using one slope when less that absoluteMidIn, and another when greater
+	 * @param absoluteMax = absolute value of max range (must be less than 1)
+	 *  
+	 * @return Corrected input from joystick. If input is below threshold, 0 is returned. 
+	 * 		   If not, input is scaled between (min, max) with absoluteMidIn mapping to absoluteMidOut	 */
+	public static double deadbandAndScaleDualRamp(double val, double threshold, double absoluteMin, double absoluteMidIn, double absoluteMidOut, 
+			 double absoluteMax) {
+		
+		double returnVal;
+		
+		if (Math.abs(val) <= threshold) {
+			return 0; 
+		} else if (Math.abs(val) <= absoluteMidIn) {
+			returnVal = ((absoluteMidOut - absoluteMin) / (absoluteMidIn - threshold)) * (Math.abs(val) - threshold) + absoluteMin; 
+		} else {
+			returnVal = ((absoluteMax - absoluteMidOut) / (1 - absoluteMidIn)) * (Math.abs(val) - absoluteMidIn) + absoluteMidOut; 
+		}
+		
+		return val > 0 ? returnVal : -returnVal; 
+
+	}
+	
+	
 	
 }

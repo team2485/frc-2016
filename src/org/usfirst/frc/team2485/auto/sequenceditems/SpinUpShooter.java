@@ -5,26 +5,27 @@ import org.usfirst.frc.team2485.robot.Hardware;
 
 public class SpinUpShooter implements SequencedItem {
 	
-	private double rpm, timeout;
-	private boolean finished;
+	private double rpm;
 	
-	public SpinUpShooter(double rpm, double timeout) {
+	public SpinUpShooter(double rpm) {
 		this.rpm = rpm;
-		this.timeout = timeout;
 	}
 	
-	public SpinUpShooter(double timeout) {
-		this(0.0 /*lidar magic*/, timeout);
+	/**
+	 * Uses Lidar <br>
+	 * Do not use right now	
+	 */
+	public SpinUpShooter() {
+		this(0.0 /*lidar magic*/);
 	}
 
 	@Override
 	public void run() {
 		Hardware.shooter.setTargetSpeed(rpm);
-		finished = Hardware.shooter.isOnTarget(0.2*rpm);//better way to do this??
 	}
 
 	@Override
 	public double duration() {
-		return finished ? 0 : timeout;
+		return 0.05;
 	}
 }

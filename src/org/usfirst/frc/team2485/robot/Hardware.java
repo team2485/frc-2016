@@ -47,9 +47,10 @@ public class Hardware {
 
 	// Sensors
 	public static Encoder leftDriveEnc, rightDriveEnc;
-	public static AnalogPotentiometer intakePot;
+	public static AnalogPotentiometer intakeAbsEncoder;
 	public static AHRS ahrs;
-	public static Ultrasonic ultrasonic;
+
+	public static Ultrasonic sonic;
 
 	// Sequences && Auto
 	public static Sequencer autoSequence;
@@ -113,11 +114,11 @@ public class Hardware {
 			rightDriveEnc = new Encoder(Constants.kRightDriveEncoder[0], 
 					Constants.kRightDriveEncoder[1]);
 			
-			intakePot = new AnalogPotentiometer(Constants.kIntakeArmPot);
-			
+			intakeAbsEncoder = new AnalogPotentiometer(Constants.kIntakeArmAbsEncoder);
+						
 			ahrs = new AHRS(SPI.Port.kMXP);
 			
-			ultrasonic = new Ultrasonic(Constants.kUltrasonic[0], Constants.kUltrasonic[1]);
+			sonic = new Ultrasonic(Constants.kUltrasonicDIO[0], Constants.kUltrasonicDIO[1]);
 			
 		}
 

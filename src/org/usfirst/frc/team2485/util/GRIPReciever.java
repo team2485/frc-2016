@@ -1,5 +1,6 @@
 package org.usfirst.frc.team2485.util;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -86,7 +87,6 @@ public class GRIPReciever {
 
 		double bestCenterX = centerXs[widest];
 		double bestCenterY = data.get("centerY")[widest];
-		System.out.println("Location: (" + bestCenterX + ", " + bestCenterY + ")");
 
 		// make relative to center
 		bestCenterX -= IMAGE_WIDTH / 2;
@@ -96,13 +96,10 @@ public class GRIPReciever {
 		double Z = Math.sqrt(R * R - bestCenterX * bestCenterX - bestCenterY * bestCenterY);
 		angle = Math.toDegrees(Math.atan(bestCenterX / Z));
 
-		System.out.println("DELTA ANGLE: " + angle);
-
 		return angle;
 
 	}
 	
-	@SuppressWarnings("serial")
 	public static class GRIPTargetNotFoundException extends Exception {
 
 		GRIPTargetNotFoundException(String message) {
