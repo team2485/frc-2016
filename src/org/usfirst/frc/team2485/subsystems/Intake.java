@@ -73,11 +73,12 @@ public class Intake implements Loggable {
 	}
 
 	public void setManual(double pwm) {
-
-		pwm = ThresholdHandler.deadbandAndScale(pwm, Constants.kMoveIntakeManuallyDeadband, 0.05, 0.5);
+		
+		armPID.disable();
+//		pwm = ThresholdHandler.deadbandAndScale(pwm, Constants.kMoveIntakeManuallyDeadband, 0.05, 0.5);
+		pwm = ThresholdHandler.deadbandAndScaleDualRamp(pwm, Constants.kMoveIntakeManuallyDeadband, 0.05, 0.8, 0.4, 1.0);
 		
 		armSpeedControllerWrapper.set(pwm);
-		armPID.disable();
 
 	}
 
@@ -100,9 +101,9 @@ public class Intake implements Loggable {
 	}
 
 	public void setSetpoint(double setpoint) {
-
-		armPID.setSetpoint(setpoint);
+		
 		armPID.enable();
+		armPID.setSetpoint(setpoint);
 
 	}
 
@@ -114,7 +115,7 @@ public class Intake implements Loggable {
 	 */
 	public void setSetpoint(double setpoint, boolean rollersOn) {
 
-		armPID.setSetpoint(setpoint);
+		setSetpoint(setpoint);
 
 		if (rollersOn) {
 			startRollers(defaultRollerSpeed);
