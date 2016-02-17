@@ -20,7 +20,5 @@ public class ShootLowGoal implements SequencedItem {
 	@Override
 	public double duration() {
 		return 1.5;
-	}
-	
-	
+	}	
 }

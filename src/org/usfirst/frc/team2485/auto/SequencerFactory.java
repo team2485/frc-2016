@@ -100,13 +100,20 @@ public class SequencerFactory {
 	}
 
 	public static Sequencer getShootHighGoalSequence() {
-		return new Sequencer(new SequencedItem[] { new ShootHighGoal() });
+		return new Sequencer(new SequencedItem[] { 
+				new ShootHighGoal(),
+				new SequencedPause(0.5),
+				new SetStager(Position.NEUTRAL)
+				});
 	}
 
 	public static Sequencer getShootLowGoalSequence() {
 		return new Sequencer(new SequencedItem[] { 
 				new SetIntakeArm(Intake.INTAKE_POSITION, 2), 
-				new ShootLowGoal() });
+				new ShootLowGoal(),
+				new SetRollers(0, 0),
+				new SetStager(Position.NEUTRAL)
+				});
 	}
 
 	public static Sequencer getAutoAimSequence() {
