@@ -7,6 +7,7 @@ import java.util.TimerTask;
 
 import org.usfirst.frc.team2485.robot.Constants;
 import org.usfirst.frc.team2485.robot.Hardware;
+import org.usfirst.frc.team2485.subsystems.BoulderStager.Position;
 import org.usfirst.frc.team2485.util.Loggable;
 
 import edu.wpi.first.wpilibj.Ultrasonic;
@@ -47,6 +48,7 @@ public class BoulderDetector implements Loggable {
 						@Override
 						public void run() {
 							Hardware.intake.setSetpoint(Intake.LOW_NO_INTAKE_POSITION, false);
+							Hardware.boulderStager.setPosition(Position.NEUTRAL);
 							stopTimer = null;
 						}
 					}, 250);
