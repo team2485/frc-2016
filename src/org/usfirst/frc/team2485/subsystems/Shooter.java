@@ -16,9 +16,16 @@ import edu.wpi.first.wpilibj.Solenoid;
  */
 public class Shooter implements Loggable {
 
+	/**
+	 * Low Angle = Long shot <br>
+	 * High Angle = Batter Shot <br>
+	 * Stowed = Don't Shoot <br>
+	 */
 	public static enum HoodPosition {
 		LOW_ANGLE, HIGH_ANGLE, STOWED
 	};
+	
+	public static final double RPM_LONG_SHOT = 5500, RPM_BATTER_SHOT = 4500;
 
 	private CANTalon rightShooterMotor, leftShooterMotor;
 	private Solenoid solenoid1, solenoid2;
@@ -139,6 +146,10 @@ public class Shooter implements Loggable {
 	}
 
 	public double getCurrentPower() {
+
+		// Calls get on the left motor (the follower) which returns the
+		// throttle, because follow is effectively PercentVbus
+
 		return leftShooterMotor.get();
 	}
 

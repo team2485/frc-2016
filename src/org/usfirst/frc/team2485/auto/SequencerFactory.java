@@ -12,53 +12,107 @@ import org.usfirst.frc.team2485.auto.sequenceditems.ShootLowGoal;
 import org.usfirst.frc.team2485.auto.sequenceditems.SpinUpShooter;
 import org.usfirst.frc.team2485.subsystems.BoulderStager.Position;
 import org.usfirst.frc.team2485.subsystems.Intake;
+import org.usfirst.frc.team2485.subsystems.Shooter;
 import org.usfirst.frc.team2485.subsystems.Shooter.HoodPosition;
 
 public class SequencerFactory {
 
 	public enum AutoType {
-		BASIC, AUTO_AIM_NO_THANKS_LIDAR, AUTO_AIM_YES_PLEASE_LIDAR, SHOOT_HIGH_GOAL, SHOOT_LOW_GOAL, LOW_BAR_AUTO, RAMPARTS_AUTO, ROUGH_TERRAIN_AUTO;
+		LOW_BAR_AUTO, RAMPARTS_AUTO, ROUGH_TERRAIN_AUTO, MOAT_AUTO, ROCK_WALL_AUTO, PORTCULLIS_AUTO, CHEVAL_DE_FRISE, REACH_AUTO;
 	}
 
 	// Auto
 	public static Sequencer createAuto(AutoType autoType) {
 
+		//@formatter:off
+
 		switch (autoType) {
-		case BASIC:
-			return new Sequencer(new SequencedItem[] { new RotateTo(360, 10) });
-
-		case AUTO_AIM_NO_THANKS_LIDAR:
-			return new Sequencer(new SequencedItem[] { new AlignToTower() });
-
-		case AUTO_AIM_YES_PLEASE_LIDAR:
-			return new Sequencer(new SequencedItem[] { new AlignToTower(), new SpinUpShooter(3) });
-
-		case SHOOT_HIGH_GOAL:
-			return new Sequencer(new SequencedItem[] { new ShootHighGoal() });
-
-		case SHOOT_LOW_GOAL:
-			return new Sequencer(new SequencedItem[] { new SetIntakeArm(Intake.INTAKE_POSITION, 0.5),
-					new SetStager(Position.INTAKE), new SetRollers(-0.5, 3.0) });
+		
+		case REACH_AUTO:
+			return new Sequencer(new SequencedItem[] { 
+					new DriveTo(50) 
+					});
 
 		case LOW_BAR_AUTO:
 			return new Sequencer(new SequencedItem[] {
-					new SequencedMultipleItem(new DriveTo(30), new SetIntakeArm(Intake.INTAKE_POSITION, 2)),
+					new SequencedMultipleItem(
+							new DriveTo(30), 
+							new SetIntakeArm(Intake.INTAKE_POSITION, 2)),
 					new DriveTo(50, 4, 0.3),
-					new SequencedMultipleItem(new DriveTo(110),
-							new SetHoodPosition(HoodPosition.LOW_ANGLE)),
-					new RotateTo(60), new SpinUpShooter(3), new ShootHighGoal() });
-
+					new SequencedMultipleItem(
+							new DriveTo(100),
+							new SetHoodPosition(HoodPosition.LOW_ANGLE), 
+							new SpinUpShooter(Shooter.RPM_LONG_SHOT)),
+					new RotateTo(60), 
+					new ShootHighGoal(5) });
+			
 		case RAMPARTS_AUTO:
 		case ROUGH_TERRAIN_AUTO:
+		case MOAT_AUTO:
+		case ROCK_WALL_AUTO:
 			return new Sequencer(new SequencedItem[] {
-					new SequencedMultipleItem(new DriveTo(30), new DriveTo(50, 4, 0.4),
-							new SetIntakeArm(Intake.INTAKE_POSITION, 2)),
-					new SequencedMultipleItem(new SetHoodPosition(HoodPosition.LOW_ANGLE), new AlignToTower()),
-					new SpinUpShooter(3), new ShootHighGoal() });
-
+					new SequencedMultipleItem(
+							new DriveTo(30), 
+							new SetIntakeArm(Intake.INTAKE_POSITION, 2), 
+							new SpinUpShooter(Shooter.RPM_LONG_SHOT)),
+					new DriveTo(50, 4, 0.4),
+					new SequencedMultipleItem(
+							new SetHoodPosition(HoodPosition.LOW_ANGLE), 
+							new AlignToTower()),
+					new ShootHighGoal(5) });
+			
+		case PORTCULLIS_AUTO:
+			return new Sequencer(new SequencedItem[] {
+					new SequencedMultipleItem(
+							new DriveTo(30), 
+							new SetIntakeArm(Intake.LOW_NO_INTAKE_POSITION, 2),
+					new SequencedMultipleItem(
+							new DriveTo(10, 2, 0.4),
+							new SetIntakeArm(Intake.FLOOR_POSITION, 1)),
+					new SetIntakeArm(Intake.INTAKE_POSITION, 2),
+					new SequencedMultipleItem(
+							new DriveTo(10, 4, 0.4),
+							new SetIntakeArm(Intake.PORTCULLIS_POSITION, 4)),
+					new SequencedMultipleItem(
+							new DriveTo(20, 4, 0.4),
+							new SetIntakeArm(Intake.INTAKE_POSITION, 2), 
+							new SetHoodPosition(HoodPosition.LOW_ANGLE))),
+					new AlignToTower(),
+					new SpinUpShooter(),
+					new ShootHighGoal()
+			});
+			
+		case CHEVAL_DE_FRISE:
+			return new Sequencer(new SequencedItem[] {
+							new DriveTo(30),
+							new SetIntakeArm(Intake.FLOOR_POSITION, 2),
+							new DriveTo(5),
+							new SequencedMultipleItem(
+									new DriveTo(50, 4, 0.5),
+									new SetIntakeArm(Intake.FULL_UP_POSITION, 2)),
+							new SetIntakeArm(Intake.INTAKE_POSITION, 2),
+							new SpinUpShooter(),
+							new AlignToTower(),
+							new ShootHighGoal()
+			});
 		}
 		return new Sequencer();
 	}
 
-	// Teleop Sequences
+	public static Sequencer getShootHighGoalSequence() {
+		return new Sequencer(new SequencedItem[] { new ShootHighGoal() });
+	}
+
+	public static Sequencer getShootLowGoalSequence() {
+		return new Sequencer(new SequencedItem[] { 
+				new SetIntakeArm(Intake.INTAKE_POSITION, 2), 
+				new ShootLowGoal() });
+	}
+
+	public static Sequencer getAutoAimSequence() {
+		return new Sequencer(new SequencedItem[] {
+			new AlignToTower()
+		});
+	}
+	//@formatter:on
 }
