@@ -39,18 +39,18 @@ public class LidarWrapper extends SensorBase {
 		while (busyFlag != 0) {
 			byte[] testSignal = { 0x1 };
 			boolean nack = m_i2c.writeBulk(testSignal);
-			
+
 			if (nack) {
-				throw new BadLidarDataException("WriteBulk failed to write (in bulk)");
+				throw new BadLidarDataException("WriteBulk failed to write (in bulk): " + testSignal);
 			}
-			
+
 			byte testBuffer[] = new byte[1];
 			m_i2c.readOnly(testBuffer, 1);
 			busyFlag = testBuffer[0];
 
 			busyCounter++;
 			if (busyCounter > 9999) {
-				throw new BadLidarDataException("Lidar was too busy");
+				throw new BadLidarDataException("Lidar was too busy: " + busyFlag);
 			}
 		}
 
@@ -58,13 +58,13 @@ public class LidarWrapper extends SensorBase {
 			byte[] registerSignal = { (byte) register };
 			boolean nack = m_i2c.writeBulk(registerSignal);
 			if (nack) {
-				throw new BadLidarDataException("Unable to write register signal");
+				throw new BadLidarDataException("Unable to write (bulk) register signal: " + registerSignal);
 			}
 			m_i2c.readOnly(buffer, count);
 		}
-		
+
 		if (busyCounter > 9999) {
-			throw new BadLidarDataException("Lidar was too busy");
+			throw new BadLidarDataException("Lidar was too busy: " + busyFlag);
 		}
 
 	}
@@ -75,6 +75,5 @@ public class LidarWrapper extends SensorBase {
 		public BadLidarDataException(String message) {
 			super(message);
 		}
-
 	}
 }

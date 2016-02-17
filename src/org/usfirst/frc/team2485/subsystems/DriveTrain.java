@@ -42,7 +42,7 @@ public class DriveTrain implements Loggable {
     public PIDController encPID;
     
 	private int ahrsOnTargetCounter = 0;
-    private final int MINIMUM_AHRS_ON_TARGET_ITERATIONS = 50;
+    private final int MINIMUM_AHRS_ON_TARGET_ITERATIONS = 10;
     
 //    public static double
 //            kP_G_Rotate = 0.03,

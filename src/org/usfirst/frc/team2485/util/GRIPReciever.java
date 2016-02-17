@@ -87,7 +87,6 @@ public class GRIPReciever {
 
 		double bestCenterX = centerXs[widest];
 		double bestCenterY = data.get("centerY")[widest];
-		System.out.println("Location: (" + bestCenterX + ", " + bestCenterY + ")");
 
 		// make relative to center
 		bestCenterX -= IMAGE_WIDTH / 2;
@@ -96,8 +95,6 @@ public class GRIPReciever {
 		double R = IMAGE_WIDTH / (2 * Math.sin(Math.toRadians(FIELD_OF_VIEW / 2)));
 		double Z = Math.sqrt(R * R - bestCenterX * bestCenterX - bestCenterY * bestCenterY);
 		angle = Math.toDegrees(Math.atan(bestCenterX / Z));
-
-		System.out.println("DELTA ANGLE: " + angle);
 
 		return angle;
 

@@ -12,6 +12,8 @@ public class DriveTo implements SequencedItem {
 	
 	private boolean finished; 
 	private double timeout; 
+	
+	private static final double DEFAULT_TIMEOUT = 4;
 	 
 	public DriveTo(double inches, double timeout, double maxAbsOutput) {
 		this.inches = inches;
@@ -24,7 +26,7 @@ public class DriveTo implements SequencedItem {
 	}
 	
 	public DriveTo(double inches) {
-		this(inches, 4); 
+		this(inches, DEFAULT_TIMEOUT); 
 	}
 	
 	@Override

@@ -15,8 +15,6 @@ public class BoulderDetector implements Loggable {
 
 	private Ultrasonic sonic;
 
-	private boolean stop;
-
 	private Timer stopTimer = null;
 
 	private boolean hasBoulder;
@@ -32,16 +30,12 @@ public class BoulderDetector implements Loggable {
 		return sonic.getRangeInches() < 10;
 	}
 
-	// public void stopListeningForBalls() {
-	// stop = true;
-	// }
-
 	private class TimingSystem extends Thread {
 
 		@Override
 		public void run() {
 
-			while (!stop) {
+			while (true) {
 
 				if (boulderDetected() && !hasBoulder) {
 
