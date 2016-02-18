@@ -20,15 +20,17 @@ public class Constants {
 						kRightDrivePWM = {5, 6, 7}, 
 						kRightDrivePDP = {12, 13, 14};
 	
-	public static final int[] kIntakeArmPWM = {11, 12} , kIntakeArmPDP = {0, 1};
+
+	public static final int[] kIntakeArmPWM = {0, 1} , kIntakeArmPDP = {0, 1};
 	
-	public static final int kLateralRollerPWM = 10, kLateralRollerPDP = 0, //TODO: correct port numbers
-			kIntakeRollerPWM = 0, kIntakeRollerPDP = 0;
+	public static final int kLateralRollerPWM = 9, kLateralRollerPDP = 9,
+			kIntakeRollerPWM = 8, kIntakeRollerPDP = 10;
 	
 	public static final int[] kLeftDriveEncoder = {2, 3}, 
 			kRightDriveEncoder = {4, 5};
 	
-	public static final int kIntakeArmAbsEncoder = 6; //TODO: correct port number
+
+	public static final int kIntakeArmAbsEncoder = 0;
 	
 	public static final int[] kUltrasonicDIO = {0, 1};
 
@@ -37,6 +39,7 @@ public class Constants {
 
 	
 	public static final float kMoveIntakeManuallyDeadband = 0.3f;
+	
 	
 	private static HashMap<String, String> constantsMap;
 	

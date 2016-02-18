@@ -27,7 +27,6 @@ public class SequencerFactory {
 		//@formatter:off
 
 		switch (autoType) {
-		
 		case REACH_AUTO:
 			return new Sequencer(new SequencedItem[] { 
 					new DriveTo(50) 
@@ -54,11 +53,10 @@ public class SequencerFactory {
 					new SequencedMultipleItem(
 							new DriveTo(30), 
 							new SetIntakeArm(Intake.INTAKE_POSITION, 2), 
-							new SpinUpShooter(Shooter.RPM_LONG_SHOT)),
+							new SpinUpShooter(Shooter.RPM_LONG_SHOT), 
+							new SetHoodPosition(HoodPosition.LOW_ANGLE)),
 					new DriveTo(50, 4, 0.4),
-					new SequencedMultipleItem(
-							new SetHoodPosition(HoodPosition.LOW_ANGLE), 
-							new AlignToTower()),
+					new AlignToTower(),
 					new ShootHighGoal(5) });
 			
 		case PORTCULLIS_AUTO:
@@ -79,7 +77,7 @@ public class SequencerFactory {
 							new SetHoodPosition(HoodPosition.LOW_ANGLE))),
 					new AlignToTower(),
 					new SpinUpShooter(),
-					new ShootHighGoal()
+					new ShootHighGoal(5)
 			});
 			
 		case CHEVAL_DE_FRISE:
@@ -90,36 +88,31 @@ public class SequencerFactory {
 							new SequencedMultipleItem(
 									new DriveTo(50, 4, 0.5),
 									new SetIntakeArm(Intake.FULL_UP_POSITION, 2)),
-							new SetIntakeArm(Intake.INTAKE_POSITION, 2),
-							new SpinUpShooter(),
+							new SequencedMultipleItem(
+									new SetIntakeArm(Intake.INTAKE_POSITION, 2),
+									new SetHoodPosition(HoodPosition.LOW_ANGLE)),	
 							new AlignToTower(),
-							new ShootHighGoal()
+							new SpinUpShooter(),
+							new ShootHighGoal(5)
 			});
 		}
 		return new Sequencer();
 	}
 
 	public static Sequencer getShootHighGoalSequence() {
-		return new Sequencer(new SequencedItem[] { 
-				new ShootHighGoal(),
-				new SequencedPause(0.5),
-				new SetStager(Position.NEUTRAL)
-				});
+		return new Sequencer(new SequencedItem[] { new ShootHighGoal(),
+				new SequencedPause(0.5), new SetStager(Position.NEUTRAL) });
 	}
 
 	public static Sequencer getShootLowGoalSequence() {
-		return new Sequencer(new SequencedItem[] { 
-				new SetIntakeArm(Intake.INTAKE_POSITION, 2), 
-				new ShootLowGoal(),
-				new SetRollers(0, 0),
-				new SetStager(Position.NEUTRAL)
-				});
+		return new Sequencer(new SequencedItem[] {
+				new SetIntakeArm(Intake.INTAKE_POSITION, 2),
+				new ShootLowGoal(), new SetRollers(0, 0),
+				new SetStager(Position.NEUTRAL) });
 	}
 
 	public static Sequencer getAutoAimSequence() {
-		return new Sequencer(new SequencedItem[] {
-			new AlignToTower()
-		});
+		return new Sequencer(new SequencedItem[] { new AlignToTower() });
 	}
-	//@formatter:on
+	// @formatter:on
 }
