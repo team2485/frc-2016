@@ -7,6 +7,7 @@ import org.usfirst.frc.team2485.subsystems.Intake;
 import org.usfirst.frc.team2485.subsystems.Shooter;
 import org.usfirst.frc.team2485.util.Battery;
 import org.usfirst.frc.team2485.util.ConstantsIO;
+import org.usfirst.frc.team2485.util.LidarWrapper;
 import org.usfirst.frc.team2485.util.SpeedControllerWrapper;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -15,6 +16,7 @@ import com.ni.vision.NIVision.LegFeature;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -51,6 +53,8 @@ public class Hardware {
 	public static AHRS ahrs;
 
 	public static Ultrasonic sonic;
+	
+	public static LidarWrapper lidar;
 
 	// Sequences && Auto
 	public static Sequencer autoSequence;
@@ -119,6 +123,8 @@ public class Hardware {
 			ahrs = new AHRS(SPI.Port.kMXP);
 			
 			sonic = new Ultrasonic(Constants.kUltrasonicDIO[0], Constants.kUltrasonicDIO[1]);
+			
+			lidar = new LidarWrapper(Port.kMXP);
 			
 		}
 

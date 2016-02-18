@@ -3,13 +3,14 @@ package org.usfirst.frc.team2485.util;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.SensorBase;
 import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.PIDSourceType;
 
 /**
  * @author Jeremy McCulloch
  * @author Nicholas Contreras
  */
-public class LidarWrapper extends SensorBase {
+public class LidarWrapper extends SensorBase implements PIDSource {
 
 	private I2C m_i2c;
 
@@ -17,7 +18,10 @@ public class LidarWrapper extends SensorBase {
 		m_i2c = new I2C(port, 0x62);
 	}
 
-	public int getDistance() {
+	/**
+	 * @return distance in inches
+	 */
+	public double getDistance() {
 
 		byte[] buffer;
 		buffer = new byte[2];
@@ -29,7 +33,26 @@ public class LidarWrapper extends SensorBase {
 
 		read(0x8f, buffer, 2);
 
-		return (int) (Integer.toUnsignedLong(buffer[0] << 8) + Byte.toUnsignedInt(buffer[1]));
+		return  (Integer.toUnsignedLong(buffer[0] << 8) + Byte.toUnsignedInt(buffer[1])) / 2.54;
+	}
+	
+	/**
+	 * @return rate in inches / s
+	 */
+	public double getRate() {
+		
+		byte[] buffer;
+		buffer = new byte[1];
+
+		buffer[0] = 0x00;
+
+		m_i2c.write(0x04, 0xa0);
+		m_i2c.write(0x00, 0x04);
+
+		read(0x09, buffer, 1);
+
+		return 10 * Integer.toUnsignedLong(buffer[0]) / 2.54;
+		
 	}
 
 	private void read(int register, byte[] buffer, int count) {
@@ -69,6 +92,28 @@ public class LidarWrapper extends SensorBase {
 
 	}
 
+	@Override
+	public PIDSourceType getPIDSourceType() {
+		return PIDSourceType.kDisplacement;
+	}
+
+	@Override
+	public double pidGet() {
+		return getDistance();
+	}
+
+	@Override
+	/**
+	 * Not Yet Implemented
+	 */
+	public void setPIDSourceType(PIDSourceType arg0) {
+		if (arg0 == PIDSourceType.kRate) {
+			System.err.println("Lidar does not support PIDSourceType.kRate");
+
+		}
+		
+	}
+	
 	@SuppressWarnings("serial")
 	class BadLidarDataException extends RuntimeException {
 

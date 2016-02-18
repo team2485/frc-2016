@@ -37,9 +37,12 @@ public class DriveTrain implements Loggable {
     // AUTONOMOUS
     private DummyOutput dummyAhrsOutput;
     private DummyOutput dummyEncoderOutput;
+    private DummyOutput dummyLidarOutput;
     
     public PIDController ahrsPID;
     public PIDController encPID;
+    public PIDController lidarPID;
+
     
 	private int ahrsOnTargetCounter = 0;
     private final int MINIMUM_AHRS_ON_TARGET_ITERATIONS = 10;
@@ -54,9 +57,9 @@ public class DriveTrain implements Loggable {
 //            kI_E,
 //            kD_E;
 
-    private final double AbsTolerance_Imu_DriveTo = 2.0;
-    private final double AbsTolerance_Imu_TurnTo = 1;
-    private final double AbsTolerance_Enc = 5;
+//    private final double AbsTolerance_Imu_DriveTo = 2.0;
+    private static final double ABS_TOLERANCE_ROTATETO = 1;
+    private static final double ABS_TOLERANCE_DRIVETO = 5;
     
 	private double lowEncRate = 5;
 
@@ -83,6 +86,7 @@ public class DriveTrain implements Loggable {
     
     
     public DriveTrain(boolean useAhrs) {
+    	
         this.leftDrive      = Hardware.leftDrive;
         this.rightDrive     = Hardware.rightDrive;
         this.encoder        = Hardware.leftDriveEnc;
@@ -106,9 +110,16 @@ public class DriveTrain implements Loggable {
         dummyEncoderOutput = new DummyOutput();
         encPID = new PIDController(ConstantsIO.kP_DriveTo, ConstantsIO.kI_DriveTo, 
         		ConstantsIO.kD_DriveTo, encoder, dummyEncoderOutput);
-        encPID.setAbsoluteTolerance(AbsTolerance_Enc);
+        encPID.setAbsoluteTolerance(ABS_TOLERANCE_DRIVETO);
 
         encoder.reset();
+        
+        
+        dummyLidarOutput = new DummyOutput();
+        lidarPID = new PIDController(ConstantsIO.kP_DriveTo, ConstantsIO.kI_DriveTo, 
+        		ConstantsIO.kD_DriveTo, Hardware.lidar, dummyLidarOutput);
+        lidarPID.setAbsoluteTolerance(ABS_TOLERANCE_DRIVETO);
+        
     }
 
    
@@ -317,14 +328,14 @@ public class DriveTrain implements Loggable {
     public void setPIDGyroDrive() {
     	if (ahrs != null) {
     		ahrsPID.setPID(kP_G_Drive, kI_G_Drive, kD_G_Drive);
-        	ahrsPID.setAbsoluteTolerance(AbsTolerance_Imu_DriveTo);
+        	ahrsPID.setAbsoluteTolerance(ABS_TOLERANCE_ROTATETO);
     	}
     }
 
     public void initPIDGyroRotate() {
     	if (ahrs != null) {
     		ahrsPID.setPID(ConstantsIO.kP_Rotate, ConstantsIO.kI_Rotate, ConstantsIO.kD_Rotate);
-    		ahrsPID.setAbsoluteTolerance(AbsTolerance_Imu_TurnTo);
+    		ahrsPID.setAbsoluteTolerance(ABS_TOLERANCE_ROTATETO);
     	}
     }
 
@@ -368,6 +379,42 @@ public class DriveTrain implements Loggable {
 		if (encPID.onTarget() && Math.abs(encoder.getRate()) < lowEncRate) {
 			setLeftRight(0.0, 0.0);
 			encPID.disable();
+			return true;
+		}
+		return false;
+	}
+    /**
+     * 
+     * @param inchesFromWall how far we want to be from the wall when PID finishes
+     * @param maxAbsOutput max PWM value that we will output to motor
+     * @return true if finished
+     */
+    public boolean driveToLidar(double inchesFromWall, double maxAbsOutput) {
+
+    	
+		if (!lidarPID.isEnabled()) {
+			lidarPID.enable();
+//			System.out.println("|DriveTrain.driveTo| Enabling driveStraight PID in driveTo " + encoder.getDistance() + " , " + inches);
+			lidarPID.setSetpoint(inchesFromWall);
+		}
+		
+		lidarPID.setOutputRange(-maxAbsOutput, maxAbsOutput);
+		
+		System.out.println("|DriveTrain.driveToLidar| Error: " + lidarPID.getError());
+
+		double lidarOutput = dummyLidarOutput.get();
+		
+		System.out.println("|DriveTrain.driveToLidar| Output: " + lidarOutput);
+		
+		double leftOutput  = lidarOutput;
+		double rightOutput = lidarOutput;
+		
+		setLeftRight(leftOutput, rightOutput);
+
+		// done?
+		if (lidarPID.onTarget() && Math.abs(Hardware.lidar.getRate()) < lowEncRate) {
+			setLeftRight(0.0, 0.0);
+			lidarPID.disable();
 			return true;
 		}
 		return false;
