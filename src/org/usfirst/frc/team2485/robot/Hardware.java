@@ -38,8 +38,8 @@ public class Hardware {
 	
 	public static VictorSP lateralVictorSP;
 	public static VictorSP intakeVictorSP;
-	public static VictorSP[] rollerVictorSPs; 
-	public static SpeedControllerWrapper rollers;
+//	public static VictorSP[] rollerVictorSPs; 
+//	public static SpeedControllerWrapper rollers;
 
 	
 	// Solenoids
@@ -89,11 +89,11 @@ public class Hardware {
 			leftDrive = new SpeedControllerWrapper(
 					leftDriveVictorSPs, Constants.kLeftDrivePDP);
 			
-			rollerVictorSPs = new VictorSP[2];
-			rollerVictorSPs[0] = lateralVictorSP = new VictorSP(Constants.kLateralRollerPWM);
-			rollerVictorSPs[1] = intakeVictorSP = new VictorSP(Constants.kIntakeRollerPWM);
-			int[] rollerPDPs = {Constants.kLateralRollerPDP, Constants.kIntakeRollerPDP};
-			rollers = new SpeedControllerWrapper(rollerVictorSPs, rollerPDPs);
+//			rollerVictorSPs = new VictorSP[2];
+			lateralVictorSP = new VictorSP(Constants.kLateralRollerPWM);
+			intakeVictorSP = new VictorSP(Constants.kIntakeRollerPWM);
+//			int[] rollerPDPs = {Constants.kLateralRollerPDP, Constants.kIntakeRollerPDP};
+//			rollers = new SpeedControllerWrapper(rollerVictorSPs, rollerPDPs);
 			
 			intakeArmVictorSP = new VictorSP[2];
 			intakeArmVictorSP[0] = new VictorSP(Constants.kIntakeArmPWM[0]);

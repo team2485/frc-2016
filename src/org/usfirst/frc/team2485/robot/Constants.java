@@ -20,21 +20,22 @@ public class Constants {
 						kRightDrivePWM = {5, 6, 7}, 
 						kRightDrivePDP = {12, 13, 14};
 	
-	public static int[] kIntakeArmPWM = {11, 12} , kIntakeArmPDP = {0, 1};
+	public static int[] kIntakeArmPWM = {0, 1} , kIntakeArmPDP = {0, 1};
 	
-	public static int kLateralRollerPWM = 10, kLateralRollerPDP = 0, //TODO: correct port numbers
-			kIntakeRollerPWM = 0, kIntakeRollerPDP = 0;
+	public static int kLateralRollerPWM = 9, kLateralRollerPDP = 9,
+			kIntakeRollerPWM = 8, kIntakeRollerPDP = 10;
 	
 	public static int[] kLeftDriveEncoder = {2, 3}, 
 			kRightDriveEncoder = {4, 5};
 	
-	public static int kIntakeArmAbsEncoder = 6; //TODO: correct port number
+	public static int kIntakeArmAbsEncoder = 0;
 	
 	public static int[] kUltrasonicDIO = {0, 1};
 
 	public static double WHEEL_RADIUS_INCHES = 2.25;
 	
 	public static float kMoveIntakeManuallyDeadband = 0.3f;
+	
 	
 	private static HashMap<String, String> constantsMap;
 	
