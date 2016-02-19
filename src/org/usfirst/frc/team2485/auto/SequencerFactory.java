@@ -1,5 +1,6 @@
 package org.usfirst.frc.team2485.auto;
 
+import org.usfirst.frc.team2485.auto.SequencerFactory.AutoType;
 import org.usfirst.frc.team2485.auto.sequenceditems.AlignToTower;
 import org.usfirst.frc.team2485.auto.sequenceditems.DisableDriveToPID;
 import org.usfirst.frc.team2485.auto.sequenceditems.DisableRotateToPID;
@@ -25,7 +26,7 @@ public class SequencerFactory {
 	}
 
 	// Auto
-	public static Sequencer createAuto(AutoType autoType) {
+	public static Sequencer createAuto(AutoType autoType, int defenseLocation) {
 
 		// @formatter:off
 

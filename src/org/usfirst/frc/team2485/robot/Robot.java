@@ -34,7 +34,8 @@ public class Robot extends IterativeRobot {
 
 	private Sequencer autonomousSequencer, driverTeleopSequencer, operatorTeleopSequencer;
 
-	private SendableChooser autoChooser;
+	private SendableChooser autoChooser, autoPosChooser;
+	
 
 	public void robotInit() {
 
@@ -72,6 +73,16 @@ public class Robot extends IterativeRobot {
 		}
 
 		autoChooser.addDefault(AutoType.REACH_AUTO.toString(), AutoType.REACH_AUTO);
+		
+		autoPosChooser = new SendableChooser();
+		
+		for (int i = 1; i <= 5; i++) {
+			autoPosChooser.addDefault("Position: " + i, new Integer(i));
+		}
+		
+		SmartDashboard.putData("Auto Defense Chooser", autoChooser);
+		
+		SmartDashboard.putData("Auto Position Chooser", autoPosChooser);
 	}
 
 	public void autonomousInit() {
@@ -84,10 +95,8 @@ public class Robot extends IterativeRobot {
 		Hardware.ahrs.zeroYaw();
 		System.out.println("Robot - ahrs reading: " + Hardware.ahrs.getYaw());
 
-		// autonomousSequencer = SequencerFactory
-		// .createAuto((AutoType) autoChooser.getSelected());
-
-		autonomousSequencer = SequencerFactory.createAuto(AutoType.MOAT_AUTO);
+		 autonomousSequencer = SequencerFactory
+		 .createAuto((AutoType) autoChooser.getSelected(), (Integer) autoPosChooser.getSelected());
 
 	}
 
