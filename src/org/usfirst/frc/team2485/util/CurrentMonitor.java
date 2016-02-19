@@ -16,12 +16,13 @@ public class CurrentMonitor {
 		
 //		leftDriveMonitor = new CurrentMonitorGroup(Constants.kLeftDrivePDP, 60);
 //		rightDriveMonitor = new CurrentMonitorGroup(Constants.kRightDrivePDP, 60);
-		intakeArmMonitor = new CurrentMonitorGroup(Constants.kIntakeArmPDP, 40, 0.05);
+		intakeArmMonitor = new CurrentMonitorGroup(Constants.kIntakeArmPDP, 40, 
+				0.05, true, 0.25);
 		Hardware.intakeArmSC.setCurrentMonitor(intakeArmMonitor);
 
 	}
 	
-	public CurrentMonitor getInstance() {
+	public static CurrentMonitor getInstance() {
 		
 		if (instance == null) {
 			instance = new CurrentMonitor();
@@ -31,6 +32,9 @@ public class CurrentMonitor {
 		
 	}
 	
+	/**
+	 * Should be called every 20 ms
+	 */
 	public void monitorCurrent() {
 		
 //		if (Hardware.battery.getTotalCurrent() > 120) {

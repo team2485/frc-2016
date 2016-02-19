@@ -14,17 +14,35 @@ public class CurrentMonitorGroup {
 	private double timeOverCurrent;
 	private double lastTimeUpdated; 
 	private double maxTimeOverCurrent;
+	private boolean usesEmergencyStop;
+	private double timeout;
+	public static final double EMERGENCY_STOP_FLAG = -1;
 	
-	public CurrentMonitorGroup(int[] pdpSlots, double maxCurrent, double maxTimeOverCurrent) {
+	/**
+	 * 
+	 * @param pdpSlots
+	 * @param maxCurrent
+	 * @param maxTimeOverCurrent max time before starts limiting current in seconds
+	 * @param usesEmergencyStop 
+	 * @param timeout time in seconds after over current before allowed 
+	 * to resume normal operation
+	 */
+	public CurrentMonitorGroup(int[] pdpSlots, double maxCurrent, 
+			double maxTimeOverCurrent, boolean usesEmergencyStop, double timeout) {
 		
 		this.pdpSlots = pdpSlots;
 		this.maxCurrent = maxCurrent;
 		this.timeOverCurrent = 0;
 		this.lastTimeUpdated = -1;
 		this.maxTimeOverCurrent = maxTimeOverCurrent;
+		this.usesEmergencyStop = usesEmergencyStop;
+		this.timeout = timeout;
 		
 	}
 	
+	/**
+	 * Called every 20 ms by CurrentMonitor
+	 */
 	public void monitorCurrent() {
 		
 		double currTime = Timer.getFPGATimestamp();
@@ -42,8 +60,10 @@ public class CurrentMonitorGroup {
 
 		if (current > maxCurrent) {
 			timeOverCurrent += timeSinceLastUpdate;
+			if (timeOverCurrent > maxTimeOverCurrent) {
+				timeOverCurrent = maxTimeOverCurrent + timeout;
+			}
 		} else {
-//			timeOverCurrent = 0;
 			timeOverCurrent -= timeSinceLastUpdate;
 			if (timeOverCurrent < 0) {
 				timeOverCurrent = 0;
@@ -72,9 +92,15 @@ public class CurrentMonitorGroup {
 	 */
 	public double getMaxAbsolutePWMValue() {
 		
-		return timeOverCurrent > maxTimeOverCurrent ? 0.0 : 1.0;
+		if (timeOverCurrent > maxTimeOverCurrent) {
+			return usesEmergencyStop ? EMERGENCY_STOP_FLAG : 0.0;
+		} else {
+			return 1.0;
+		}
 		
 	}
+	
+	
 
 
 }

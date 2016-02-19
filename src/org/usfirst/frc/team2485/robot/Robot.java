@@ -12,6 +12,7 @@ import org.usfirst.frc.team2485.subsystems.Shooter;
 import org.usfirst.frc.team2485.subsystems.Shooter.HoodPosition;
 import org.usfirst.frc.team2485.util.ConstantsIO;
 import org.usfirst.frc.team2485.util.Controllers;
+import org.usfirst.frc.team2485.util.CurrentMonitor;
 import org.usfirst.frc.team2485.util.Logger;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -59,6 +60,8 @@ public class Robot extends IterativeRobot {
 		Logger.getInstance().addLoggable(Hardware.driveTrain);
 		Logger.getInstance().addLoggable(Hardware.shooter);
 
+		CurrentMonitor.getInstance(); //forces to construct
+		
 		initAutoChooser();
 
 		System.out.println("initialized");
@@ -111,6 +114,8 @@ public class Robot extends IterativeRobot {
 		// System.out.println(((PIDController)
 		// SmartDashboard.getData("PIDController")).getP());
 		updateDashboard();
+		updateAllPeriodic();
+
 	}
 
 	public void teleopInit() {
@@ -138,9 +143,10 @@ public class Robot extends IterativeRobot {
 			System.out.println("Robot: arm PID is enabled");
 		}
 
-		Logger.getInstance().logAll();
+		updateAllPeriodic();
 
 		updateDashboard();
+		
 	}
 
 	private boolean XBOXPressed = false;
@@ -249,8 +255,6 @@ public class Robot extends IterativeRobot {
 			joystickPressed = false;
 		} // int main = void();
 
-		Logger.getInstance().logAll();
-
 		updateDashboard();
 	}
 
@@ -276,7 +280,8 @@ public class Robot extends IterativeRobot {
 	public void testPeriodic() {
 
 		System.out.println("Robot: IntakePos: " + Hardware.intake.getCurrentPosition());
-
+		updateAllPeriodic();
+		
 	}
 
 	private void resetAndDisableSystems() {
@@ -299,5 +304,15 @@ public class Robot extends IterativeRobot {
 		// SmartDashboard.putNumber("Drive Encoder Speed",
 		// Hardware.leftDriveEnc.getRate());
 
+	}
+	
+	/**
+	 * Run in teleop, auto and test periodic
+	 */
+	public void updateAllPeriodic() {
+		
+		Logger.getInstance().logAll();
+		CurrentMonitor.getInstance().monitorCurrent();
+		
 	}
 }
