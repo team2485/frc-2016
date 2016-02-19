@@ -85,6 +85,11 @@ public class SpeedControllerWrapper implements SpeedController {
 			s.set(speed);
 	}
 	
+	public void emergencyStop() {
+		for (SpeedController s : speedControllerList) 
+			s.set(0);
+	}
+	
 	@Override
 	public void setInverted(boolean isInverted) {
 		for (SpeedController s : speedControllerList) 
