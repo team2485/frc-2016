@@ -16,7 +16,7 @@ import org.usfirst.frc.team2485.util.GRIPReciever.GRIPTargetNotFoundException;
 
 public class AlignToTower implements SequencedItem {
 
-	private double timeout = 4;
+	private double timeout = 2;
 	private boolean finished = false;
 	private boolean firstTime = true;
 

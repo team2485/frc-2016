@@ -61,6 +61,8 @@ public class SequencerFactory {
 		case ROCK_WALL_AUTO:
 			
 			double degreesToTurn = 0.0;
+			double distPreTurn = 100;
+			double distPostTurn = 100;
 			
 			switch(defenseLocation) {
 			
@@ -78,21 +80,23 @@ public class SequencerFactory {
 			}
 			
 			return new Sequencer(new SequencedItem[] {
-					new SequencedMultipleItem(new DriveTo(100, 6, 0.55),
+					new SequencedMultipleItem(
+							new DriveTo(distPreTurn, 4, 0.55),
 							/*new SetIntakeArm(Intake.INTAKE_POSITION, 2),*/
 							new SetHoodPosition(HoodPosition.HIGH_ANGLE)),
 					new DisableDriveToPID(),
-					new ZeroDriveEncoder(),
 					new RotateTo(degreesToTurn),
 					new DisableRotateToPID(),
 					new ZeroDriveEncoder(),
-					new DriveTo(100), //Approaches batter, may be removed when long shot works
+					new DriveTo(distPostTurn), //Approaches batter, may be removed when long shot works
 					new DisableDriveToPID(),
 					new ZeroDriveEncoder(),
-					new SpinUpShooter(Shooter.RPM_BATTER_SHOT),
-					new AlignToTower(),
+					new SequencedMultipleItem(
+							new SpinUpShooter(Shooter.RPM_BATTER_SHOT),
+							new AlignToTower()),
 					new DisableRotateToPID(),
-					new ShootHighGoal(5) });
+					new ShootHighGoal(5)
+					});
 
 		case PORTCULLIS_AUTO:
 			return new Sequencer(
