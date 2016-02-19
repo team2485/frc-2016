@@ -85,6 +85,13 @@ public class Shooter implements Loggable {
 		rightShooterMotor.set(setpoint);
 
 	}
+	
+	/** Set shooter speed based distance read of Lidar <br>
+	 *  Currently not working
+	 */
+	public void setSpeedOffLidar() {
+		setTargetSpeed(0.0 /*Lidar magic*/);
+	}
 
 	public double getSetpoint() {
 		return rightShooterMotor.getSetpoint();
