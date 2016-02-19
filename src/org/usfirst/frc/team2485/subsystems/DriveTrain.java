@@ -89,16 +89,16 @@ public class DriveTrain implements Loggable {
 			ahrs = Hardware.ahrs;
 			if (ahrs != null) {
 				dummyAhrsOutput = new DummyOutput();
-				ahrsPID = new PIDController(ConstantsIO.kP_Rotate,
+				ahrsPID = new PIDController(ConstantsIO.kP_RotateLargeAngle,
 						ConstantsIO.kI_Rotate, ConstantsIO.kD_Rotate, ahrs,
 						dummyAhrsOutput);
 				ahrsPID.setAbsoluteTolerance(AbsTolerance_Imu_TurnTo);
 				ahrsPID.setOutputRange(-0.8, 0.8);
 
 				dummyDriveStraightOutput = new DummyOutput();
-				driveStraightPID = new PIDController(ConstantsIO.kP_Rotate,
-						ConstantsIO.kI_Rotate, ConstantsIO.kD_Rotate, ahrs,
-						dummyDriveStraightOutput);
+				driveStraightPID = new PIDController(
+						ConstantsIO.kP_RotateLargeAngle, ConstantsIO.kI_Rotate,
+						ConstantsIO.kD_Rotate, ahrs, dummyDriveStraightOutput);
 				driveStraightPID.setAbsoluteTolerance(AbsTolerance_Imu_DriveTo);
 				driveStraightPID.setOutputRange(-0.8, 0.8);
 			}
@@ -281,8 +281,8 @@ public class DriveTrain implements Loggable {
 		lastLeft = leftOutput;
 		lastRight = rightOutput;
 
-		System.out.println("DriveTrain SetLeftRight: Left: " + leftOutput + " Right: "
-				+ rightOutput);
+		System.out.println("DriveTrain SetLeftRight: Left: " + leftOutput
+				+ " Right: " + rightOutput);
 
 		leftDrive.set(leftOutput);
 		rightDrive.set(rightOutput);
@@ -337,8 +337,8 @@ public class DriveTrain implements Loggable {
 
 	public void initPIDGyroRotate() {
 		if (ahrs != null) {
-			ahrsPID.setPID(ConstantsIO.kP_Rotate, ConstantsIO.kI_Rotate,
-					ConstantsIO.kD_Rotate);
+			ahrsPID.setPID(ConstantsIO.kP_RotateLargeAngle,
+					ConstantsIO.kI_Rotate, ConstantsIO.kD_Rotate);
 			ahrsPID.setAbsoluteTolerance(AbsTolerance_Imu_TurnTo);
 		}
 	}
@@ -403,9 +403,14 @@ public class DriveTrain implements Loggable {
 		if (ahrsPID == null)
 			throw new IllegalStateException("can't rotateTo when ahrs is null");
 
-		if (!ahrsPID.isEnabled()) {
-			ahrsPID.setSetpoint(angle);
-			ahrsPID.enable();
+		
+		
+		if(!ahrsPID.isEnabled() && Math.abs(Hardware.ahrs.getYaw()-angle) <15){
+			ahrsPID.setPID(ConstantsIO.kP_RotateSmallAngle,ConstantsIO.kI_Rotate,ConstantsIO.kD_Rotate);
+		}
+		else if(!ahrsPID.isEnabled()){
+			ahrsPID.setPID(ConstantsIO.kP_RotateLargeAngle,ConstantsIO.kI_Rotate,ConstantsIO.kD_Rotate);
+
 		}
 
 		// Check to see if we're on target
