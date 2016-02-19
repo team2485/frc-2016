@@ -50,3 +50,5 @@ bin/
 build/
 *.class
 *.jar
+/bin/
+/bin/

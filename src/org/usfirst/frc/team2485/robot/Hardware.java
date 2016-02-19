@@ -25,27 +25,27 @@ import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.VictorSP;
 
 public class Hardware {
-	
+
 	public static Battery battery;
-	
-	//Speed Controllers
+
+	// Speed Controllers
 	public static VictorSP[] rightDriveVictorSPs, leftDriveVictorSPs;
 
 	public static SpeedControllerWrapper rightDrive, leftDrive;
 
 	public static CANTalon leftShooterMotor, rightShooterMotor;
-	
-	public static VictorSP []  intakeArmVictorSP;
-	public static SpeedControllerWrapper intakeArm;
-	
+
+	public static VictorSP[] intakeArmVictorSP;
+	public static SpeedControllerWrapper intakeArmSC;
+
 	public static VictorSP lateralVictorSP;
 	public static VictorSP intakeVictorSP;
-//	public static VictorSP[] rollerVictorSPs; 
-//	public static SpeedControllerWrapper rollers;
+	// public static VictorSP[] rollerVictorSPs;
+	// public static SpeedControllerWrapper rollers;
 
-	
 	// Solenoids
-	public static Solenoid shooterHoodSolenoid1, shooterHoodSolenoid2, boulderStagerSolenoid1, boulderStagerSolenoid2;
+	public static Solenoid shooterHoodSolenoid1, shooterHoodSolenoid2,
+			boulderStagerSolenoid1, boulderStagerSolenoid2;
 
 	// Sensors
 	public static Encoder leftDriveEnc, rightDriveEnc;
@@ -62,11 +62,11 @@ public class Hardware {
 	// Compressor
 	public static Relay compressorSpike;
 
-	//Subsystems
+	// Subsystems
 	public static DriveTrain driveTrain;
 
 	public static Shooter shooter;
-	
+
 	public static Intake intake;
 
 	public static BoulderStager boulderStager;
@@ -75,7 +75,7 @@ public class Hardware {
 		if (battery == null) {
 
 			battery = new Battery();
-			
+
 			// Victor SPs
 			rightDriveVictorSPs = new VictorSP[3];
 			rightDriveVictorSPs[0] = new VictorSP(Constants.kRightDrivePWM[0]);
@@ -87,45 +87,54 @@ public class Hardware {
 			leftDriveVictorSPs[1] = new VictorSP(Constants.kLeftDrivePWM[1]);
 			leftDriveVictorSPs[2] = new VictorSP(Constants.kLeftDrivePWM[2]);
 
-			rightDrive = new SpeedControllerWrapper(
-					rightDriveVictorSPs, Constants.kRightDrivePDP);
+			rightDrive = new SpeedControllerWrapper(rightDriveVictorSPs,
+					Constants.kRightDrivePDP);
 
-			leftDrive = new SpeedControllerWrapper(
-					leftDriveVictorSPs, Constants.kLeftDrivePDP);
-			
-//			rollerVictorSPs = new VictorSP[2];
+			leftDrive = new SpeedControllerWrapper(leftDriveVictorSPs,
+					Constants.kLeftDrivePDP);
+
+			// rollerVictorSPs = new VictorSP[2];
 			lateralVictorSP = new VictorSP(Constants.kLateralRollerPWM);
 			intakeVictorSP = new VictorSP(Constants.kIntakeRollerPWM);
-//			int[] rollerPDPs = {Constants.kLateralRollerPDP, Constants.kIntakeRollerPDP};
-//			rollers = new SpeedControllerWrapper(rollerVictorSPs, rollerPDPs);
-			
+			// int[] rollerPDPs = {Constants.kLateralRollerPDP,
+			// Constants.kIntakeRollerPDP};
+			// rollers = new SpeedControllerWrapper(rollerVictorSPs,
+			// rollerPDPs);
+
 			intakeArmVictorSP = new VictorSP[2];
 			intakeArmVictorSP[0] = new VictorSP(Constants.kIntakeArmPWM[0]);
 			intakeArmVictorSP[1] = new VictorSP(Constants.kIntakeArmPWM[1]);
-			intakeArm = new SpeedControllerWrapper(intakeArmVictorSP, Constants.kIntakeArmPDP);
+			intakeArmSC = new SpeedControllerWrapper(intakeArmVictorSP,
+					Constants.kIntakeArmPDP);
 
 			leftShooterMotor = new CANTalon(Constants.kLeftShooterCAN);
 			rightShooterMotor = new CANTalon(Constants.kRightShooterCAN);
 
-			shooterHoodSolenoid1 = new Solenoid(Constants.kShooterHoodSolenoid1Port);
-			shooterHoodSolenoid2 = new Solenoid(Constants.kShooterHoodSolenoid2Port);
-			
-			boulderStagerSolenoid1 = new Solenoid(Constants.kBoulderStagerSolenoid1Port);
-			boulderStagerSolenoid2 = new Solenoid(Constants.kBoulderStagerSolenoid2Port);
+			shooterHoodSolenoid1 = new Solenoid(
+					Constants.kShooterHoodSolenoid1Port);
+			shooterHoodSolenoid2 = new Solenoid(
+					Constants.kShooterHoodSolenoid2Port);
 
-			leftDriveEnc = new Encoder(Constants.kLeftDriveEncoder[0], 
+			boulderStagerSolenoid1 = new Solenoid(
+					Constants.kBoulderStagerSolenoid1Port);
+			boulderStagerSolenoid2 = new Solenoid(
+					Constants.kBoulderStagerSolenoid2Port);
+
+			leftDriveEnc = new Encoder(Constants.kLeftDriveEncoder[0],
 					Constants.kLeftDriveEncoder[1]);
-			rightDriveEnc = new Encoder(Constants.kRightDriveEncoder[0], 
+			rightDriveEnc = new Encoder(Constants.kRightDriveEncoder[0],
 					Constants.kRightDriveEncoder[1]);
-			
-			intakeAbsEncoder = new AnalogPotentiometer(Constants.kIntakeArmAbsEncoder);
-						
+
+			intakeAbsEncoder = new AnalogPotentiometer(
+					Constants.kIntakeArmAbsEncoder);
+
 			ahrs = new AHRS(SPI.Port.kMXP);
 			
 			sonic = new Ultrasonic(Constants.kUltrasonicDIO[0], Constants.kUltrasonicDIO[1]);
 			
 			lidar = new LidarWrapper(Port.kMXP);
 			
+
 		}
 
 		rightDrive.setInverted(false);
@@ -135,14 +144,14 @@ public class Hardware {
 		leftDrive.setInverted(true);
 		leftDrive.setRampMode(true);
 		leftDrive.setRampRate(ConstantsIO.kDriveVoltageRamp);
-		
+
 		intakeArmVictorSP[0].setInverted(false);
 		intakeArmVictorSP[1].setInverted(false);
-		
-		leftDriveEnc.setDistancePerPulse(2 * Math.PI
-				* Constants.WHEEL_RADIUS_INCHES / 250);
-		rightDriveEnc.setDistancePerPulse(2 * Math.PI
-				* Constants.WHEEL_RADIUS_INCHES / 250);
+
+		leftDriveEnc.setDistancePerPulse(0.01304 * 4);
+		rightDriveEnc.setDistancePerPulse(0.01295 * 4);
+
+		leftDriveEnc.setReverseDirection(true);
 
 		ahrs.zeroYaw();
 
@@ -150,7 +159,6 @@ public class Hardware {
 		shooter = new Shooter();
 		intake = new Intake();
 		boulderStager = new BoulderStager();
-
 
 	}
 

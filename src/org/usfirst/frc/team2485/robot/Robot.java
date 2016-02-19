@@ -1,8 +1,12 @@
 package org.usfirst.frc.team2485.robot;
 
+import org.usfirst.frc.team2485.auto.SequencedItem;
 import org.usfirst.frc.team2485.auto.Sequencer;
 import org.usfirst.frc.team2485.auto.SequencerFactory;
 import org.usfirst.frc.team2485.auto.SequencerFactory.AutoType;
+import org.usfirst.frc.team2485.auto.sequenceditems.SetHoodPosition;
+import org.usfirst.frc.team2485.auto.sequenceditems.SetStager;
+import org.usfirst.frc.team2485.subsystems.BoulderStager.Position;
 import org.usfirst.frc.team2485.subsystems.Shooter;
 import org.usfirst.frc.team2485.subsystems.Shooter.HoodPosition;
 import org.usfirst.frc.team2485.util.ConstantsIO;
@@ -55,12 +59,12 @@ public class Robot extends IterativeRobot {
 		Logger.getInstance().addLoggable(Hardware.driveTrain);
 		Logger.getInstance().addLoggable(Hardware.shooter);
 
-		initAuto();
+		initAutoChooser();
 
 		System.out.println("initialized");
 	}
 
-	private void initAuto() {
+	private void initAutoChooser() {
 
 		autoChooser = new SendableChooser();
 
@@ -82,8 +86,11 @@ public class Robot extends IterativeRobot {
 		Hardware.ahrs.zeroYaw();
 		System.out.println("Robot - ahrs reading: " + Hardware.ahrs.getYaw());
 
+		// autonomousSequencer = SequencerFactory
+		// .createAuto((AutoType) autoChooser.getSelected());
+
 		autonomousSequencer = SequencerFactory
-				.createAuto((AutoType) autoChooser.getSelected());
+				.createAuto(AutoType.MOAT_AUTO);
 
 	}
 
@@ -100,7 +107,6 @@ public class Robot extends IterativeRobot {
 		updateDashboard();
 	}
 
-
 	public void teleopInit() {
 		resetAndDisableSystems();
 		ConstantsIO.init();
@@ -113,11 +119,10 @@ public class Robot extends IterativeRobot {
 		driverTeleopControl();
 
 		operatorTeleopControl();
-		
-		if(Hardware.intake.isPIDEnabled()) {
+
+		if (Hardware.intake.isPIDEnabled()) {
 			System.out.println("Robot: arm PID is enabled");
 		}
-			
 
 		if (driverTeleopSequencer != null && driverTeleopSequencer.run()) {
 			driverTeleopSequencer = null;
@@ -139,9 +144,15 @@ public class Robot extends IterativeRobot {
 		// JoyStick Drive
 
 		// Negative on Y to invert throttle
-		Hardware.driveTrain.warlordDrive(
-				-Controllers.getAxis(Controllers.XBOX_AXIS_LY, 0),
-				Controllers.getAxis(Controllers.XBOX_AXIS_RX, 0));
+
+		double inputX = Controllers.getAxis(Controllers.XBOX_AXIS_RX, 0.2f);
+		double inputY = -Controllers.getAxis(Controllers.XBOX_AXIS_LY, 0.2f);
+
+		// if (Math.abs(inputX) > 0.01 || Math.abs(inputY) > 0.01) {
+		// System.out.println("Robot: Drivercontrol: X: " + inputX + " Y: "
+		// + inputY);
+		// Hardware.driveTrain.warlordDrive(inputY, inputX);
+		// }
 
 		// Quick turn
 		if (Controllers.getButton(Controllers.XBOX_BTN_RBUMP)) {
@@ -176,10 +187,6 @@ public class Robot extends IterativeRobot {
 
 	private void operatorTeleopControl() {
 
-		System.out.println("Robot: Y-Axis: "
-				+ -Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y,
-						Constants.kMoveIntakeManuallyDeadband));
-
 		if (Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y,
 				Constants.kMoveIntakeManuallyDeadband) != 0) {
 
@@ -187,9 +194,9 @@ public class Robot extends IterativeRobot {
 					Controllers.JOYSTICK_AXIS_Y,
 					Constants.kMoveIntakeManuallyDeadband)));
 		} else {
-//			if (!Hardware.intake.PIDOn()) {
-//				Hardware.intake.setSetpoint(Hardware.intake.getCurrentPosition());
-//			}
+			// if (!Hardware.intake.PIDOn()) {
+			// Hardware.intake.setSetpoint(Hardware.intake.getCurrentPosition());
+			// }
 		}
 
 		if (Controllers.getJoystickButton(4)) {
@@ -240,34 +247,44 @@ public class Robot extends IterativeRobot {
 		updateDashboard();
 	}
 
+	Sequencer seq;
+
 	public void testInit() {
 
 		resetAndDisableSystems();
 		ConstantsIO.init();
 
+		seq = new Sequencer(new SequencedItem[] { new SetStager(Position.INTAKE) });
 	}
 
 	public void testPeriodic() {
+
+		System.out.println("Robot: IntakePos: " + Hardware.intake.getCurrentPosition());
 
 	}
 
 	private void resetAndDisableSystems() {
 		Hardware.driveTrain.disableAhrsPID();
+		Hardware.driveTrain.driveStraightPID.disable();
+		Hardware.driveTrain.resetEncoder();
+		Hardware.ahrs.reset();
 	}
 
 	public void updateDashboard() {
 
 		SmartDashboard.putNumber("Current Speed", Hardware.shooter.getRate());
-		SmartDashboard.putString("RPM", Hardware.shooter.getRate() + ","
-				+ Hardware.shooter.getSetpoint());
+		SmartDashboard.putString("RPM", (int)Hardware.shooter.getRate() + ","
+				+ (int)Hardware.shooter.getSetpoint());
 
-		SmartDashboard.putNumber("Current Error", Hardware.shooter.getError());
+		SmartDashboard.putNumber("Current 	Error", Hardware.shooter.getError());
 
-		SmartDashboard.putNumber("Throttle", Hardware.shooter.getCurrentPower());
-		
+		SmartDashboard
+				.putNumber("Throttle", Hardware.shooter.getCurrentPower());
+
 		SmartDashboard.putNumber("Total Current",
 				Hardware.battery.getTotalCurrent());
-//		SmartDashboard.putNumber("Drive Encoder Speed", Hardware.leftDriveEnc.getRate());
+		// SmartDashboard.putNumber("Drive Encoder Speed",
+		// Hardware.leftDriveEnc.getRate());
 
 	}
 }

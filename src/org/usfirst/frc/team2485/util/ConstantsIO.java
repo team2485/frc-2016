@@ -20,12 +20,14 @@ public class ConstantsIO {
 
 	public static final String ROBO_RIO_CONSTANTS_FILE_PATH = "/home/lvuser/Constants.txt", 
 			DRIVER_STATION_CONSTANTS_FILE_PATH = "C:\\Users\\2485\\Documents\\frc-2016\\Constants.txt";
+
 	
 	public static HashMap<String, String> data;
 	
 	public static double kP_Shooter, kI_Shooter, kD_Shooter, kF_Shooter;
 	public static double kP_DriveTo, kI_DriveTo, kD_DriveTo;
-	public static double kP_Rotate, kI_Rotate, kD_Rotate;
+	public static double kP_RotateSmallAngle, kI_RotateSmallAngle, kD_RotateSmallAngle;
+	public static double kP_RotateLargeAngle, kI_RotateLargeAngle, kD_RotateLargeAngle;
 	public static double kP_IntakeArm, kI_IntakeArm, kD_IntakeArm;
 
 	public static double kDriveVoltageRamp, kShooterVoltageRamp;
@@ -52,9 +54,13 @@ public class ConstantsIO {
 		kI_DriveTo = Double.parseDouble(data.get("kI_DriveTo"));
 		kD_DriveTo = Double.parseDouble(data.get("kD_DriveTo"));
 		
-		kP_Rotate = Double.parseDouble(data.get("kP_Rotate"));
-		kI_Rotate = Double.parseDouble(data.get("kI_Rotate"));
-		kD_Rotate = Double.parseDouble(data.get("kD_Rotate"));
+		kP_RotateSmallAngle = Double.parseDouble(data.get("kP_RotateSmallAngle"));
+		kI_RotateSmallAngle = Double.parseDouble(data.get("kI_RotateSmallAngle"));
+		kD_RotateSmallAngle = Double.parseDouble(data.get("kD_RotateSmallAngle"));
+		
+		kP_RotateLargeAngle = Double.parseDouble(data.get("kP_RotateLargeAngle"));
+		kI_RotateLargeAngle = Double.parseDouble(data.get("kI_RotateLargeAngle"));
+		kD_RotateLargeAngle = Double.parseDouble(data.get("kD_RotateLargeAngle"));
 		
 		kP_IntakeArm = Double.parseDouble(data.get("kP_IntakeArm"));
 		kI_IntakeArm = Double.parseDouble(data.get("kI_IntakeArm"));
