@@ -29,16 +29,16 @@ public class Intake implements Loggable {
 
 	public static final double ABSOLUTE_TOLERANCE = .01;
 
-	public static final double 	FLOOR_POSITION = 0.41, 
-								INTAKE_POSITION = 0.518, 
-								FULL_UP_POSITION = 0.760,
+	public static final double 	FLOOR_POSITION = 0.500, 
+								INTAKE_POSITION = 0.597, 
+								FULL_UP_POSITION = 0.836,
 								PORTCULLIS_POSITION = 0.651,
-								LOW_NO_INTAKE_POSITION = 0.473; 
+								LOW_NO_INTAKE_POSITION = 0.552; 
 	
 
 	public Intake() {
 		
-		this.armSpeedControllerWrapper = Hardware.intakeArm;
+		this.armSpeedControllerWrapper = Hardware.intakeArmSC;
 		
 		this.intakeVictorSP = Hardware.intakeVictorSP;
 		this.lateralVictorSP = Hardware.lateralVictorSP;

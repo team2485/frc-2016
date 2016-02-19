@@ -34,7 +34,7 @@ public class Hardware {
 	public static CANTalon leftShooterMotor, rightShooterMotor;
 
 	public static VictorSP[] intakeArmVictorSP;
-	public static SpeedControllerWrapper intakeArm;
+	public static SpeedControllerWrapper intakeArmSC;
 
 	public static VictorSP lateralVictorSP;
 	public static VictorSP intakeVictorSP;
@@ -100,7 +100,7 @@ public class Hardware {
 			intakeArmVictorSP = new VictorSP[2];
 			intakeArmVictorSP[0] = new VictorSP(Constants.kIntakeArmPWM[0]);
 			intakeArmVictorSP[1] = new VictorSP(Constants.kIntakeArmPWM[1]);
-			intakeArm = new SpeedControllerWrapper(intakeArmVictorSP,
+			intakeArmSC = new SpeedControllerWrapper(intakeArmVictorSP,
 					Constants.kIntakeArmPDP);
 
 			leftShooterMotor = new CANTalon(Constants.kLeftShooterCAN);

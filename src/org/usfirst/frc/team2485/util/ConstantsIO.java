@@ -54,13 +54,13 @@ public class ConstantsIO {
 		kI_DriveTo = Double.parseDouble(data.get("kI_DriveTo"));
 		kD_DriveTo = Double.parseDouble(data.get("kD_DriveTo"));
 		
-		kP_RotateSmallAngle = Double.parseDouble(data.get("kP_Rotate"));
-		kI_RotateSmallAngle = Double.parseDouble(data.get("kI_Rotate"));
-		kD_RotateSmallAngle = Double.parseDouble(data.get("kD_Rotate"));
+		kP_RotateSmallAngle = Double.parseDouble(data.get("kP_RotateSmallAngle"));
+		kI_RotateSmallAngle = Double.parseDouble(data.get("kI_RotateSmallAngle"));
+		kD_RotateSmallAngle = Double.parseDouble(data.get("kD_RotateSmallAngle"));
 		
-		kP_RotateLargeAngle = Double.parseDouble(data.get("kP_Rotate"));
-		kI_RotateLargeAngle = Double.parseDouble(data.get("kI_Rotate"));
-		kD_RotateLargeAngle = Double.parseDouble(data.get("kD_Rotate"));
+		kP_RotateLargeAngle = Double.parseDouble(data.get("kP_RotateLargeAngle"));
+		kI_RotateLargeAngle = Double.parseDouble(data.get("kI_RotateLargeAngle"));
+		kD_RotateLargeAngle = Double.parseDouble(data.get("kD_RotateLargeAngle"));
 		
 		kP_IntakeArm = Double.parseDouble(data.get("kP_IntakeArm"));
 		kI_IntakeArm = Double.parseDouble(data.get("kI_IntakeArm"));

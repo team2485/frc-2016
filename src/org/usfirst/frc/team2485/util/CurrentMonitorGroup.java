@@ -13,14 +13,15 @@ public class CurrentMonitorGroup {
 	private double maxCurrent; 
 	private double timeOverCurrent;
 	private double lastTimeUpdated; 
-	private static final double MAX_TIME_OVER_CURRENT = 0.1;
+	private double maxTimeOverCurrent;
 	
-	public CurrentMonitorGroup(int[] pdpSlots, double maxCurrent) {
+	public CurrentMonitorGroup(int[] pdpSlots, double maxCurrent, double maxTimeOverCurrent) {
 		
 		this.pdpSlots = pdpSlots;
 		this.maxCurrent = maxCurrent;
 		this.timeOverCurrent = 0;
 		this.lastTimeUpdated = -1;
+		this.maxTimeOverCurrent = maxTimeOverCurrent;
 		
 	}
 	
@@ -42,7 +43,11 @@ public class CurrentMonitorGroup {
 		if (current > maxCurrent) {
 			timeOverCurrent += timeSinceLastUpdate;
 		} else {
-			timeOverCurrent = 0;
+//			timeOverCurrent = 0;
+			timeOverCurrent -= timeSinceLastUpdate;
+			if (timeOverCurrent < 0) {
+				timeOverCurrent = 0;
+			}
 		}
 
 		lastTimeUpdated = currTime;
@@ -67,7 +72,7 @@ public class CurrentMonitorGroup {
 	 */
 	public double getMaxAbsolutePWMValue() {
 		
-		return timeOverCurrent > MAX_TIME_OVER_CURRENT ? 0.0 : 1.0;
+		return timeOverCurrent > maxTimeOverCurrent ? 0.0 : 1.0;
 		
 	}
 
