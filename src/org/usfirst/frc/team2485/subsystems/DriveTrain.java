@@ -27,19 +27,22 @@ public class DriveTrain implements Loggable {
 
 	private double driveSpeed = NORMAL_SPEED_RATING;
 
-	private double lastLeft, lastRight;
+//	private double lastLeft, lastRight;
 
 	// private final double MAX_PWM_DELTA = 1.0 / 20; // 20 cycles to get to
 	// full speed from rest
 
 	// AUTONOMOUS
-	private DummyOutput dummyAhrsOutput;
-	private DummyOutput dummyEncoderOutput;
+	private DummyOutput dummyRotateToOutput;
+	private DummyOutput dummyDriveToEncoderOutput;
 	private DummyOutput dummyDriveStraightOutput;
+	private DummyOutput dummyDriveToLidarOutput;
 
-	public PIDController ahrsPID;
+	public PIDController rotateToPID;
 	public PIDController driveStraightPID;
-	public PIDController encPID;
+	public PIDController driveToEncoderPID;
+	public PIDController driveToLidarPID;
+
 
 	private int ahrsOnTargetCounter = 0;
 	private final int MINIMUM_AHRS_ON_TARGET_ITERATIONS = 10;
@@ -54,20 +57,20 @@ public class DriveTrain implements Loggable {
 	// kI_E,
 	// kD_E;
 
-	private final double AbsTolerance_Imu_DriveTo = 2.0;
-	private final double AbsTolerance_Imu_TurnTo = 1;
-	private final double AbsTolerance_Enc = 5;
+	private static final double ABS_TOLERANCE_DRIVESTRAIGHT = 2.0;
+	private static final double ABS_TOLERANCE_ROTATETO = 1;
+	private static final double ABS_TOLERANCE_DRIVETO = 5;
 
 	private double lowEncRate = 5;
 
 	// W.A.R. LORD DRIVE
 	private double oldSteering = 0.0;
 	private double quickStopAccumulator = 0.0;
-	private final double THROTTLE_DEADBAND = 0.1;
-	private final double STEERING_DEADBAND = 0.1;
+	private static final double THROTTLE_DEADBAND = 0.1;
+	private static final double STEERING_DEADBAND = 0.1;
 
-	private final double SENSITIVITY_HIGH = 0.85;
-	private final double SENSITIVITY_LOW = 0.75;
+	private static final double SENSITIVITY_HIGH = 0.85;
+	private static final double SENSITIVITY_LOW = 0.75;
 	private boolean isQuickTurn = false;
 
 	private AHRS ahrs;
@@ -87,26 +90,31 @@ public class DriveTrain implements Loggable {
 		if (useAhrs) {
 			ahrs = Hardware.ahrs;
 			if (ahrs != null) {
-				dummyAhrsOutput = new DummyOutput();
-				ahrsPID = new PIDController(ConstantsIO.kP_RotateLargeAngle, ConstantsIO.kI_RotateLargeAngle,
-						ConstantsIO.kD_RotateLargeAngle, ahrs, dummyAhrsOutput);
-				ahrsPID.setAbsoluteTolerance(AbsTolerance_Imu_TurnTo);
-				ahrsPID.setOutputRange(-0.8, 0.8);
+				dummyRotateToOutput = new DummyOutput();
+				rotateToPID = new PIDController(ConstantsIO.kP_RotateLargeAngle, ConstantsIO.kI_RotateLargeAngle,
+						ConstantsIO.kD_RotateLargeAngle, ahrs, dummyRotateToOutput);
+				rotateToPID.setAbsoluteTolerance(ABS_TOLERANCE_ROTATETO);
+				rotateToPID.setOutputRange(-0.8, 0.8);
 
 				dummyDriveStraightOutput = new DummyOutput();
 				driveStraightPID = new PIDController(ConstantsIO.kP_RotateLargeAngle, ConstantsIO.kI_RotateLargeAngle,
 						ConstantsIO.kD_RotateLargeAngle, ahrs, dummyDriveStraightOutput);
-				driveStraightPID.setAbsoluteTolerance(AbsTolerance_Imu_DriveTo);
+				driveStraightPID.setAbsoluteTolerance(ABS_TOLERANCE_DRIVESTRAIGHT);
 				driveStraightPID.setOutputRange(-0.8, 0.8);
 			}
 		} else {
 			this.ahrs = null;
 		}
 
-		dummyEncoderOutput = new DummyOutput();
-		encPID = new PIDController(ConstantsIO.kP_DriveTo, ConstantsIO.kI_DriveTo, ConstantsIO.kD_DriveTo, encoder,
-				dummyEncoderOutput);
-		encPID.setAbsoluteTolerance(AbsTolerance_Enc);
+		dummyDriveToEncoderOutput = new DummyOutput();
+		driveToEncoderPID = new PIDController(ConstantsIO.kP_DriveTo, ConstantsIO.kI_DriveTo, ConstantsIO.kD_DriveTo, encoder,
+				dummyDriveToEncoderOutput);
+		driveToEncoderPID.setAbsoluteTolerance(ABS_TOLERANCE_DRIVETO);
+		
+		dummyDriveToLidarOutput = new DummyOutput();
+		driveToLidarPID = new PIDController(ConstantsIO.kP_DriveTo, ConstantsIO.kI_DriveTo, ConstantsIO.kD_DriveTo, 
+				Hardware.lidar, dummyDriveToLidarOutput);
+		driveToLidarPID.setAbsoluteTolerance(ABS_TOLERANCE_DRIVETO);
 
 		encoder.reset();
 	}
@@ -255,20 +263,21 @@ public class DriveTrain implements Loggable {
 		leftOutput *= driveSpeed;
 		rightOutput *= driveSpeed;
 
-		if (leftOutput - lastLeft > ConstantsIO.kDriveVoltageRamp) {
-			leftOutput = lastLeft + ConstantsIO.kDriveVoltageRamp;
-		} else if (leftOutput - lastLeft < -ConstantsIO.kDriveVoltageRamp) {
-			leftOutput = lastLeft - ConstantsIO.kDriveVoltageRamp;
-		}
+		// now done within speedcontrollerwrapper
+//		if (leftOutput - lastLeft > ConstantsIO.kDriveVoltageRamp) {
+//			leftOutput = lastLeft + ConstantsIO.kDriveVoltageRamp;
+//		} else if (leftOutput - lastLeft < -ConstantsIO.kDriveVoltageRamp) {
+//			leftOutput = lastLeft - ConstantsIO.kDriveVoltageRamp;
+//		}
+//
+//		if (rightOutput - lastRight > ConstantsIO.kDriveVoltageRamp) {
+//			rightOutput = lastRight + ConstantsIO.kDriveVoltageRamp;
+//		} else if (rightOutput - lastRight < -ConstantsIO.kDriveVoltageRamp) {
+//			rightOutput = lastRight - ConstantsIO.kDriveVoltageRamp;
+//		}
 
-		if (rightOutput - lastRight > ConstantsIO.kDriveVoltageRamp) {
-			rightOutput = lastRight + ConstantsIO.kDriveVoltageRamp;
-		} else if (rightOutput - lastRight < -ConstantsIO.kDriveVoltageRamp) {
-			rightOutput = lastRight - ConstantsIO.kDriveVoltageRamp;
-		}
-
-		lastLeft = leftOutput;
-		lastRight = rightOutput;
+//		lastLeft = leftOutput;
+//		lastRight = rightOutput;
 
 		System.out.println("DriveTrain SetLeftRight: Left: " + leftOutput + " Right: " + rightOutput);
 
@@ -318,55 +327,55 @@ public class DriveTrain implements Loggable {
 
 	public void setPIDGyroDrive() {
 		if (ahrs != null) {
-			ahrsPID.setPID(kP_G_Drive, kI_G_Drive, kD_G_Drive);
-			ahrsPID.setAbsoluteTolerance(AbsTolerance_Imu_DriveTo);
+			driveStraightPID.setPID(kP_G_Drive, kI_G_Drive, kD_G_Drive);
+			driveStraightPID.setAbsoluteTolerance(ABS_TOLERANCE_DRIVESTRAIGHT);
 		}
 	}
 
 	public void initPIDGyroRotate() {
 		if (ahrs != null) {
-			ahrsPID.setPID(ConstantsIO.kP_RotateLargeAngle, ConstantsIO.kI_RotateLargeAngle,
+			rotateToPID.setPID(ConstantsIO.kP_RotateLargeAngle, ConstantsIO.kI_RotateLargeAngle,
 					ConstantsIO.kD_RotateLargeAngle);
-			ahrsPID.setAbsoluteTolerance(AbsTolerance_Imu_TurnTo);
+			rotateToPID.setAbsoluteTolerance(ABS_TOLERANCE_ROTATETO);
 		}
 	}
 
 	public void initPIDEncoder() {
-		encPID.setPID(ConstantsIO.kP_DriveTo, ConstantsIO.kI_DriveTo, ConstantsIO.kD_DriveTo);
+		driveToEncoderPID.setPID(ConstantsIO.kP_DriveTo, ConstantsIO.kI_DriveTo, ConstantsIO.kD_DriveTo);
 	}
 
 	public void disableAhrsPID() {
 		if (ahrs != null) {
-			ahrsPID.disable();
+			rotateToPID.disable();
 		}
 		setLeftRight(0, 0);
 	}
 
 	public void disableDriveToPID() {
-		encPID.disable();
+		driveToEncoderPID.disable();
 		driveStraightPID.disable();
 	}
 
 	public boolean driveTo(double inches, double maxAbsOutput) {
 
-		if (!encPID.isEnabled()) {
-			encPID.enable();
+		if (!driveToEncoderPID.isEnabled()) {
+			driveToEncoderPID.enable();
 			System.out.println("|DriveTrain.driveTo| Enabling driveStraight PID in driveTo " + encoder.getDistance()
 					+ " , " + inches);
-			encPID.setSetpoint(inches);
+			driveToEncoderPID.setSetpoint(inches);
 
 			driveStraightPID.enable();
 			driveStraightPID.setSetpoint(ahrs.getYaw());
 		}
 
-		encPID.setOutputRange(-maxAbsOutput, maxAbsOutput);
+		driveToEncoderPID.setOutputRange(-maxAbsOutput, maxAbsOutput);
 
-		System.out.println(encPID.getError());
+//		System.out.println(encPID.getError());
 
-		double encoderOutput = dummyEncoderOutput.get();
+		double encoderOutput = dummyDriveToEncoderOutput.get();
 		double driveStraightOutput = dummyDriveStraightOutput.get();
 
-		System.out.println("|DriveTrain.driveTo| Encoder Output: " + encoderOutput);
+//		System.out.println("|DriveTrain.driveTo| Encoder Output: " + encoderOutput);
 
 		double leftOutput = encoderOutput + driveStraightOutput;
 		double rightOutput = encoderOutput - driveStraightOutput;
@@ -374,9 +383,45 @@ public class DriveTrain implements Loggable {
 		setLeftRight(leftOutput, rightOutput);
 
 		// done?
-		if (encPID.onTarget() && Math.abs(encoder.getRate()) < lowEncRate) {
+		if (driveToEncoderPID.onTarget() && Math.abs(encoder.getRate()) < lowEncRate) {
 			setLeftRight(0.0, 0.0);
-			encPID.disable();
+			driveToEncoderPID.disable();
+			driveStraightPID.disable();
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean driveToLidar(double inchesToWall, double maxAbsOutput) {
+
+		if (!driveToEncoderPID.isEnabled()) {
+			
+			driveToLidarPID.enable();
+			driveToLidarPID.setSetpoint(inchesToWall);
+
+			driveStraightPID.enable();
+			driveStraightPID.setSetpoint(ahrs.getYaw());
+			
+		}
+
+		driveToLidarPID.setOutputRange(-maxAbsOutput, maxAbsOutput);
+
+//		System.out.println(encPID.getError());
+
+		double lidarPIDOutput = dummyDriveToLidarOutput.get();
+		double driveStraightOutput = dummyDriveStraightOutput.get();
+
+//		System.out.println("|DriveTrain.driveTo| Encoder Output: " + encoderOutput);
+
+		double leftOutput = lidarPIDOutput + driveStraightOutput;
+		double rightOutput = lidarPIDOutput - driveStraightOutput;
+
+		setLeftRight(leftOutput, rightOutput);
+
+		// done?
+		if (driveToLidarPID.onTarget() && Math.abs(Hardware.lidar.getRate()) < lowEncRate) {
+			setLeftRight(0.0, 0.0);
+			driveToLidarPID.disable();
 			driveStraightPID.disable();
 			return true;
 		}
@@ -385,14 +430,14 @@ public class DriveTrain implements Loggable {
 
 	public boolean rotateTo(double angle) { // may need to check for moving to
 											// fast when pid is on target
-		if (ahrsPID == null)
+		if (rotateToPID == null)
 			throw new IllegalStateException("can't rotateTo when ahrs is null");
 
-		if (!ahrsPID.isEnabled() && Math.abs(Hardware.ahrs.getYaw() - angle) < 15) {
-			ahrsPID.setPID(ConstantsIO.kP_RotateSmallAngle, ConstantsIO.kI_RotateSmallAngle,
+		if (!rotateToPID.isEnabled() && Math.abs(Hardware.ahrs.getYaw() - angle) < 15) {
+			rotateToPID.setPID(ConstantsIO.kP_RotateSmallAngle, ConstantsIO.kI_RotateSmallAngle,
 					ConstantsIO.kD_RotateSmallAngle);
-		} else if (!ahrsPID.isEnabled()) {
-			ahrsPID.setPID(ConstantsIO.kP_RotateLargeAngle, ConstantsIO.kI_RotateLargeAngle,
+		} else if (!rotateToPID.isEnabled()) {
+			rotateToPID.setPID(ConstantsIO.kP_RotateLargeAngle, ConstantsIO.kI_RotateLargeAngle,
 					ConstantsIO.kD_RotateLargeAngle);
 
 		}
@@ -400,20 +445,20 @@ public class DriveTrain implements Loggable {
 		// Check to see if we're on target
 
 		System.out.println(
-				"|DriveTrain.rotateTo| Angle Error: " + ahrsPID.getError() + "\t Output: " + dummyAhrsOutput.get());
+				"|DriveTrain.rotateTo| Angle Error: " + rotateToPID.getError() + "\t Output: " + dummyRotateToOutput.get());
 
-		if (ahrsPID.onTarget())
+		if (rotateToPID.onTarget())
 			ahrsOnTargetCounter++;
 		else
 			ahrsOnTargetCounter = 0;
 
 		if (ahrsOnTargetCounter >= MINIMUM_AHRS_ON_TARGET_ITERATIONS) {
 			setLeftRight(0, 0);
-			ahrsPID.disable();
+			rotateToPID.disable();
 			return true;
 		}
 
-		double ahrsOutput = dummyAhrsOutput.get();
+		double ahrsOutput = dummyRotateToOutput.get();
 
 		// left and right are opposite on porpoise
 		setLeftRight(ahrsOutput, -ahrsOutput);
