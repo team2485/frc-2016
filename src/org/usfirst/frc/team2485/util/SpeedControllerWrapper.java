@@ -85,9 +85,13 @@ public class SpeedControllerWrapper implements SpeedController {
 			s.set(speed);
 	}
 	
-	public void emergencyStop() {
+	/**
+	 * ignores all ramping and may stop very quickly, don't use lightly
+	 */
+	public void emergencyStop() { 
 		for (SpeedController s : speedControllerList) 
 			s.set(0);
+		lastPWM = 0;
 	}
 	
 	@Override
@@ -164,7 +168,10 @@ public class SpeedControllerWrapper implements SpeedController {
 			
 			double maxAbsPWM = currentMonitor.getMaxAbsolutePWMValue();
 			
-			if (desiredPWM > maxAbsPWM) {
+			if (maxAbsPWM == CurrentMonitorGroup.EMERGENCY_STOP_FLAG) {
+				lastPWM = 0;
+				desiredPWM = 0;
+			} else if (desiredPWM > maxAbsPWM) {
 				desiredPWM = maxAbsPWM;
 			} else if (desiredPWM < -maxAbsPWM) {
 				desiredPWM = -maxAbsPWM;
