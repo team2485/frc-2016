@@ -32,8 +32,7 @@ public class Robot extends IterativeRobot {
 	// rightDriveSC1, rightDriveSC2, rightDriveSC3;
 	// private Encoder driveEncoder;
 
-	private Sequencer autonomousSequencer, driverTeleopSequencer,
-			operatorTeleopSequencer;
+	private Sequencer autonomousSequencer, driverTeleopSequencer, operatorTeleopSequencer;
 
 	private SendableChooser autoChooser;
 
@@ -72,8 +71,7 @@ public class Robot extends IterativeRobot {
 			autoChooser.addObject(curType.toString(), curType);
 		}
 
-		autoChooser.addDefault(AutoType.REACH_AUTO.toString(),
-				AutoType.REACH_AUTO);
+		autoChooser.addDefault(AutoType.REACH_AUTO.toString(), AutoType.REACH_AUTO);
 	}
 
 	public void autonomousInit() {
@@ -89,8 +87,7 @@ public class Robot extends IterativeRobot {
 		// autonomousSequencer = SequencerFactory
 		// .createAuto((AutoType) autoChooser.getSelected());
 
-		autonomousSequencer = SequencerFactory
-				.createAuto(AutoType.MOAT_AUTO);
+		autonomousSequencer = SequencerFactory.createAuto(AutoType.MOAT_AUTO);
 
 	}
 
@@ -116,20 +113,20 @@ public class Robot extends IterativeRobot {
 
 	public void teleopPeriodic() {
 
-		driverTeleopControl();
-
-		operatorTeleopControl();
-
-		if (Hardware.intake.isPIDEnabled()) {
-			System.out.println("Robot: arm PID is enabled");
-		}
-
-		if (driverTeleopSequencer != null && driverTeleopSequencer.run()) {
+		if (driverTeleopSequencer == null) {
+			driverTeleopControl();
+		} else if (driverTeleopSequencer.run()) {
 			driverTeleopSequencer = null;
 		}
 
-		if (operatorTeleopSequencer != null && operatorTeleopSequencer.run()) {
+		if (operatorTeleopSequencer == null) {
+			operatorTeleopControl();
+		} else if (operatorTeleopSequencer.run()) {
 			operatorTeleopSequencer = null;
+		}
+
+		if (Hardware.intake.isPIDEnabled()) {
+			System.out.println("Robot: arm PID is enabled");
 		}
 
 		Logger.getInstance().logAll();
@@ -172,8 +169,7 @@ public class Robot extends IterativeRobot {
 		if (Controllers.getButton(Controllers.XBOX_BTN_A)) {
 			if (!XBOXPressed) {
 				if (driverTeleopSequencer == null) {
-					driverTeleopSequencer = SequencerFactory
-							.getAutoAimSequence();
+					driverTeleopSequencer = SequencerFactory.getAutoAimSequence();
 					XBOXPressed = true;
 				}
 			}
@@ -187,12 +183,10 @@ public class Robot extends IterativeRobot {
 
 	private void operatorTeleopControl() {
 
-		if (Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y,
-				Constants.kMoveIntakeManuallyDeadband) != 0) {
+		if (Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, Constants.kMoveIntakeManuallyDeadband) != 0) {
 
-			Hardware.intake.setManual(-(Controllers.getJoystickAxis(
-					Controllers.JOYSTICK_AXIS_Y,
-					Constants.kMoveIntakeManuallyDeadband)));
+			Hardware.intake.setManual(
+					-(Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, Constants.kMoveIntakeManuallyDeadband)));
 		} else {
 			// if (!Hardware.intake.PIDOn()) {
 			// Hardware.intake.setSetpoint(Hardware.intake.getCurrentPosition());
@@ -216,16 +210,14 @@ public class Robot extends IterativeRobot {
 		} else if (Controllers.getJoystickButton(1)) {// trigger
 			if (!joystickPressed) {
 				if (operatorTeleopSequencer == null) {
-					operatorTeleopSequencer = SequencerFactory
-							.getShootHighGoalSequence();
+					operatorTeleopSequencer = SequencerFactory.getShootHighGoalSequence();
 					joystickPressed = true;
 				}
 			}
 		} else if (Controllers.getJoystickButton(2)) { // side trigger
 			if (!joystickPressed) {
 				if (operatorTeleopSequencer == null) {
-					operatorTeleopSequencer = SequencerFactory
-							.getShootLowGoalSequence();
+					operatorTeleopSequencer = SequencerFactory.getShootLowGoalSequence();
 					joystickPressed = true;
 				}
 			}
@@ -273,16 +265,13 @@ public class Robot extends IterativeRobot {
 	public void updateDashboard() {
 
 		SmartDashboard.putNumber("Current Speed", Hardware.shooter.getRate());
-		SmartDashboard.putString("RPM", (int)Hardware.shooter.getRate() + ","
-				+ (int)Hardware.shooter.getSetpoint());
+		SmartDashboard.putString("RPM", (int) Hardware.shooter.getRate() + "," + (int) Hardware.shooter.getSetpoint());
 
 		SmartDashboard.putNumber("Current 	Error", Hardware.shooter.getError());
 
-		SmartDashboard
-				.putNumber("Throttle", Hardware.shooter.getCurrentPower());
+		SmartDashboard.putNumber("Throttle", Hardware.shooter.getCurrentPower());
 
-		SmartDashboard.putNumber("Total Current",
-				Hardware.battery.getTotalCurrent());
+		SmartDashboard.putNumber("Total Current", Hardware.battery.getTotalCurrent());
 		// SmartDashboard.putNumber("Drive Encoder Speed",
 		// Hardware.leftDriveEnc.getRate());
 
