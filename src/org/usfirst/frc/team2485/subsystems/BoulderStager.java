@@ -40,22 +40,24 @@ public class BoulderStager implements Loggable {
 	}
 
 	public void setPosition(Position position) {
+		
+		System.out.println("BoulderStager: SetPos: " + position.toString());
 
 		this.position = position;
 
 		switch (position) {
 
 		case INTAKE:
-			solenoid1.set(true);
+			solenoid1.set(false); // used to be true
 			solenoid2.set(true);
 			break;
 
-		case NEUTRAL:
+		case SHOOTING:
 			solenoid1.set(true);
 			solenoid2.set(false);
 			break;
 
-		case SHOOTING:
+		case NEUTRAL:
 			solenoid1.set(false);
 			solenoid2.set(false);
 			break;

@@ -16,31 +16,34 @@ import org.usfirst.frc.team2485.util.GRIPReciever.GRIPTargetNotFoundException;
 
 public class AlignToTower implements SequencedItem {
 
-	private double timeout = 5;
+	private double timeout = 4;
 	private boolean finished = false;
 	private boolean firstTime = true;
 
-	//the angle, according to the AHRS, that we should be pointing towards
-	//to be on-target
+	// the angle, according to the AHRS, that we should be pointing towards
+	// to be on-target
 	private double angleTarget;
 
 	private Timer refreshTimer;
-	
+
 	private boolean curTurnDone = true;
 
 	public AlignToTower() {
-		
+
 	}
 
 	@Override
 	public void run() {
 
-		if(firstTime) {
+		if (firstTime) {
 			angleTarget = Hardware.ahrs.getYaw();
 			firstTime = false;
 		}
 
 		if (curTurnDone) {
+			
+			System.out.println("AlignToTower: Current Turn done, recalulating");
+			
 			if (refreshTimer == null) {
 				refreshTimer = new Timer();
 				refreshTimer.schedule(new TimerTask() {
@@ -48,15 +51,16 @@ public class AlignToTower implements SequencedItem {
 					@Override
 					public void run() {
 						try {
-							
+
 							double angleOffset = GRIPReciever.getAngle();
-							
+
 							angleTarget = Hardware.ahrs.getYaw() + angleOffset;
 							refreshTimer = null;
 							curTurnDone = false;
 
 							if (Math.abs(angleOffset) <= 1) {
-								//GRIPReciever.resetCameraSettings();
+								System.out
+										.println("AlignToTower: New angle is less than 1");
 								finished = true;
 							}
 
@@ -68,13 +72,16 @@ public class AlignToTower implements SequencedItem {
 			}
 		} else {
 			curTurnDone = Hardware.driveTrain.rotateTo(angleTarget);
+
+			System.out.println("AlignToTower: Target Angle: " + angleTarget
+					+ " Current Angle: " + Hardware.ahrs.getYaw());
 		}
 	}
 
 	@Override
 	public double duration() {
 
-		if(finished)
+		if (finished)
 			System.out.println("Finished is true in AlignToTower");
 		return finished ? 0 : timeout;
 	}

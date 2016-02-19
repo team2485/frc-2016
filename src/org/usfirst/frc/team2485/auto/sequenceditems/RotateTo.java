@@ -16,7 +16,7 @@ public class RotateTo implements SequencedItem {
 	}
 	
 	public RotateTo(double angle) {
-		this(angle, 4); 
+		this(angle, 2); 
 	}
 	
 	@Override
