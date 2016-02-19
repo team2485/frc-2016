@@ -13,13 +13,18 @@ kP_DriveTo = 0.03
 kI_DriveTo = 0.0
 kD_DriveTo = 0.0
 
-kP_Rotate = 0.025
-kI_Rotate = 0.0
-kD_Rotate = 0.0
+kP_RotateLargeAngle = 0.04
+kI_RotateLargeAngle = 0.0
+kD_RotateLargeAngle = 0.01
 
-kP_IntakeArm = 0.01
+kP_RotateSmallAngle = 0.06
+kI_RotateSmallAngle = 0.0
+kD_RotateSmallAngle = 0.01
+
+kP_IntakeArm = 7.0
 kI_IntakeArm = 0.00
-kD_IntakeArm = 0.00
+kD_IntakeArm = 0.00'
+
 
 # Voltage Ramping
 kDriveVoltageRamp = 0.05
