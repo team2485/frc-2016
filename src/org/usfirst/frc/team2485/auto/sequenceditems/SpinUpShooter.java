@@ -16,7 +16,7 @@ public class SpinUpShooter implements SequencedItem {
 	 * Do not use right now	
 	 */
 	public SpinUpShooter() {
-		this(0.0 /*lidar magic*/);
+		Hardware.shooter.setSpeedOffLidar();
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package org.usfirst.frc.team2485.auto;
 
+import org.usfirst.frc.team2485.auto.SequencerFactory.AutoType;
 import org.usfirst.frc.team2485.auto.sequenceditems.AlignToTower;
 import org.usfirst.frc.team2485.auto.sequenceditems.DisableDriveToPID;
 import org.usfirst.frc.team2485.auto.sequenceditems.DisableRotateToPID;
@@ -25,7 +26,7 @@ public class SequencerFactory {
 	}
 
 	// Auto
-	public static Sequencer createAuto(AutoType autoType) {
+	public static Sequencer createAuto(AutoType autoType, int defenseLocation) {
 
 		// @formatter:off
 
@@ -52,16 +53,40 @@ public class SequencerFactory {
 					new AlignToTower(),
 					new DisableRotateToPID(), 
 					new ShootHighGoal(5)});
-
+	
 			
 		case RAMPARTS_AUTO:
 		case ROUGH_TERRAIN_AUTO:
 		case MOAT_AUTO:
 		case ROCK_WALL_AUTO:
+			
+			double degreesToTurn = 0.0;
+			
+			switch(defenseLocation) {
+			
+			case 2:
+				degreesToTurn = 20;
+				break;
+			case 3:
+				degreesToTurn = 10;
+				break;
+			case 4:
+				degreesToTurn = -5;
+				break;
+			case 5:
+				degreesToTurn = -15;
+			}
+			
 			return new Sequencer(new SequencedItem[] {
-					new SequencedMultipleItem(new DriveTo(200, 6, 0.55),
+					new SequencedMultipleItem(new DriveTo(100, 6, 0.55),
 							/*new SetIntakeArm(Intake.INTAKE_POSITION, 2),*/
 							new SetHoodPosition(HoodPosition.HIGH_ANGLE)),
+					new DisableDriveToPID(),
+					new ZeroDriveEncoder(),
+					new RotateTo(degreesToTurn),
+					new DisableRotateToPID(),
+					new ZeroDriveEncoder(),
+					new DriveTo(100), //Approaches batter, may be removed when long shot works
 					new DisableDriveToPID(),
 					new ZeroDriveEncoder(),
 					new SpinUpShooter(Shooter.RPM_BATTER_SHOT),

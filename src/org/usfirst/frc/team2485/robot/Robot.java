@@ -7,6 +7,7 @@ import org.usfirst.frc.team2485.auto.SequencerFactory.AutoType;
 import org.usfirst.frc.team2485.auto.sequenceditems.SetHoodPosition;
 import org.usfirst.frc.team2485.auto.sequenceditems.SetStager;
 import org.usfirst.frc.team2485.subsystems.BoulderStager.Position;
+import org.usfirst.frc.team2485.subsystems.Intake;
 import org.usfirst.frc.team2485.subsystems.Shooter;
 import org.usfirst.frc.team2485.subsystems.Shooter.HoodPosition;
 import org.usfirst.frc.team2485.util.ConstantsIO;
@@ -34,7 +35,7 @@ public class Robot extends IterativeRobot {
 
 	private Sequencer autonomousSequencer, driverTeleopSequencer, operatorTeleopSequencer;
 
-	private SendableChooser autoChooser;
+	private SendableChooser autoChooser, autoPosChooser;
 
 	public void robotInit() {
 
@@ -72,6 +73,16 @@ public class Robot extends IterativeRobot {
 		}
 
 		autoChooser.addDefault(AutoType.REACH_AUTO.toString(), AutoType.REACH_AUTO);
+
+		autoPosChooser = new SendableChooser();
+
+		for (int i = 1; i <= 5; i++) {
+			autoPosChooser.addDefault("Position: " + i, new Integer(i));
+		}
+
+		SmartDashboard.putData("Auto Defense Chooser", autoChooser);
+
+		SmartDashboard.putData("Auto Position Chooser", autoPosChooser);
 	}
 
 	public void autonomousInit() {
@@ -84,10 +95,8 @@ public class Robot extends IterativeRobot {
 		Hardware.ahrs.zeroYaw();
 		System.out.println("Robot - ahrs reading: " + Hardware.ahrs.getYaw());
 
-		// autonomousSequencer = SequencerFactory
-		// .createAuto((AutoType) autoChooser.getSelected());
-
-		autonomousSequencer = SequencerFactory.createAuto(AutoType.MOAT_AUTO);
+		autonomousSequencer = SequencerFactory.createAuto((AutoType) autoChooser.getSelected(),
+				(Integer) autoPosChooser.getSelected());
 
 	}
 
@@ -145,11 +154,10 @@ public class Robot extends IterativeRobot {
 		double inputX = Controllers.getAxis(Controllers.XBOX_AXIS_RX, 0.2f);
 		double inputY = -Controllers.getAxis(Controllers.XBOX_AXIS_LY, 0.2f);
 
-		// if (Math.abs(inputX) > 0.01 || Math.abs(inputY) > 0.01) {
-		// System.out.println("Robot: Drivercontrol: X: " + inputX + " Y: "
-		// + inputY);
-		// Hardware.driveTrain.warlordDrive(inputY, inputX);
-		// }
+		if (Math.abs(inputX) > 0.01 || Math.abs(inputY) > 0.01) {
+			System.out.println("Robot: Drivercontrol: X: " + inputX + " Y: " + inputY);
+			Hardware.driveTrain.warlordDrive(inputY, inputX);
+		}
 
 		// Quick turn
 		if (Controllers.getButton(Controllers.XBOX_BTN_RBUMP)) {
@@ -158,9 +166,9 @@ public class Robot extends IterativeRobot {
 			Hardware.driveTrain.setQuickTurn(false);
 		}
 
-		if (Controllers.getButton(Controllers.XBOX_BTN_LBUMP)) {
+		if (Controllers.getAxis(Controllers.XBOX_AXIS_RTRIGGER) > 0.4) {
 			Hardware.driveTrain.setHighSpeed();
-		} else if (Controllers.getAxis(Controllers.XBOX_AXIS_LTRIGGER) > 0.5) {
+		} else if (Controllers.getAxis(Controllers.XBOX_AXIS_LTRIGGER) > 0.4) {
 			Hardware.driveTrain.setLowSpeed();
 		} else {
 			Hardware.driveTrain.setNormalSpeed();
@@ -172,6 +180,11 @@ public class Robot extends IterativeRobot {
 					driverTeleopSequencer = SequencerFactory.getAutoAimSequence();
 					XBOXPressed = true;
 				}
+			}
+		} else if (Controllers.getButton(Controllers.XBOX_BTN_X)) {
+			if (!XBOXPressed) {
+				Hardware.intake.setSetpoint(Intake.INTAKE_POSITION, true);
+				XBOXPressed = true;
 			}
 		} else {
 			XBOXPressed = false;
@@ -188,17 +201,37 @@ public class Robot extends IterativeRobot {
 			Hardware.intake.setManual(
 					-(Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, Constants.kMoveIntakeManuallyDeadband)));
 		} else {
-			// if (!Hardware.intake.PIDOn()) {
-			// Hardware.intake.setSetpoint(Hardware.intake.getCurrentPosition());
-			// }
+			if (!Hardware.intake.PIDOn()) {
+				Hardware.intake.setSetpoint(Hardware.intake.getCurrentPosition());
+			}
 		}
 
-		if (Controllers.getJoystickButton(4)) {
+		if (Controllers.getJoystickButton(1)) {// trigger
+			if (Hardware.shooter.isReadyToFire()) {
+				Hardware.boulderStager.setPosition(Position.SHOOTING);
+			}
+			joystickPressed = true;
+		} else if (Controllers.getJoystickButton(2)) { // side trigger
+			if (!joystickPressed) {
+				operatorTeleopSequencer = SequencerFactory.getShootLowGoalSequence();
+				joystickPressed = true;
+			}
+		} else if (Controllers.getJoystickButton(3)) {
+			if (!joystickPressed) {
+				// Set low angle for Lidar shot
+				Hardware.shooter.setHoodPosition(HoodPosition.LOW_ANGLE);
+				Hardware.shooter.setSpeedOffLidar();
+			}
+		} else if (Controllers.getJoystickButton(4)) {
 			if (!joystickPressed) {
 				// Set high angle for batter shot
 				Hardware.shooter.setHoodPosition(HoodPosition.HIGH_ANGLE);
 				Hardware.shooter.setTargetSpeed(Shooter.RPM_BATTER_SHOT);
 				joystickPressed = true;
+			}
+		} else if (Controllers.getJoystickButton(5)) {
+			if (!joystickPressed) {
+				Hardware.shooter.disable();
 			}
 		} else if (Controllers.getJoystickButton(6)) {
 			if (!joystickPressed) {
@@ -207,18 +240,9 @@ public class Robot extends IterativeRobot {
 				Hardware.shooter.setTargetSpeed(Shooter.RPM_LONG_SHOT);
 				joystickPressed = true;
 			}
-		} else if (Controllers.getJoystickButton(1)) {// trigger
-			if (!joystickPressed) {
-				if (operatorTeleopSequencer == null) {
-					operatorTeleopSequencer = SequencerFactory.getShootHighGoalSequence();
-					joystickPressed = true;
-				}
-			}
-		} else if (Controllers.getJoystickButton(2)) { // side trigger
-			if (!joystickPressed) {
-				if (operatorTeleopSequencer == null) {
-					operatorTeleopSequencer = SequencerFactory.getShootLowGoalSequence();
-					joystickPressed = true;
+			if (Controllers.getJoystickButton(7)) {
+				if (!joystickPressed) {
+					Hardware.intake.stopRollers();
 				}
 			}
 		} else {
