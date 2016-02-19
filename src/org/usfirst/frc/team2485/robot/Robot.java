@@ -259,7 +259,7 @@ public class Robot extends IterativeRobot {
 
 	public void testPeriodic() {
 
-		seq.run();
+		System.out.println("Robot: IntakePos: " + Hardware.intake.getCurrentPosition());
 
 	}
 
