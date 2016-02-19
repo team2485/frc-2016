@@ -27,8 +27,8 @@ public class DriveToLidar implements SequencedItem {
 		
 	}
 	
-	public DriveToLidar(double inchesToWall, double timeout) {
-		this(inchesToWall, timeout, 1.0);
+	public DriveToLidar(double inchesToObject, double timeout) {
+		this(inchesToObject, timeout, 1.0);
 	}
 	
 	public DriveToLidar(double inchesToWall) {
