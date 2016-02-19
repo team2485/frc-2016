@@ -76,7 +76,7 @@ public class Robot extends IterativeRobot {
 
 		autoPosChooser = new SendableChooser();
 
-		for (int i = 1; i <= 5; i++) {
+		for (int i = 2; i <= 5; i++) {
 			autoPosChooser.addDefault("Position: " + i, new Integer(i));
 		}
 
