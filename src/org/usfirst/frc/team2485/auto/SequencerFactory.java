@@ -70,9 +70,9 @@ public class SequencerFactory {
 			switch(defenseLocation) {
 			
 			case 2:
-				distPreTurn = 236;
-				degreesToTurn = 20;
-				distPostTurn = 55;
+				distPreTurn = 234;
+				degreesToTurn = 55;
+				distPostTurn = 20;
 				break;
 			case 3:
 				degreesToTurn = 10;
