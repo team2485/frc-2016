@@ -57,7 +57,7 @@ public class SequencerFactory {
 		switch (autoType) {
 		case REACH_AUTO:
 			return new Sequencer(new SequencedItem[] { 
-					new DriveTo(50)
+					new DriveTo(30)
 			});
 
 		case LOW_BAR_AUTO:
@@ -65,7 +65,7 @@ public class SequencerFactory {
 					new SequencedMultipleItem(
 							new DriveTo(200, 5, 0.5),
 							new SetHoodPosition(HoodPosition.STOWED),
-							new SetIntakeArm(Intake.INTAKE_POSITION, 2)),
+							new SetIntakeArm(Intake.INTAKE_POSITION)),
 					new DisableDriveToPID(),
 					new SequencedMultipleItem(
 							new RotateTo(55),
@@ -90,7 +90,7 @@ public class SequencerFactory {
 			return new Sequencer(new SequencedItem[] {
 					new SequencedMultipleItem(
 							new DriveTo(distPreTurn, 4, 0.55),
-							new SetIntakeArm(Intake.LOW_NO_INTAKE_POSITION, 2),
+							new SetIntakeArm(Intake.PORTCULLIS_POSITION),
 							new SetHoodPosition(HoodPosition.HIGH_ANGLE)),
 					new DisableDriveToPID(),
 					new RotateTo(degreesToTurn),
@@ -98,78 +98,74 @@ public class SequencerFactory {
 					new ZeroDriveEncoder(),
 					new DriveTo(distPostTurn), //Approaches batter, may be removed when long shot works
 					new DisableDriveToPID(),
-					new ZeroDriveEncoder(),
 					new SequencedMultipleItem(
 							new SpinUpShooter(Shooter.RPM_BATTER_SHOT),
 							new AlignToTower()),
 					new DisableRotateToPID(),
-					new ZeroDriveEncoder(),
 					new ShootHighGoal(5)
 			});
 
 		case PORTCULLIS_AUTO:
+			
+			// Not zeroing drive encoders until after distPreTurn
+			
 			return new Sequencer(new SequencedItem[] {
+					new SetIntakeArm(Intake.LOW_NO_INTAKE_POSITION),
 					new DriveTo(30),
 					new DisableDriveToPID(),
-					new ZeroDriveEncoder(),
-					new SetIntakeArm(Intake.LOW_NO_INTAKE_POSITION, 2),
 					new SequencedMultipleItem(
-							new DriveTo(10, 2, 0.4),
-							new DisableDriveToPID(),
-							new ZeroDriveEncoder(),
-							new SetIntakeArm(Intake.FLOOR_POSITION, 1)),
-					new SetIntakeArm(Intake.INTAKE_POSITION, 2),
-					new SequencedMultipleItem(
-							new DriveTo(10, 4, 0.4),
-							new DisableDriveToPID(),
-							new ZeroDriveEncoder(),
-							new SetIntakeArm(Intake.PORTCULLIS_POSITION, 4)),
-					new SequencedMultipleItem(
-							new DriveTo(20, 4, 0.4),
-							new DisableDriveToPID(),
-							new ZeroDriveEncoder(),
-							new SetIntakeArm(Intake.INTAKE_POSITION, 2),
-							new SetHoodPosition(HoodPosition.HIGH_ANGLE)),
-					new SpinUpShooter(Shooter.RPM_BATTER_SHOT),
-					new DriveTo(distPreTurn - 70),
+							new DriveTo(40, 2, 0.4),
+							new SetIntakeArm(Intake.FLOOR_POSITION)),
 					new DisableDriveToPID(),
-					new ZeroDriveEncoder(),
+//					new SetIntakeArm(Intake.INTAKE_POSITION),
+					new SequencedMultipleItem(
+							new DriveTo(50, 2, 0.4),
+							new SetIntakeArm(Intake.PORTCULLIS_POSITION)),
+					new DisableDriveToPID(),
+					new SequencedMultipleItem(
+							new DriveTo(70, 2, 0.4),
+							new SetIntakeArm(Intake.INTAKE_POSITION)),
+					new SequencedMultipleItem(
+							new SpinUpShooter(Shooter.RPM_BATTER_SHOT),
+							new SetHoodPosition(HoodPosition.HIGH_ANGLE)),
+					new DriveTo(distPreTurn), //avoid zeroing encoders such that distPreTurn remains absolute and correct
+					new DisableDriveToPID(),
 					new RotateTo(degreesToTurn),
 					new DisableRotateToPID(),
 					new ZeroDriveEncoder(),
 					new DriveTo(distPostTurn),
 					new DisableDriveToPID(),
-					new ZeroDriveEncoder(),
 					new AlignToTower(), 
 					new DisableRotateToPID(),
-					new ZeroDriveEncoder(),
 					new ShootHighGoal(5) 
 			});
 
 		case CHEVAL_DE_FRISE:
+			
+			// Not zeroing drive encoders until after distPreTurn
+			
 			return new Sequencer(new SequencedItem[] {
 					new DriveTo(30),
-					new SetIntakeArm(Intake.FLOOR_POSITION, 2),
-					new DriveTo(5),
+					new SetIntakeArm(Intake.FLOOR_POSITION),
+					new DisableDriveToPID(),
+					new DriveTo(40, 1),
+					new DisableDriveToPID(),
 					new SequencedMultipleItem(
-							new DriveTo(50, 4, 0.5),
-							new SetIntakeArm(Intake.FULL_UP_POSITION, 2)),
+							new DriveTo(90, 4, 0.5),
+							new SetIntakeArm(Intake.FULL_UP_POSITION)),
 					new SequencedMultipleItem(
-							new SetIntakeArm(Intake.INTAKE_POSITION, 2), 
+							new SetIntakeArm(Intake.INTAKE_POSITION), 
 							new SetHoodPosition(HoodPosition.HIGH_ANGLE)),
 					new SpinUpShooter(Shooter.RPM_BATTER_SHOT),
-					new DriveTo(distPreTurn - 80),
+					new DriveTo(distPreTurn),
 					new DisableDriveToPID(),
-					new ZeroDriveEncoder(),
 					new RotateTo(degreesToTurn),
 					new DisableRotateToPID(),
 					new ZeroDriveEncoder(),
 					new DriveTo(distPostTurn),
 					new DisableDriveToPID(),
-					new ZeroDriveEncoder(),
 					new AlignToTower(), 
 					new DisableRotateToPID(),
-					new ZeroDriveEncoder(),
 					new ShootHighGoal(5) 
 			});
 		}
@@ -187,7 +183,7 @@ public class SequencerFactory {
 	public static Sequencer getShootLowGoalSequence() {
 		return new Sequencer(
 				new SequencedItem[] {
-				new SetIntakeArm(Intake.INTAKE_POSITION, 2),
+				new SetIntakeArm(Intake.INTAKE_POSITION),
 				new ShootLowGoal(), 
 				new SetRollers(0, 0),
 				new SetStager(Position.NEUTRAL) 
