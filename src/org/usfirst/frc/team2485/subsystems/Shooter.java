@@ -2,6 +2,8 @@ package org.usfirst.frc.team2485.subsystems;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.usfirst.frc.team2485.robot.Hardware;
 import org.usfirst.frc.team2485.util.ConstantsIO;
@@ -24,7 +26,7 @@ public class Shooter implements Loggable {
 	public static enum HoodPosition {
 		LOW_ANGLE, HIGH_ANGLE, STOWED
 	};
-	
+
 	public static final double RPM_LONG_SHOT = 5500, RPM_BATTER_SHOT = 4500;
 
 	private CANTalon rightShooterMotor, leftShooterMotor;
@@ -61,22 +63,27 @@ public class Shooter implements Loggable {
 
 	}
 
-	public void setHoodPosition(HoodPosition newHoodPosition) {
+	public void setHoodPosition(final HoodPosition newHoodPosition) {
 
 		solenoid1.set(newHoodPosition == HoodPosition.STOWED);
 
 		if ((newHoodPosition == HoodPosition.STOWED && currHoodPosition == HoodPosition.LOW_ANGLE)
 				&& (currHoodPosition == HoodPosition.STOWED && newHoodPosition == HoodPosition.LOW_ANGLE)) {
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-			}
+			new Timer().schedule(new TimerTask() {
+
+				@Override
+				public void run() {
+					solenoid2.set(newHoodPosition != HoodPosition.LOW_ANGLE);
+
+					currHoodPosition = newHoodPosition;
+				}
+			}, 500);
+		} else {
+
+			solenoid2.set(newHoodPosition != HoodPosition.LOW_ANGLE);
+
+			currHoodPosition = newHoodPosition;
 		}
-
-		solenoid2.set(newHoodPosition != HoodPosition.LOW_ANGLE);
-
-		currHoodPosition = newHoodPosition;
-
 	}
 
 	public void setTargetSpeed(double setpoint) {
@@ -85,12 +92,13 @@ public class Shooter implements Loggable {
 		rightShooterMotor.set(setpoint);
 
 	}
-	
-	/** Set shooter speed based distance read of Lidar <br>
-	 *  Currently not working
+
+	/**
+	 * Set shooter speed based distance read of Lidar <br>
+	 * Currently not working
 	 */
 	public void setSpeedOffLidar() {
-		setTargetSpeed(0.0 /*Lidar magic*/);
+		setTargetSpeed(0.0 /* Lidar magic */);
 	}
 
 	public double getSetpoint() {
