@@ -13,8 +13,10 @@ import org.usfirst.frc.team2485.subsystems.Shooter.HoodPosition;
 import org.usfirst.frc.team2485.util.ConstantsIO;
 import org.usfirst.frc.team2485.util.Controllers;
 import org.usfirst.frc.team2485.util.CurrentMonitor;
+import org.usfirst.frc.team2485.util.LidarWrapper;
 import org.usfirst.frc.team2485.util.Logger;
 
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -34,7 +36,8 @@ public class Robot extends IterativeRobot {
 	// rightDriveSC1, rightDriveSC2, rightDriveSC3;
 	// private Encoder driveEncoder;
 
-	private Sequencer autonomousSequencer, driverTeleopSequencer, operatorTeleopSequencer;
+	private Sequencer autonomousSequencer, driverTeleopSequencer,
+			operatorTeleopSequencer;
 
 	private SendableChooser autoChooser, autoPosChooser;
 
@@ -60,8 +63,8 @@ public class Robot extends IterativeRobot {
 		Logger.getInstance().addLoggable(Hardware.driveTrain);
 		Logger.getInstance().addLoggable(Hardware.shooter);
 
-		CurrentMonitor.getInstance(); //forces to construct
-		
+		CurrentMonitor.getInstance(); // forces to construct
+
 		initAutoChooser();
 
 		System.out.println("initialized");
@@ -75,7 +78,8 @@ public class Robot extends IterativeRobot {
 			autoChooser.addObject(curType.toString(), curType);
 		}
 
-		autoChooser.addDefault(AutoType.REACH_AUTO.toString(), AutoType.REACH_AUTO);
+		autoChooser.addDefault(AutoType.REACH_AUTO.toString(),
+				AutoType.REACH_AUTO);
 
 		autoPosChooser = new SendableChooser();
 
@@ -98,7 +102,8 @@ public class Robot extends IterativeRobot {
 		Hardware.ahrs.zeroYaw();
 		System.out.println("Robot - ahrs reading: " + Hardware.ahrs.getYaw());
 
-		autonomousSequencer = SequencerFactory.createAuto((AutoType) autoChooser.getSelected(),
+		autonomousSequencer = SequencerFactory.createAuto(
+				(AutoType) autoChooser.getSelected(),
 				(Integer) autoPosChooser.getSelected());
 
 	}
@@ -146,7 +151,7 @@ public class Robot extends IterativeRobot {
 		updateAllPeriodic();
 
 		updateDashboard();
-		
+
 	}
 
 	private boolean XBOXPressed = false;
@@ -161,7 +166,8 @@ public class Robot extends IterativeRobot {
 		double inputY = -Controllers.getAxis(Controllers.XBOX_AXIS_LY, 0.2f);
 
 		if (Math.abs(inputX) > 0.01 || Math.abs(inputY) > 0.01) {
-			System.out.println("Robot: Drivercontrol: X: " + inputX + " Y: " + inputY);
+			System.out.println("Robot: Drivercontrol: X: " + inputX + " Y: "
+					+ inputY);
 			Hardware.driveTrain.warlordDrive(inputY, inputX);
 		}
 
@@ -183,13 +189,15 @@ public class Robot extends IterativeRobot {
 		if (Controllers.getButton(Controllers.XBOX_BTN_A)) {
 			if (!XBOXPressed) {
 				if (driverTeleopSequencer == null) {
-					driverTeleopSequencer = SequencerFactory.getAutoAimSequence();
+					driverTeleopSequencer = SequencerFactory
+							.getAutoAimSequence();
 					XBOXPressed = true;
 				}
 			}
 		} else if (Controllers.getButton(Controllers.XBOX_BTN_X)) {
 			if (!XBOXPressed) {
 				Hardware.intake.setSetpoint(Intake.INTAKE_POSITION, true);
+				System.out.println("Robot: X was in fact pressed");
 				XBOXPressed = true;
 			}
 		} else {
@@ -202,14 +210,18 @@ public class Robot extends IterativeRobot {
 
 	private void operatorTeleopControl() {
 
-		if (Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, Constants.kMoveIntakeManuallyDeadband) != 0) {
+		if (Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y,
+				Constants.kMoveIntakeManuallyDeadband) != 0) {
 
-			Hardware.intake.setManual(
-					-(Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, Constants.kMoveIntakeManuallyDeadband)));
+			Hardware.intake.setManual(Controllers.getJoystickAxis(
+					Controllers.JOYSTICK_AXIS_Y,
+					Constants.kMoveIntakeManuallyDeadband));
+
 		} else {
-			if (!Hardware.intake.PIDOn()) {
-				Hardware.intake.setSetpoint(Hardware.intake.getCurrentPosition());
-			}
+			// if (!Hardware.intake.isPIDEnabled()) {
+			// Hardware.intake.setSetpoint(Hardware.intake.getCurrentPosition());
+			// }
+			Hardware.intake.setManual(0);
 		}
 
 		if (Controllers.getJoystickButton(1)) {// trigger
@@ -219,7 +231,8 @@ public class Robot extends IterativeRobot {
 			joystickPressed = true;
 		} else if (Controllers.getJoystickButton(2)) { // side trigger
 			if (!joystickPressed) {
-				operatorTeleopSequencer = SequencerFactory.getShootLowGoalSequence();
+				operatorTeleopSequencer = SequencerFactory
+						.getShootLowGoalSequence();
 				joystickPressed = true;
 			}
 		} else if (Controllers.getJoystickButton(3)) {
@@ -251,7 +264,34 @@ public class Robot extends IterativeRobot {
 					Hardware.intake.stopRollers();
 				}
 			}
-		} else {
+		}
+		// else if (Controllers.getJoystickButton(8)) {
+		// if (!joystickPressed) {
+		// Hardware.intake.setSetpoint(Intake.FLOOR_POSITION);
+		// joystickPressed = true;
+		// }
+		// } else if (Controllers.getJoystickButton(9)) {
+		// if (!joystickPressed) {
+		// Hardware.intake.setSetpoint(Intake.LOW_NO_INTAKE_POSITION);
+		// joystickPressed = true;
+		// }
+		// } else if (Controllers.getJoystickButton(10)) {
+		// if (!joystickPressed) {
+		// Hardware.intake.setSetpoint(Intake.INTAKE_POSITION);
+		// joystickPressed = true;
+		// }
+		// } else if (Controllers.getJoystickButton(11)) {
+		// if (!joystickPressed) {
+		// Hardware.intake.setSetpoint(Intake.PORTCULLIS_POSITION);
+		// joystickPressed = true;
+		// }
+		// } else if (Controllers.getJoystickButton(12)) {
+		// if (!joystickPressed) {
+		// Hardware.intake.setSetpoint(Intake.FULL_UP_POSITION);
+		// joystickPressed = true;
+		// }
+		// }
+		else {
 			joystickPressed = false;
 		} // int main = void();
 
@@ -267,52 +307,56 @@ public class Robot extends IterativeRobot {
 		updateDashboard();
 	}
 
-	Sequencer seq;
-
 	public void testInit() {
 
 		resetAndDisableSystems();
 		ConstantsIO.init();
+		Hardware.init();
 
-		seq = new Sequencer(new SequencedItem[] { new SetStager(Position.INTAKE) });
 	}
 
 	public void testPeriodic() {
 
-		System.out.println("Robot: IntakePos: " + Hardware.intake.getCurrentPosition());
-		updateAllPeriodic();
-		
+		System.out.println("Robot: Lidar distance: "
+				+ Hardware.lidar.getDistance() + " Vel: "
+				+ Hardware.lidar.getRate());
+
 	}
 
 	private void resetAndDisableSystems() {
 		Hardware.driveTrain.disableAhrsPID();
 		Hardware.driveTrain.driveStraightPID.disable();
+		Hardware.driveTrain.setLeftRight(0, 0);
 		Hardware.driveTrain.resetEncoder();
+		Hardware.intake.setManual(0);
 		Hardware.ahrs.reset();
 	}
 
 	public void updateDashboard() {
 
 		SmartDashboard.putNumber("Current Speed", Hardware.shooter.getRate());
-		SmartDashboard.putString("RPM", (int) Hardware.shooter.getRate() + "," + (int) Hardware.shooter.getSetpoint());
+		SmartDashboard.putString("RPM", (int) Hardware.shooter.getRate() + ","
+				+ (int) Hardware.shooter.getSetpoint());
 
 		SmartDashboard.putNumber("Current 	Error", Hardware.shooter.getError());
 
-		SmartDashboard.putNumber("Throttle", Hardware.shooter.getCurrentPower());
+		SmartDashboard
+				.putNumber("Throttle", Hardware.shooter.getCurrentPower());
 
-		SmartDashboard.putNumber("Total Current", Hardware.battery.getTotalCurrent());
+		SmartDashboard.putNumber("Total Current",
+				Hardware.battery.getTotalCurrent());
 		// SmartDashboard.putNumber("Drive Encoder Speed",
 		// Hardware.leftDriveEnc.getRate());
 
 	}
-	
+
 	/**
 	 * Run in teleop, auto and test periodic
 	 */
 	public void updateAllPeriodic() {
-		
+
 		Logger.getInstance().logAll();
 		CurrentMonitor.getInstance().monitorCurrent();
-		
+
 	}
 }

@@ -35,7 +35,7 @@ public class BoulderStager implements Loggable {
 
 		setPosition(Position.NEUTRAL);
 
-		new BoulderDetector();  
+//		new BoulderDetector();  
 	}
 
 	public void setPosition(Position position) {
@@ -47,7 +47,7 @@ public class BoulderStager implements Loggable {
 		switch (position) {
 
 		case INTAKE:
-			solenoid1.set(false); // used to be true (money on it)
+			solenoid1.set(false);
 			solenoid2.set(true);
 			break;
 

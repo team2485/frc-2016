@@ -73,7 +73,7 @@ public class Shooter implements Loggable {
 			}
 		}
 
-		solenoid2.set(newHoodPosition == HoodPosition.LOW_ANGLE);
+		solenoid2.set(newHoodPosition != HoodPosition.LOW_ANGLE);
 
 		currHoodPosition = newHoodPosition;
 

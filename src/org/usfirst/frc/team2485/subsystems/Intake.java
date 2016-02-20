@@ -27,8 +27,9 @@ public class Intake implements Loggable {
 
 	public static final double ABSOLUTE_TOLERANCE = .01;
 
-	public static final double FLOOR_POSITION = 0.500, INTAKE_POSITION = 0.597, FULL_UP_POSITION = 0.836,
-			PORTCULLIS_POSITION = 0.651, LOW_NO_INTAKE_POSITION = 0.552;
+	public static final double FLOOR_POSITION = 0.0505167,
+			INTAKE_POSITION = 0.155126, FULL_UP_POSITION = 0.407994,
+			PORTCULLIS_POSITION = 0.237154, LOW_NO_INTAKE_POSITION = 0.129440;
 
 	public Intake() {
 
@@ -39,11 +40,10 @@ public class Intake implements Loggable {
 
 		this.absEncoder = Hardware.intakeAbsEncoder;
 
-		armPID = new PIDController(ConstantsIO.kP_IntakeArm, ConstantsIO.kI_IntakeArm, ConstantsIO.kD_IntakeArm,
-				absEncoder, armSpeedControllerWrapper);
-		armPID.setAbsoluteTolerance(ABSOLUTE_TOLERANCE); // change value of
-															// absolute
-															// tolerance
+		armPID = new PIDController(ConstantsIO.kP_IntakeArm,
+				ConstantsIO.kI_IntakeArm, ConstantsIO.kD_IntakeArm, absEncoder,
+				armSpeedControllerWrapper);
+		armPID.setAbsoluteTolerance(ABSOLUTE_TOLERANCE);
 
 		armPID.setInputRange(0.0, 1.0);
 		armPID.setContinuous();
@@ -71,10 +71,11 @@ public class Intake implements Loggable {
 		}
 		// pwm = ThresholdHandler.deadbandAndScale(pwm,
 		// Constants.kMoveIntakeManuallyDeadband, 0.05, 0.5);
-		pwm = ThresholdHandler.deadbandAndScaleDualRamp(pwm, Constants.kMoveIntakeManuallyDeadband, 0.05, 0.8, 0.4,
-				1.0);
+		pwm = ThresholdHandler.deadbandAndScaleDualRamp(pwm,
+				Constants.kMoveIntakeManuallyDeadband, 0.05, 0.8, 0.4, 1.0);
 
-		System.out.println("Intake: PWM: " + pwm + "\t\tand PID is disabled: " + armPID.isEnabled());
+		System.out.println("Intake: PWM: " + pwm + "\t\tand PID is disabled: "
+				+ armPID.isEnabled());
 
 		armSpeedControllerWrapper.set(pwm);
 	}
@@ -84,7 +85,8 @@ public class Intake implements Loggable {
 		setManual(i);
 
 		if (rollersOn) {
-			startRollers(ConstantsIO.kLateralRollerSpeed, ConstantsIO.kIntakeRollerSpeed);
+			startRollers(ConstantsIO.kLateralRollerSpeed,
+					ConstantsIO.kIntakeRollerSpeed);
 		} else {
 			stopRollers();
 
@@ -124,7 +126,8 @@ public class Intake implements Loggable {
 		setSetpoint(setpoint);
 
 		if (rollersOn) {
-			startRollers(ConstantsIO.kLateralRollerSpeed, ConstantsIO.kIntakeRollerSpeed);
+			startRollers(ConstantsIO.kLateralRollerSpeed,
+					ConstantsIO.kIntakeRollerSpeed);
 		} else {
 			stopRollers();
 		}
@@ -153,10 +156,6 @@ public class Intake implements Loggable {
 
 		return logData;
 
-	}
-
-	public boolean PIDOn() {
-		return armPID.isEnabled();
 	}
 
 }

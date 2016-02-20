@@ -49,6 +49,7 @@ public class BoulderDetector implements Loggable {
 						public void run() {
 							Hardware.intake.setSetpoint(Intake.LOW_NO_INTAKE_POSITION, false);
 							Hardware.boulderStager.setPosition(Position.NEUTRAL);
+							System.out.println("BoulderDetector: setting position to LOW_NO_INTAKE");
 							stopTimer = null;
 						}
 					}, 250);
