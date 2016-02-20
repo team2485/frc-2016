@@ -201,14 +201,14 @@ public class Robot extends IterativeRobot {
 				XBOXPressed = true;
 			}
 		} else if (Controllers.getButton(Controllers.XBOX_BTN_B)) {
-			//Prep for Low Bar because button "B" for Low "B"ar... :|
+			// Prep for Low Bar because button "B" for Low "B"ar... :|
 			if (!XBOXPressed) {
 				Hardware.intake.setSetpoint(Intake.INTAKE_POSITION);
 				Hardware.shooter.setHoodPosition(HoodPosition.STOWED);
 				XBOXPressed = true;
 			}
 		} else if (Controllers.getButton(Controllers.XBOX_BTN_Y)) {
-			//Prep for other defenses
+			// Prep for other defenses
 			if (!XBOXPressed) {
 				Hardware.intake.setSetpoint(Intake.FULL_UP_POSITION);
 				XBOXPressed = true;
@@ -231,10 +231,11 @@ public class Robot extends IterativeRobot {
 					Constants.kMoveIntakeManuallyDeadband));
 
 		} else {
-			// if (!Hardware.intake.isPIDEnabled()) {
-			// Hardware.intake.setSetpoint(Hardware.intake.getCurrentPosition());
-			// }
-			Hardware.intake.setManual(0);
+			if (!Hardware.intake.isPIDEnabled()) {
+				Hardware.intake.setSetpoint(Hardware.intake
+						.getCurrentPosition());
+			}
+			// Hardware.intake.setManual(0);
 		}
 
 		if (Controllers.getJoystickButton(1)) {// trigger
@@ -277,34 +278,32 @@ public class Robot extends IterativeRobot {
 					Hardware.intake.stopRollers();
 				}
 			}
-		}
-		// else if (Controllers.getJoystickButton(8)) {
-		// if (!joystickPressed) {
-		// Hardware.intake.setSetpoint(Intake.FLOOR_POSITION);
-		// joystickPressed = true;
-		// }
-		// } else if (Controllers.getJoystickButton(9)) {
-		// if (!joystickPressed) {
-		// Hardware.intake.setSetpoint(Intake.LOW_NO_INTAKE_POSITION);
-		// joystickPressed = true;
-		// }
-		// } else if (Controllers.getJoystickButton(10)) {
-		// if (!joystickPressed) {
-		// Hardware.intake.setSetpoint(Intake.INTAKE_POSITION);
-		// joystickPressed = true;
-		// }
-		// } else if (Controllers.getJoystickButton(11)) {
-		// if (!joystickPressed) {
-		// Hardware.intake.setSetpoint(Intake.PORTCULLIS_POSITION);
-		// joystickPressed = true;
-		// }
-		// } else if (Controllers.getJoystickButton(12)) {
-		// if (!joystickPressed) {
-		// Hardware.intake.setSetpoint(Intake.FULL_UP_POSITION);
-		// joystickPressed = true;
-		// }
-		// }
-		else {
+		} else if (Controllers.getJoystickButton(8)) {
+			if (!joystickPressed) {
+				Hardware.intake.setSetpoint(Intake.FLOOR_POSITION);
+				joystickPressed = true;
+			}
+		} else if (Controllers.getJoystickButton(9)) {
+			if (!joystickPressed) {
+				Hardware.intake.setSetpoint(Intake.LOW_NO_INTAKE_POSITION);
+				joystickPressed = true;
+			}
+		} else if (Controllers.getJoystickButton(10)) {
+			if (!joystickPressed) {
+				Hardware.intake.setSetpoint(Intake.INTAKE_POSITION);
+				joystickPressed = true;
+			}
+		} else if (Controllers.getJoystickButton(11)) {
+			if (!joystickPressed) {
+				Hardware.intake.setSetpoint(Intake.PORTCULLIS_POSITION);
+				joystickPressed = true;
+			}
+		} else if (Controllers.getJoystickButton(12)) {
+			if (!joystickPressed) {
+				Hardware.intake.setSetpoint(Intake.FULL_UP_POSITION);
+				joystickPressed = true;
+			}
+		} else {
 			joystickPressed = false;
 		} // int main = void();
 
@@ -330,9 +329,7 @@ public class Robot extends IterativeRobot {
 
 	public void testPeriodic() {
 
-		System.out.println("Robot: Lidar distance: "
-				+ Hardware.lidar.getDistance() + " Vel: "
-				+ Hardware.lidar.getRate());
+		System.out.println("Robot: EncoderPos: " + Hardware.intakeAbsEncoder.get());
 
 	}
 

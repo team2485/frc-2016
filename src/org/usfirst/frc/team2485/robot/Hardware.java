@@ -146,8 +146,8 @@ public class Hardware {
 		leftDrive.setRampRate(ConstantsIO.kDriveVoltageRamp);
 
 		//don't set the wrapper to inverted since one is inv and the other isn't
-		intakeArmVictorSP[0].setInverted(false);
-		intakeArmVictorSP[1].setInverted(true);
+		intakeArmVictorSP[0].setInverted(true);
+		intakeArmVictorSP[1].setInverted(false);
 
 		leftDriveEnc.setDistancePerPulse(0.01304 * 4);
 		rightDriveEnc.setDistancePerPulse(0.01295 * 4);

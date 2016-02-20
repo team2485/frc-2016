@@ -25,11 +25,11 @@ public class Intake implements Loggable {
 
 	private AnalogPotentiometer absEncoder;
 
-	public static final double ABSOLUTE_TOLERANCE = .01;
+	public static final double ABSOLUTE_TOLERANCE = 0.01;
 
-	public static final double FLOOR_POSITION = 0.0505167,
-			INTAKE_POSITION = 0.155126, FULL_UP_POSITION = 0.407994,
-			PORTCULLIS_POSITION = 0.237154, LOW_NO_INTAKE_POSITION = 0.129440;
+	public static final double FLOOR_POSITION = 0.705, INTAKE_POSITION = 0.811,
+			FULL_UP_POSITION = 0.053, PORTCULLIS_POSITION = 0.966,
+			LOW_NO_INTAKE_POSITION = 0.790;
 
 	public Intake() {
 
@@ -48,7 +48,8 @@ public class Intake implements Loggable {
 		armPID.setInputRange(0.0, 1.0);
 		armPID.setContinuous();
 
-		armPID.setOutputRange(-0.3, 0.3);
+		armPID.setOutputRange(-0.1, 0.3);
+
 	}
 
 	public void startRollers(double lateralValue, double intakeValue) {
@@ -77,7 +78,31 @@ public class Intake implements Loggable {
 		System.out.println("Intake: PWM: " + pwm + "\t\tand PID is disabled: "
 				+ armPID.isEnabled());
 
-		armSpeedControllerWrapper.set(pwm);
+		double encoderPos = absEncoder.get();
+
+		boolean disableDownwards = false;
+
+		if (FLOOR_POSITION > 0.1) {
+			if (encoderPos < FLOOR_POSITION
+					&& Math.abs(encoderPos - FLOOR_POSITION) < 0.1) {
+				disableDownwards = true;
+			}
+		} else {
+			if (encoderPos < FLOOR_POSITION
+					|| Math.abs((encoderPos - 1) - FLOOR_POSITION) < 0.1) {
+				disableDownwards = true;
+			}
+		}
+
+		if (pwm < 0) {
+			if (!disableDownwards) {
+				armSpeedControllerWrapper.set(pwm);
+			} else {
+				armSpeedControllerWrapper.set(0);
+			}
+		} else {
+			armSpeedControllerWrapper.set(pwm);
+		}
 	}
 
 	public void setManual(double i, boolean rollersOn) {
