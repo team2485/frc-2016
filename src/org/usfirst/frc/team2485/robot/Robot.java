@@ -200,6 +200,19 @@ public class Robot extends IterativeRobot {
 				System.out.println("Robot: X was in fact pressed");
 				XBOXPressed = true;
 			}
+		} else if (Controllers.getButton(Controllers.XBOX_BTN_B)) {
+			//Prep for Low Bar because button "B" for Low "B"ar... :|
+			if (!XBOXPressed) {
+				Hardware.intake.setSetpoint(Intake.INTAKE_POSITION);
+				Hardware.shooter.setHoodPosition(HoodPosition.STOWED);
+				XBOXPressed = true;
+			}
+		} else if (Controllers.getButton(Controllers.XBOX_BTN_Y)) {
+			//Prep for other defenses
+			if (!XBOXPressed) {
+				Hardware.intake.setSetpoint(Intake.FULL_UP_POSITION);
+				XBOXPressed = true;
+			}
 		} else {
 			XBOXPressed = false;
 		}
