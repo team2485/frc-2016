@@ -27,11 +27,11 @@ public class Intake implements Loggable {
 
 	public static final double ABSOLUTE_TOLERANCE = 0.01;
 
-	public static final double 	FLOOR_POSITION = 0.817,
-								LOW_NO_INTAKE_POSITION = (FLOOR_POSITION + 0.085) % 1,
-								INTAKE_POSITION = (FLOOR_POSITION + 0.120) % 1,
-								PORTCULLIS_POSITION = (FLOOR_POSITION + 0.261) % 1,
-								FULL_UP_POSITION = (FLOOR_POSITION + 0.348) % 1;
+	public static double FLOOR_POSITION = 0.106,
+			LOW_NO_INTAKE_POSITION = (FLOOR_POSITION + 0.085) % 1,
+			INTAKE_POSITION = (FLOOR_POSITION + 0.120) % 1,
+			PORTCULLIS_POSITION = (FLOOR_POSITION + 0.261) % 1,
+			FULL_UP_POSITION = (FLOOR_POSITION + 0.348) % 1;
 
 	public Intake() {
 
@@ -80,8 +80,9 @@ public class Intake implements Loggable {
 		pwm = ThresholdHandler.deadbandAndScaleDualRamp(pwm,
 				Constants.kMoveIntakeManuallyDeadband, 0.05, 0.8, 0.4, 1.0);
 
-//		System.out.println("Intake: PWM: " + pwm + "\t\tand PID is disabled: "
-//				+ armPID.isEnabled());
+		// System.out.println("Intake: PWM: " + pwm +
+		// "\t\tand PID is disabled: "
+		// + armPID.isEnabled());
 
 		double encoderPos = absEncoder.get();
 
@@ -99,6 +100,19 @@ public class Intake implements Loggable {
 			}
 		}
 
+		boolean disableUpwards = false;
+		if (FULL_UP_POSITION < 0.9) {
+			if (encoderPos > FULL_UP_POSITION
+					&& Math.abs(encoderPos - FULL_UP_POSITION) < 0.1) {
+				disableUpwards = true;
+			}
+		} else {
+			if (encoderPos > FULL_UP_POSITION
+					|| Math.abs((encoderPos + 1) - FULL_UP_POSITION) < 0.1) {
+				disableUpwards = true;
+			}
+		}
+
 		if (pwm < 0) {
 			if (!disableDownwards) {
 				armSpeedControllerWrapper.set(pwm);
@@ -106,7 +120,11 @@ public class Intake implements Loggable {
 				armSpeedControllerWrapper.set(0);
 			}
 		} else {
-			armSpeedControllerWrapper.set(pwm);
+			if (disableUpwards) {
+				armSpeedControllerWrapper.set(0);
+			} else {
+				armSpeedControllerWrapper.set(pwm);
+			}
 		}
 	}
 

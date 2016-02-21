@@ -27,7 +27,9 @@ public class Shooter implements Loggable {
 		LOW_ANGLE, HIGH_ANGLE, STOWED
 	};
 
-	public static final double RPM_LONG_SHOT = 5500, RPM_BATTER_SHOT = 4500;
+	public static final double RPM_LONG_SHOT = 5500, RPM_BATTER_SHOT = 4650;
+	
+	public static final HoodPosition DEFAULT_HOOD_POSITION = HoodPosition.HIGH_ANGLE; 
 
 	private CANTalon rightShooterMotor, leftShooterMotor;
 	private Solenoid lowerSolenoid, upperSolenoid;
@@ -59,19 +61,20 @@ public class Shooter implements Loggable {
 		rightShooterMotor.reverseOutput(false); //This reverses direction of shooter
 		leftShooterMotor.reverseOutput(true); // always reversed because it's relative to master
 
-		currHoodPosition = HoodPosition.LOW_ANGLE;
+		currHoodPosition = DEFAULT_HOOD_POSITION;
 
-		disable();
+		disableShooter();
 
 	}
 
 	public void setHoodPosition(final HoodPosition newHoodPosition) {
+		System.out.println("Shooter: set hood position " + newHoodPosition.toString());
+
 
 		if (newHoodPosition == HoodPosition.LOW_ANGLE) {
 			if (currHoodPosition == HoodPosition.HIGH_ANGLE) {
-				upperSolenoid.set(false); // This should extend the upper
-											// piston, because polarity is
-											// backwards
+				upperSolenoid.set(true); // This should extend the upper
+											// piston
 			} else if (currHoodPosition == HoodPosition.STOWED) {
 				lowerSolenoid.set(false); // Retracting the lower piston pulls
 											// open the shooter
@@ -80,15 +83,17 @@ public class Shooter implements Loggable {
 
 					@Override
 					public void run() {
-						upperSolenoid.set(false);
+						upperSolenoid.set(true);
 					}
 				}, 250);
 			}
 		} else if (newHoodPosition == HoodPosition.HIGH_ANGLE) {
 			if (currHoodPosition == HoodPosition.LOW_ANGLE) {
-				upperSolenoid.set(true);
+				upperSolenoid.set(false);
+				
 			} else if (currHoodPosition == HoodPosition.STOWED) {
 				lowerSolenoid.set(false);
+				System.out.println("Shooter: stowed -> high angle");
 			}
 		} else { // setting to stowed
 			
@@ -96,7 +101,7 @@ public class Shooter implements Loggable {
 			
 			if (currHoodPosition == HoodPosition.LOW_ANGLE) {
 
-				upperSolenoid.set(true);
+				upperSolenoid.set(false);
 
 				new Timer().schedule(new TimerTask() {
 
@@ -110,28 +115,14 @@ public class Shooter implements Loggable {
 				lowerSolenoid.set(true);
 			}
 		}
-
-		// solenoid1.set(newHoodPosition == HoodPosition.STOWED);
-		//
-		// if ((newHoodPosition == HoodPosition.STOWED && currHoodPosition ==
-		// HoodPosition.LOW_ANGLE)
-		// && (currHoodPosition == HoodPosition.STOWED && newHoodPosition ==
-		// HoodPosition.LOW_ANGLE)) {
-		// new Timer().schedule(new TimerTask() {
-		//
-		// @Override
-		// public void run() {
-		// solenoid2.set(newHoodPosition != HoodPosition.LOW_ANGLE);
-		//
-		// currHoodPosition = newHoodPosition;
-		// }
-		// }, 500);
-		// } else {
-		//
-		// solenoid2.set(newHoodPosition != HoodPosition.LOW_ANGLE);
-		//
-		// currHoodPosition = newHoodPosition;
-		// }
+		
+		currHoodPosition = newHoodPosition;
+	}
+	
+	public void resetHood() {
+		
+		setHoodPosition(DEFAULT_HOOD_POSITION);
+		
 	}
 
 	public void setTargetSpeed(double setpoint) {
@@ -161,7 +152,7 @@ public class Shooter implements Loggable {
 
 	}
 
-	public void disable() {
+	public void disableShooter() {
 
 		rightShooterMotor
 				.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
@@ -206,7 +197,7 @@ public class Shooter implements Loggable {
 
 	public boolean isReadyToFire() {
 
-		return isOnTargetPercentage(0.05)
+		return isOnTargetPercentage(0.10)
 				&& currHoodPosition != HoodPosition.STOWED;
 
 	}

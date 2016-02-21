@@ -9,14 +9,12 @@ import org.usfirst.frc.team2485.util.GRIPReciever;
 import org.usfirst.frc.team2485.util.GRIPReciever.GRIPTargetNotFoundException;
 
 /**
- * 
  * @author Nicholas Contreras
- *
  */
 
 public class AlignToTower implements SequencedItem {
 
-	private double timeout = 2;
+	private double timeout;
 	private boolean finished = false;
 	private boolean firstTime = true;
 
@@ -28,8 +26,12 @@ public class AlignToTower implements SequencedItem {
 
 	private boolean curTurnDone = true;
 
+	public AlignToTower(double timeout) {
+		this.timeout = timeout;
+	}
+	
 	public AlignToTower() {
-
+		this(2.0);
 	}
 
 	@Override

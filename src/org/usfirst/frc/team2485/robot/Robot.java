@@ -71,7 +71,7 @@ public class Robot extends IterativeRobot {
 		// pressureSwitch = new DigitalInput(10);
 		// compressorSpike = new Relay(0);
 
-		Logger.getInstance().addLoggable(Hardware.battery);
+//		Logger.getInstance().addLoggable(Hardware.battery);
 		Logger.getInstance().addLoggable(Hardware.driveTrain);
 		Logger.getInstance().addLoggable(Hardware.shooter);
 
@@ -98,12 +98,13 @@ public class Robot extends IterativeRobot {
 		autoPosChooser = new SendableChooser();
 
 		for (int i = 2; i <= 5; i++) {
-			autoPosChooser.addDefault("Position: " + i, new Integer(i));
+			autoPosChooser.addObject("Position: " + i, new Integer(i));
 		}
 
-		SmartDashboard.putData("Auto Defense Chooser", autoChooser);
+		SmartDashboard.putData("Autonomous Defense Chooser", autoChooser);
 
-		SmartDashboard.putData("Auto Position Chooser", autoPosChooser);
+		SmartDashboard.putData("Autonomous Position Chooser", autoPosChooser);
+
 	}
 
 	public void autonomousInit() {
@@ -284,7 +285,7 @@ public class Robot extends IterativeRobot {
 			}
 		} else if (Controllers.getJoystickButton(5)) {
 			if (!joystickPressed) {
-				Hardware.shooter.disable();
+				Hardware.shooter.disableShooter();
 			}
 		} else if (Controllers.getJoystickButton(6)) {
 			if (!joystickPressed) {
@@ -344,13 +345,15 @@ public class Robot extends IterativeRobot {
 		resetAndDisableSystems();
 		ConstantsIO.init();
 		Hardware.init();
+		Hardware.intake.FLOOR_POSITION = Hardware.intakeAbsEncoder.get();
+		Hardware.intake.LOW_NO_INTAKE_POSITION = (Hardware.intake.FLOOR_POSITION + 0.085) % 1;
+		Hardware.intake.INTAKE_POSITION = (Hardware.intake.FLOOR_POSITION + 0.120) % 1;
+		Hardware.intake.PORTCULLIS_POSITION = (Hardware.intake.FLOOR_POSITION + 0.261) % 1;
+		Hardware.intake.FULL_UP_POSITION = (Hardware.intake.FLOOR_POSITION + 0.348) % 1;
 
 	}
 
 	public void testPeriodic() {
-
-		System.out.println("Robot: EncoderPos: "
-				+ Hardware.intakeAbsEncoder.get());
 
 		// if (pressureSwitch.get()) {
 		// compressorSpike.set(Relay.Value.kOff);
@@ -361,20 +364,27 @@ public class Robot extends IterativeRobot {
 	}
 
 	private void resetAndDisableSystems() {
+
 		Hardware.driveTrain.disableAhrsPID();
 		Hardware.driveTrain.driveStraightPID.disable();
-		Hardware.driveTrain.setLeftRight(0, 0);
+		Hardware.driveTrain.disableDriveToPID();
+		Hardware.driveTrain.emergencyStop();
 		Hardware.driveTrain.resetEncoder();
 		Hardware.intake.setManual(0);
+		Hardware.intake.stopRollers();
 		Hardware.ahrs.reset();
+		Hardware.shooter.resetHood();
+		Hardware.shooter.disableShooter();
+
 	}
 
 	private PowerDistributionPanel pdp = new PowerDistributionPanel();
 
 	public void updateDashboard() {
 
-		System.out.println("Ultrasonic value: " + Hardware.sonic.getRangeInches());
-		
+		// System.out.println("Ultrasonic value: " +
+		// Hardware.sonic.getRangeInches());
+
 		SmartDashboard.putString("RPM", (int) Hardware.shooter.getRate() + ","
 				+ (int) Hardware.shooter.getSetpoint());
 
@@ -383,8 +393,10 @@ public class Robot extends IterativeRobot {
 		SmartDashboard
 				.putNumber("Throttle", Hardware.shooter.getCurrentPower());
 
-//		SmartDashboard.putNumber("Total Current",
-//				Hardware.battery.getTotalCurrent());
+		// SmartDashboard.putNumber("Battery", Hardware.battery.getVoltage());
+
+		// SmartDashboard.putNumber("Total Current",
+		// Hardware.battery.getTotalCurrent());
 
 		// if (Hardware.battery.getTotalCurrent() > 0) {
 		// System.out.println("Robot: Total Current From Battery: "

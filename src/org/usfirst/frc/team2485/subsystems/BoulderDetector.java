@@ -28,7 +28,7 @@ public class BoulderDetector implements Loggable {
 	}
 
 	public boolean boulderDetected() {
-		return sonic.getRangeInches() < 13; //Very lucky number
+		return sonic.getRangeInches() < 10;
 	}
 
 	private class TimingSystem extends Thread {
