@@ -47,9 +47,6 @@ public class Robot extends IterativeRobot {
 
 	private SendableChooser autoChooser, autoPosChooser;
 
-	private DigitalInput pressureSwitch;
-	private Relay compressorSpike;
-
 	public void robotInit() {
 
 		ConstantsIO.init();
@@ -68,10 +65,8 @@ public class Robot extends IterativeRobot {
 		// driveEncoder.setDistancePerPulse(Math.PI*2*WHEEL_RADIUS_INCHES /
 		// 250.0);
 
-		// pressureSwitch = new DigitalInput(10);
-		// compressorSpike = new Relay(0);
+		// Logger.getInstance().addLoggable(Hardware.battery);
 
-//		Logger.getInstance().addLoggable(Hardware.battery);
 		Logger.getInstance().addLoggable(Hardware.driveTrain);
 		Logger.getInstance().addLoggable(Hardware.shooter);
 
@@ -355,10 +350,13 @@ public class Robot extends IterativeRobot {
 
 	public void testPeriodic() {
 
-		// if (pressureSwitch.get()) {
-		// compressorSpike.set(Relay.Value.kOff);
+		System.out.println("Robot: EncoderPos: "
+				+ Hardware.intakeAbsEncoder.get());
+
+		// if (Hardware.pressureSwitch.get()) {
+		// Hardware.compressorSpike.set(Relay.Value.kOff);
 		// } else {
-		// compressorSpike.set(Relay.Value.kForward);
+		// Hardware.compressorSpike.set(Relay.Value.kForward);
 		// }
 
 	}

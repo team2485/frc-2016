@@ -14,6 +14,8 @@ public class Constants {
 	public static final int kShooterHoodSolenoidLowerPort = 4, kShooterHoodSolenoidUpperPort = 5;
 	public static final int kBoulderStagerSolenoid1Port = 6, kBoulderStagerSolenoid2Port = 7;
 	
+	public static final int kCompressorSpikePort = 0;
+	
 	public static final int[] kLeftDrivePWM = {4, 3, 2}, 
 
 						kLeftDrivePDP = {15, 3, 2}, 
@@ -31,6 +33,8 @@ public class Constants {
 	
 
 	public static final int kIntakeArmAbsEncoder = 0;
+	
+	public static final int kPressureSwitchPort = 0; 
 	
 	public static final int kUltrasonicECHO = 1;
 	public static final int kUltrasonicPING = 0;
