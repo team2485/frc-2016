@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Ultrasonic;
+import edu.wpi.first.wpilibj.Ultrasonic.Unit;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.VictorSP;
 
@@ -111,9 +112,9 @@ public class Hardware {
 			rightShooterMotor = new CANTalon(Constants.kRightShooterCAN);
 
 			shooterHoodSolenoid1 = new Solenoid(
-					Constants.kShooterHoodSolenoid1Port);
+					Constants.kShooterHoodSolenoidLowerPort);
 			shooterHoodSolenoid2 = new Solenoid(
-					Constants.kShooterHoodSolenoid2Port);
+					Constants.kShooterHoodSolenoidUpperPort);
 
 			boulderStagerSolenoid1 = new Solenoid(
 					Constants.kBoulderStagerSolenoid1Port);
@@ -130,7 +131,7 @@ public class Hardware {
 
 			ahrs = new AHRS(SPI.Port.kMXP);
 			
-			sonic = new Ultrasonic(Constants.kUltrasonicDIO[0], Constants.kUltrasonicDIO[1]);
+			sonic = new Ultrasonic(Constants.kUltrasonicPING, Constants.kUltrasonicECHO, Unit.kInches);
 			
 			lidar = new LidarWrapper(Port.kMXP);
 			
@@ -155,6 +156,8 @@ public class Hardware {
 		leftDriveEnc.setReverseDirection(true);
 
 		ahrs.zeroYaw();
+		
+		sonic.setAutomaticMode(true);
 
 		driveTrain = new DriveTrain(true);
 		shooter = new Shooter();

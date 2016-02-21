@@ -183,7 +183,7 @@ public class SequencerFactory {
 	public static Sequencer getShootLowGoalSequence() {
 		return new Sequencer(
 				new SequencedItem[] {
-				new SetIntakeArm(Intake.INTAKE_POSITION),
+				new SetIntakeArm(Intake.FULL_UP_POSITION),
 				new ShootLowGoal(), 
 				new SetRollers(0, 0),
 				new SetStager(Position.NEUTRAL) 

@@ -11,7 +11,7 @@ public class Constants {
 	
 	public static final int kLeftShooterCAN = 3, kRightShooterCAN = 2;
 
-	public static final int kShooterHoodSolenoid1Port = 4, kShooterHoodSolenoid2Port = 5;
+	public static final int kShooterHoodSolenoidLowerPort = 4, kShooterHoodSolenoidUpperPort = 5;
 	public static final int kBoulderStagerSolenoid1Port = 6, kBoulderStagerSolenoid2Port = 7;
 	
 	public static final int[] kLeftDrivePWM = {4, 3, 2}, 
@@ -23,8 +23,8 @@ public class Constants {
 
 	public static final int[] kIntakeArmPWM = {0, 1} , kIntakeArmPDP = {0, 1};
 	
-	public static final int kLateralRollerPWM = 9, kLateralRollerPDP = 9,
-			kIntakeRollerPWM = 8, kIntakeRollerPDP = 10;
+	public static final int kLateralRollerPWM = 8, kLateralRollerPDP = 10,
+			kIntakeRollerPWM = 9, kIntakeRollerPDP = 9;
 	
 	public static final int[] kLeftDriveEncoder = {2, 3}, 
 			kRightDriveEncoder = {4, 5};
@@ -32,7 +32,8 @@ public class Constants {
 
 	public static final int kIntakeArmAbsEncoder = 0;
 	
-	public static final int[] kUltrasonicDIO = {0, 1};
+	public static final int kUltrasonicECHO = 1;
+	public static final int kUltrasonicPING = 0;
 
 	public static final double WHEEL_RADIUS_INCHES = 2.25;
 	public static final double CM_IN_INCH = 2.54;

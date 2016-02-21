@@ -62,7 +62,7 @@ public class CurrentMonitorGroup {
 			timeOverCurrent += timeSinceLastUpdate;
 			if (timeOverCurrent > maxTimeOverCurrent) {
 				timeOverCurrent = maxTimeOverCurrent + timeout;
-				System.out.println("CurrentMonitor: monitorCurrent: overcurrent");
+				System.out.println("CurrentMonitorGroup: monitorCurrent: overcurrent");
 			}
 		} else {
 			timeOverCurrent -= timeSinceLastUpdate;
@@ -70,9 +70,9 @@ public class CurrentMonitorGroup {
 				timeOverCurrent = 0;
 			}
 		}
-		System.out.println("CurrentMonitor: monitorCurrent: current = " + current);
-
-		System.out.println("CurrentMonitor: monitorCurrent: total current = " + Hardware.battery.getTotalCurrent());
+//		System.out.println("CurrentMonitorGroup: monitorCurrent: current = " + current);
+//
+//		System.out.println("CurrentMonitorGroup: monitorCurrent: total current = " + Hardware.battery.getTotalCurrent());
 		lastTimeUpdated = currTime;
 
 	}

@@ -279,7 +279,7 @@ public class DriveTrain implements Loggable {
 //		lastLeft = leftOutput;
 //		lastRight = rightOutput;
 
-		System.out.println("DriveTrain SetLeftRight: Left: " + leftOutput + " Right: " + rightOutput);
+//		System.out.println("DriveTrain SetLeftRight: Left: " + leftOutput + " Right: " + rightOutput);
 
 		leftDrive.set(leftOutput);
 		rightDrive.set(rightOutput);
@@ -360,8 +360,8 @@ public class DriveTrain implements Loggable {
 
 		if (!driveToEncoderPID.isEnabled()) {
 			driveToEncoderPID.enable();
-			System.out.println("|DriveTrain.driveTo| Enabling driveStraight PID in driveTo " + encoder.getDistance()
-					+ " , " + inches);
+//			System.out.println("|DriveTrain.driveTo| Enabling driveStraight PID in driveTo " + encoder.getDistance()
+//					+ " , " + inches);
 			driveToEncoderPID.setSetpoint(inches);
 
 			driveStraightPID.enable();
@@ -444,8 +444,8 @@ public class DriveTrain implements Loggable {
 
 		// Check to see if we're on target
 
-		System.out.println(
-				"|DriveTrain.rotateTo| Angle Error: " + rotateToPID.getError() + "\t Output: " + dummyRotateToOutput.get());
+//		System.out.println(
+//				"|DriveTrain.rotateTo| Angle Error: " + rotateToPID.getError() + "\t Output: " + dummyRotateToOutput.get());
 
 		if (rotateToPID.onTarget())
 			ahrsOnTargetCounter++;

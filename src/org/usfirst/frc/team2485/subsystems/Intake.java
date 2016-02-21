@@ -27,9 +27,11 @@ public class Intake implements Loggable {
 
 	public static final double ABSOLUTE_TOLERANCE = 0.01;
 
-	public static final double FLOOR_POSITION = 0.705, INTAKE_POSITION = 0.811,
-			FULL_UP_POSITION = 0.053, PORTCULLIS_POSITION = 0.966,
-			LOW_NO_INTAKE_POSITION = 0.790;
+	public static final double 	FLOOR_POSITION = 0.817,
+								LOW_NO_INTAKE_POSITION = (FLOOR_POSITION + 0.085) % 1,
+								INTAKE_POSITION = (FLOOR_POSITION + 0.120) % 1,
+								PORTCULLIS_POSITION = (FLOOR_POSITION + 0.261) % 1,
+								FULL_UP_POSITION = (FLOOR_POSITION + 0.348) % 1;
 
 	public Intake() {
 
@@ -37,6 +39,9 @@ public class Intake implements Loggable {
 
 		this.intakeVictorSP = Hardware.intakeVictorSP;
 		this.lateralVictorSP = Hardware.lateralVictorSP;
+
+		this.lateralVictorSP.setInverted(true);
+		this.intakeVictorSP.setInverted(false);
 
 		this.absEncoder = Hardware.intakeAbsEncoder;
 
@@ -75,8 +80,8 @@ public class Intake implements Loggable {
 		pwm = ThresholdHandler.deadbandAndScaleDualRamp(pwm,
 				Constants.kMoveIntakeManuallyDeadband, 0.05, 0.8, 0.4, 1.0);
 
-		System.out.println("Intake: PWM: " + pwm + "\t\tand PID is disabled: "
-				+ armPID.isEnabled());
+//		System.out.println("Intake: PWM: " + pwm + "\t\tand PID is disabled: "
+//				+ armPID.isEnabled());
 
 		double encoderPos = absEncoder.get();
 

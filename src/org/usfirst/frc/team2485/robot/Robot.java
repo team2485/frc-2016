@@ -6,6 +6,7 @@ import org.usfirst.frc.team2485.auto.SequencerFactory;
 import org.usfirst.frc.team2485.auto.SequencerFactory.AutoType;
 import org.usfirst.frc.team2485.auto.sequenceditems.SetHoodPosition;
 import org.usfirst.frc.team2485.auto.sequenceditems.SetStager;
+import org.usfirst.frc.team2485.auto.sequenceditems.ShakeBoulderStager;
 import org.usfirst.frc.team2485.subsystems.BoulderStager.Position;
 import org.usfirst.frc.team2485.subsystems.Intake;
 import org.usfirst.frc.team2485.subsystems.Shooter;
@@ -16,9 +17,14 @@ import org.usfirst.frc.team2485.util.CurrentMonitor;
 import org.usfirst.frc.team2485.util.LidarWrapper;
 import org.usfirst.frc.team2485.util.Logger;
 
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.I2C.Port;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -41,6 +47,9 @@ public class Robot extends IterativeRobot {
 
 	private SendableChooser autoChooser, autoPosChooser;
 
+	private DigitalInput pressureSwitch;
+	private Relay compressorSpike;
+
 	public void robotInit() {
 
 		ConstantsIO.init();
@@ -59,9 +68,14 @@ public class Robot extends IterativeRobot {
 		// driveEncoder.setDistancePerPulse(Math.PI*2*WHEEL_RADIUS_INCHES /
 		// 250.0);
 
+		// pressureSwitch = new DigitalInput(10);
+		// compressorSpike = new Relay(0);
+
 		Logger.getInstance().addLoggable(Hardware.battery);
 		Logger.getInstance().addLoggable(Hardware.driveTrain);
 		Logger.getInstance().addLoggable(Hardware.shooter);
+
+		CameraServer.getInstance().startAutomaticCapture("cam0");
 
 		CurrentMonitor.getInstance(); // forces to construct
 
@@ -144,9 +158,9 @@ public class Robot extends IterativeRobot {
 			operatorTeleopSequencer = null;
 		}
 
-		if (Hardware.intake.isPIDEnabled()) {
-			System.out.println("Robot: arm PID is enabled");
-		}
+		// if (Hardware.intake.isPIDEnabled()) {
+		// System.out.println("Robot: arm PID is enabled");
+		// }
 
 		updateAllPeriodic();
 
@@ -165,11 +179,7 @@ public class Robot extends IterativeRobot {
 		double inputX = Controllers.getAxis(Controllers.XBOX_AXIS_RX, 0.2f);
 		double inputY = -Controllers.getAxis(Controllers.XBOX_AXIS_LY, 0.2f);
 
-		if (Math.abs(inputX) > 0.01 || Math.abs(inputY) > 0.01) {
-			System.out.println("Robot: Drivercontrol: X: " + inputX + " Y: "
-					+ inputY);
-			Hardware.driveTrain.warlordDrive(inputY, inputX);
-		}
+		Hardware.driveTrain.warlordDrive(inputY, inputX);
 
 		// Quick turn
 		if (Controllers.getButton(Controllers.XBOX_BTN_RBUMP)) {
@@ -196,8 +206,9 @@ public class Robot extends IterativeRobot {
 			}
 		} else if (Controllers.getButton(Controllers.XBOX_BTN_X)) {
 			if (!XBOXPressed) {
+				Hardware.boulderStager.setPosition(Position.INTAKE);
 				Hardware.intake.setSetpoint(Intake.INTAKE_POSITION, true);
-				System.out.println("Robot: X was in fact pressed");
+				// System.out.println("Robot: X was in fact pressed");
 				XBOXPressed = true;
 			}
 		} else if (Controllers.getButton(Controllers.XBOX_BTN_B)) {
@@ -210,7 +221,7 @@ public class Robot extends IterativeRobot {
 		} else if (Controllers.getButton(Controllers.XBOX_BTN_Y)) {
 			// Prep for other defenses
 			if (!XBOXPressed) {
-				Hardware.intake.setSetpoint(Intake.FULL_UP_POSITION);
+				Hardware.intake.setSetpoint(Intake.PORTCULLIS_POSITION);
 				XBOXPressed = true;
 			}
 		} else {
@@ -238,10 +249,19 @@ public class Robot extends IterativeRobot {
 			// Hardware.intake.setManual(0);
 		}
 
-		if (Controllers.getJoystickButton(1)) {// trigger
-			if (Hardware.shooter.isReadyToFire()) {
-				Hardware.boulderStager.setPosition(Position.SHOOTING);
+		if (Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_THROTTLE) > 0) {
+
+			if (operatorTeleopSequencer == null) {
+
+				operatorTeleopSequencer = new Sequencer(
+						new SequencedItem[] { new ShakeBoulderStager() });
+
 			}
+		}
+
+		if (Controllers.getJoystickButton(1)) {// trigger
+			operatorTeleopSequencer = SequencerFactory
+					.getShootHighGoalSequence();
 			joystickPressed = true;
 		} else if (Controllers.getJoystickButton(2)) { // side trigger
 			if (!joystickPressed) {
@@ -273,10 +293,10 @@ public class Robot extends IterativeRobot {
 				Hardware.shooter.setTargetSpeed(Shooter.RPM_LONG_SHOT);
 				joystickPressed = true;
 			}
-			if (Controllers.getJoystickButton(7)) {
-				if (!joystickPressed) {
-					Hardware.intake.stopRollers();
-				}
+		} else if (Controllers.getJoystickButton(7)) {
+			if (!joystickPressed) {
+				Hardware.intake.stopRollers();
+				joystickPressed = true;
 			}
 		} else if (Controllers.getJoystickButton(8)) {
 			if (!joystickPressed) {
@@ -329,7 +349,14 @@ public class Robot extends IterativeRobot {
 
 	public void testPeriodic() {
 
-		System.out.println("Robot: EncoderPos: " + Hardware.intakeAbsEncoder.get());
+		System.out.println("Robot: EncoderPos: "
+				+ Hardware.intakeAbsEncoder.get());
+
+		// if (pressureSwitch.get()) {
+		// compressorSpike.set(Relay.Value.kOff);
+		// } else {
+		// compressorSpike.set(Relay.Value.kForward);
+		// }
 
 	}
 
@@ -342,22 +369,32 @@ public class Robot extends IterativeRobot {
 		Hardware.ahrs.reset();
 	}
 
+	private PowerDistributionPanel pdp = new PowerDistributionPanel();
+
 	public void updateDashboard() {
 
-		SmartDashboard.putNumber("Current Speed", Hardware.shooter.getRate());
+		System.out.println("Ultrasonic value: " + Hardware.sonic.getRangeInches());
+		
 		SmartDashboard.putString("RPM", (int) Hardware.shooter.getRate() + ","
 				+ (int) Hardware.shooter.getSetpoint());
 
-		SmartDashboard.putNumber("Current 	Error", Hardware.shooter.getError());
+		SmartDashboard.putNumber("Current Error", Hardware.shooter.getError());
 
 		SmartDashboard
 				.putNumber("Throttle", Hardware.shooter.getCurrentPower());
 
-		SmartDashboard.putNumber("Total Current",
-				Hardware.battery.getTotalCurrent());
-		// SmartDashboard.putNumber("Drive Encoder Speed",
-		// Hardware.leftDriveEnc.getRate());
+//		SmartDashboard.putNumber("Total Current",
+//				Hardware.battery.getTotalCurrent());
 
+		// if (Hardware.battery.getTotalCurrent() > 0) {
+		// System.out.println("Robot: Total Current From Battery: "
+		// + Hardware.battery.getTotalCurrent());
+		// }
+		//
+		// if (pdp.getTotalCurrent() > 0) {
+		// System.out.println("Robot: Total Current From PDP: "
+		// + pdp.getTotalCurrent());
+		// }
 	}
 
 	/**
