@@ -15,6 +15,7 @@ import com.ni.vision.NIVision.LegFeature;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.Relay;
@@ -62,6 +63,7 @@ public class Hardware {
 
 	// Compressor
 	public static Relay compressorSpike;
+	public static DigitalInput pressureSwitch;	
 
 	// Subsystems
 	public static DriveTrain driveTrain;
@@ -111,6 +113,9 @@ public class Hardware {
 			leftShooterMotor = new CANTalon(Constants.kLeftShooterCAN);
 			rightShooterMotor = new CANTalon(Constants.kRightShooterCAN);
 
+			compressorSpike = new Relay(Constants.kCompressorSpikePort);
+			pressureSwitch = new DigitalInput(Constants.kPressureSwitchPort);
+			
 			shooterHoodSolenoid1 = new Solenoid(
 					Constants.kShooterHoodSolenoidLowerPort);
 			shooterHoodSolenoid2 = new Solenoid(
