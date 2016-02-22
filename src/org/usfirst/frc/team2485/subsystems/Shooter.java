@@ -27,9 +27,10 @@ public class Shooter implements Loggable {
 		LOW_ANGLE, HIGH_ANGLE, STOWED
 	};
 
-	public static final double RPM_LONG_SHOT = 5500, RPM_BATTER_SHOT = 4650;
-	
-	public static final HoodPosition DEFAULT_HOOD_POSITION = HoodPosition.HIGH_ANGLE; 
+	public static final double RPM_LONG_SHOT = 5500, RPM_BATTER_SHOT = 4650,
+			RPM_LOW_GOAL_SHOT = 3500;
+
+	public static final HoodPosition DEFAULT_HOOD_POSITION = HoodPosition.HIGH_ANGLE;
 
 	private CANTalon rightShooterMotor, leftShooterMotor;
 	private Solenoid lowerSolenoid, upperSolenoid;
@@ -58,8 +59,10 @@ public class Shooter implements Loggable {
 		leftShooterMotor.set(rightShooterMotor.getDeviceID());
 
 		rightShooterMotor.reverseSensor(true);
-		rightShooterMotor.reverseOutput(false); //This reverses direction of shooter
-		leftShooterMotor.reverseOutput(true); // always reversed because it's relative to master
+		rightShooterMotor.reverseOutput(false); // This reverses direction of
+												// shooter
+		leftShooterMotor.reverseOutput(true); // always reversed because it's
+												// relative to master
 
 		currHoodPosition = DEFAULT_HOOD_POSITION;
 
@@ -68,8 +71,8 @@ public class Shooter implements Loggable {
 	}
 
 	public void setHoodPosition(final HoodPosition newHoodPosition) {
-		System.out.println("Shooter: set hood position " + newHoodPosition.toString());
-
+		System.out.println("Shooter: set hood position "
+				+ newHoodPosition.toString());
 
 		if (newHoodPosition == HoodPosition.LOW_ANGLE) {
 			if (currHoodPosition == HoodPosition.HIGH_ANGLE) {
@@ -90,15 +93,17 @@ public class Shooter implements Loggable {
 		} else if (newHoodPosition == HoodPosition.HIGH_ANGLE) {
 			if (currHoodPosition == HoodPosition.LOW_ANGLE) {
 				upperSolenoid.set(false);
-				
+
 			} else if (currHoodPosition == HoodPosition.STOWED) {
 				lowerSolenoid.set(false);
 				System.out.println("Shooter: stowed -> high angle");
 			}
 		} else { // setting to stowed
-			
-			System.out.println("Shooter: Hood is being set to stowed, cur pos is: " + currHoodPosition);
-			
+
+			System.out
+					.println("Shooter: Hood is being set to stowed, cur pos is: "
+							+ currHoodPosition);
+
 			if (currHoodPosition == HoodPosition.LOW_ANGLE) {
 
 				upperSolenoid.set(false);
@@ -115,14 +120,14 @@ public class Shooter implements Loggable {
 				lowerSolenoid.set(true);
 			}
 		}
-		
+
 		currHoodPosition = newHoodPosition;
 	}
-	
+
 	public void resetHood() {
-		
+
 		setHoodPosition(DEFAULT_HOOD_POSITION);
-		
+
 	}
 
 	public void setTargetSpeed(double setpoint) {

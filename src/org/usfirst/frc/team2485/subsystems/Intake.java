@@ -6,12 +6,12 @@ import java.util.Map;
 import org.usfirst.frc.team2485.robot.Constants;
 import org.usfirst.frc.team2485.robot.Hardware;
 import org.usfirst.frc.team2485.util.ConstantsIO;
+import org.usfirst.frc.team2485.util.InvertedAbsoluteEncoder;
 import org.usfirst.frc.team2485.util.Loggable;
 import org.usfirst.frc.team2485.util.SpeedControllerWrapper;
 import org.usfirst.frc.team2485.util.ThresholdHandler;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
-
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.VictorSP;
 
@@ -23,7 +23,7 @@ public class Intake implements Loggable {
 
 	private VictorSP intakeVictorSP, lateralVictorSP;
 
-	private AnalogPotentiometer absEncoder;
+	private InvertedAbsoluteEncoder absEncoder;
 
 	public static final double ABSOLUTE_TOLERANCE = 0.01;
 

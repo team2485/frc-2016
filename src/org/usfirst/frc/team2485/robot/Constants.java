@@ -34,7 +34,7 @@ public class Constants {
 
 	public static final int kIntakeArmAbsEncoder = 0;
 	
-	public static final int kPressureSwitchPort = 0; 
+	public static final int kPressureSwitchPort = 10; 
 	
 	public static final int kUltrasonicECHO = 1;
 	public static final int kUltrasonicPING = 0;
