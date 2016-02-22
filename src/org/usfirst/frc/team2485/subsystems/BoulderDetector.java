@@ -19,7 +19,11 @@ public class BoulderDetector implements Loggable {
 	private Timer stopTimer = null;
 
 	private boolean hasBoulder;
+	
+	private int numTimesBoulderDetected = 0;
+	private static final int MINIMUM_BOULDER_DETECTED_ITERATIONS = 10;
 
+	
 	public BoulderDetector() {
 
 		sonic = Hardware.sonic;
@@ -38,25 +42,43 @@ public class BoulderDetector implements Loggable {
 
 			while (true) {
 
-				if (boulderDetected() && !hasBoulder) {
-
-					hasBoulder = true;
-
-					stopTimer = new Timer();
-					stopTimer.schedule(new TimerTask() {
-
-						@Override
-						public void run() {
-							Hardware.intake.setSetpoint(Intake.LOW_NO_INTAKE_POSITION, false);
-							Hardware.boulderStager.setPosition(Position.NEUTRAL);
-							System.out.println("BoulderDetector: setting position to LOW_NO_INTAKE");
-							stopTimer = null;
-						}
-					}, 250);
-				} else if (!boulderDetected()) {
+			
+				if (boulderDetected()) {
+					numTimesBoulderDetected++;
+				} else {
 					hasBoulder = false;
+					numTimesBoulderDetected = 0;
+				}
+				
+				if (numTimesBoulderDetected > MINIMUM_BOULDER_DETECTED_ITERATIONS && !hasBoulder) {
+					
+					hasBoulder = true;
+					Hardware.intake.setSetpoint(Intake.FULL_UP_POSITION, false);
+					Hardware.boulderStager.setPosition(Position.NEUTRAL);
+					System.out.println("BoulderDetector: setting position to FULL_UP_POSITION");
+					
 				}
 
+//				if (boulderDetected() && !hasBoulder) {
+//
+//					hasBoulder = true;
+//
+//					stopTimer = new Timer();
+//					stopTimer.schedule(new TimerTask() {
+//
+//						@Override
+//						public void run() {
+//							Hardware.intake.setSetpoint(Intake.LOW_NO_INTAKE, false);
+//							Hardware.boulderStager.setPosition(Position.NEUTRAL);
+//							System.out.println("BoulderDetector: setting position to LOW_NO_INTAKE");
+//							stopTimer = null;
+//						}
+//					}, 250);
+//				} else {
+//					hasBoulder = false;
+//					numTimesBoulderDetected = 0;
+//				}
+				
 				try {
 					Thread.sleep(20);
 				} catch (InterruptedException e) {
