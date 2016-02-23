@@ -31,8 +31,16 @@ public class BoulderDetector implements Loggable {
 		new TimingSystem().start();
 	}
 
-	public boolean boulderDetected() {
+	private boolean boulderDetected() {
 		return sonic.getRangeInches() < 10;
+	}
+	
+	/**
+	 * Determines whether we have a boulder based on sonic sensor, may be delayed by 100 ms
+	 * @return true if we have a boulder
+	 */
+	public boolean hasBoulder() {
+		return hasBoulder;
 	}
 
 	private class TimingSystem extends Thread {

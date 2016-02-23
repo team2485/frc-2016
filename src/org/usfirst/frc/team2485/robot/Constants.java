@@ -23,10 +23,10 @@ public class Constants {
 						kRightDrivePDP = {12, 13, 14};
 	
 
-	public static final int kIntakeArmPWM = 0, kIntakeArmPDP = 0;
+	public static final int kIntakeArmPWM = 1, kIntakeArmPDP = 1;
 	
-	public static final int kLateralRollerPWM = 8, kLateralRollerPDP = 10,
-			kIntakeRollerPWM = 9, kIntakeRollerPDP = 9;
+	public static final int kLateralRollerPWM = 9, kLateralRollerPDP = 9,
+			kIntakeRollerPWM = 8, kIntakeRollerPDP = 10;
 	
 	public static final int[] kLeftDriveEncoder = {2, 3}, 
 			kRightDriveEncoder = {4, 5};

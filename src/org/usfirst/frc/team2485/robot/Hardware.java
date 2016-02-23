@@ -1,6 +1,7 @@
 package org.usfirst.frc.team2485.robot;
 
 import org.usfirst.frc.team2485.auto.Sequencer;
+import org.usfirst.frc.team2485.subsystems.BoulderDetector;
 import org.usfirst.frc.team2485.subsystems.BoulderStager;
 import org.usfirst.frc.team2485.subsystems.DriveTrain;
 import org.usfirst.frc.team2485.subsystems.Intake;
@@ -74,6 +75,8 @@ public class Hardware {
 	public static Intake intake;
 
 	public static BoulderStager boulderStager;
+	
+	public static BoulderDetector boulderDetector;
 
 	public static void init() {
 		if (battery == null) {
@@ -134,6 +137,8 @@ public class Hardware {
 					Constants.kUltrasonicECHO, Unit.kInches);
 
 			lidar = new LidarWrapper(Port.kMXP);
+
+			boulderDetector = new BoulderDetector();
 
 		}
 

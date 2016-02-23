@@ -35,7 +35,6 @@ public class BoulderStager implements Loggable {
 
 		setPosition(Position.NEUTRAL);
 
-//		new BoulderDetector();  
 	}
 
 	public void setPosition(Position position) {

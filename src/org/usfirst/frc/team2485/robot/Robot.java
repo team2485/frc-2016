@@ -233,11 +233,12 @@ public class Robot extends IterativeRobot {
 			Hardware.intake.setManual(
 					Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, Constants.kMoveIntakeManuallyDeadband));
 
+		} else if (Controllers.getOperatorHatSwitch() != -1) {
+			if (Hardware.intake.isPIDEnabled()) {
+				Hardware.intake.setManual(0);
+			}
+			Hardware.intakeArmSC.set(0.2); // TODO tune this value
 		}
-		// TODO get axis for thumbstick and uncomment once intake arm is fixed
-		// else if (Controllers.getJoystickAxis(4) > 0.4) {
-		// Hardware.intake.setManual(0.1);
-		// }
 		else {
 			if (!Hardware.intake.isPIDEnabled()) {
 				Hardware.intake.setSetpoint(Hardware.intake.getCurrentPosition());
@@ -260,9 +261,9 @@ public class Robot extends IterativeRobot {
 			joystickPressed = true;
 		} else if (Controllers.getJoystickButton(2)) { // side trigger
 			if (!joystickPressed) {
-//				operatorTeleopSequencer = SequencerFactory
-//						.getShootLowGoalSequence();
-				Hardware.shooter.setTargetSpeed(Shooter.RPM_LOW_GOAL_SHOT);
+				operatorTeleopSequencer = SequencerFactory
+						.getShootLowGoalSequence();
+//				Hardware.shooter.setTargetSpeed(Shooter.RPM_LOW_GOAL_SHOT);
 				joystickPressed = true;
 			}
 		} else if (Controllers.getJoystickButton(3)) {
@@ -323,10 +324,7 @@ public class Robot extends IterativeRobot {
 			joystickPressed = false;
 		} // int main = void();
 
-		// Hat Switch
-		if (Controllers.getOperatorHatSwitch() != -1) {
-			Hardware.intakeArmSC.set(0.1); // TODO tune this value
-		}
+		
 		
 		updateDashboard();
 	}
@@ -393,6 +391,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Current Error", Hardware.shooter.getError());
 
 		SmartDashboard.putNumber("Throttle", Hardware.shooter.getCurrentPower());
+		
+		SmartDashboard.putBoolean("Has Boulder?", Hardware.boulderDetector.hasBoulder());
 
 		// SmartDashboard.putNumber("Battery", Hardware.battery.getVoltage());
 
@@ -416,7 +416,7 @@ public class Robot extends IterativeRobot {
 	public void updateAllPeriodic() {
 
 		Logger.getInstance().logAll();
-		CurrentMonitor.getInstance().monitorCurrent();
+//		CurrentMonitor.getInstance().monitorCurrent();
 
 	}
 }
