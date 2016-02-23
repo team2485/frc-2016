@@ -1,5 +1,7 @@
 package org.usfirst.frc.team2485.util;
 
+import java.awt.SecondaryLoop;
+
 import edu.wpi.first.wpilibj.Joystick;
 
 /**
@@ -260,7 +262,25 @@ public final class Controllers {
         if (button < 1 || button > 22)
             throw new IllegalArgumentException("Joystick button number (" + button + ") is invalid.");
 
+        
         return secondary.getRawButton(button);
+    }
+    
+    /**
+     * Gets the angle position of the hat switch (POV) on the operator joystick
+     * 
+     * Angles start at 0 in the 12 o'clock position and continue to 360 clockwise.
+     * Returns -1 if the hat switch is in the center.
+     * 
+     * @return the angle of the hat switch
+     * 
+     * @see edu.wip.first.wpilibj.Joystick
+     */
+    public static int getOperatorHatSwitch() {
+    	if (secondary == null)
+    		throw new ControllerNullException("Secondary controller is null");
+    	
+    	return secondary.getPOV();
     }
 
     // </editor-fold>

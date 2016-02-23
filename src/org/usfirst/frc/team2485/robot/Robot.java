@@ -42,7 +42,8 @@ public class Robot extends IterativeRobot {
 	// rightDriveSC1, rightDriveSC2, rightDriveSC3;
 	// private Encoder driveEncoder;
 
-	private Sequencer autonomousSequencer, driverTeleopSequencer, operatorTeleopSequencer;
+	private Sequencer autonomousSequencer, driverTeleopSequencer,
+	operatorTeleopSequencer;
 
 	private SendableChooser autoChooser, autoPosChooser;
 
@@ -224,9 +225,10 @@ public class Robot extends IterativeRobot {
 
 	private boolean joystickPressed = false;
 
-	private void operatorTeleopControl() {
-
-		if (Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, Constants.kMoveIntakeManuallyDeadband) != 0) {
+	private void operatorTeleopControl() {		
+		// Axes
+		if (Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y,
+				Constants.kMoveIntakeManuallyDeadband) != 0) {
 
 			Hardware.intake.setManual(
 					Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, Constants.kMoveIntakeManuallyDeadband));
@@ -251,13 +253,16 @@ public class Robot extends IterativeRobot {
 
 			}
 		}
-
+		
+		// Buttons
 		if (Controllers.getJoystickButton(1)) {// trigger
 			operatorTeleopSequencer = SequencerFactory.getShootHighGoalSequence();
 			joystickPressed = true;
 		} else if (Controllers.getJoystickButton(2)) { // side trigger
 			if (!joystickPressed) {
-				operatorTeleopSequencer = SequencerFactory.getShootLowGoalSequence();
+//				operatorTeleopSequencer = SequencerFactory
+//						.getShootLowGoalSequence();
+				Hardware.shooter.setTargetSpeed(Shooter.RPM_LOW_GOAL_SHOT);
 				joystickPressed = true;
 			}
 		} else if (Controllers.getJoystickButton(3)) {
@@ -318,6 +323,11 @@ public class Robot extends IterativeRobot {
 			joystickPressed = false;
 		} // int main = void();
 
+		// Hat Switch
+		if (Controllers.getOperatorHatSwitch() != -1) {
+			Hardware.intakeArmSC.set(0.1); // TODO tune this value
+		}
+		
 		updateDashboard();
 	}
 
@@ -326,7 +336,6 @@ public class Robot extends IterativeRobot {
 	}
 
 	public void disabledPeriodic() {
-
 		updateDashboard();
 	}
 
@@ -336,10 +345,10 @@ public class Robot extends IterativeRobot {
 		ConstantsIO.init();
 		Hardware.init();
 		Hardware.intake.FLOOR_POSITION = Hardware.intakeAbsEncoder.get();
-		Hardware.intake.LOW_NO_INTAKE_POSITION = (Hardware.intake.FLOOR_POSITION + 0.085) % 1;
-		Hardware.intake.INTAKE_POSITION = (Hardware.intake.FLOOR_POSITION + 0.120) % 1;
-		Hardware.intake.PORTCULLIS_POSITION = (Hardware.intake.FLOOR_POSITION + 0.261) % 1;
-		Hardware.intake.FULL_UP_POSITION = (Hardware.intake.FLOOR_POSITION + 0.348) % 1;
+		Hardware.intake.LOW_NO_INTAKE_POSITION = (Hardware.intake.FLOOR_POSITION + 0.055) % 1;
+		Hardware.intake.INTAKE_POSITION = (Hardware.intake.FLOOR_POSITION + 0.085) % 1;
+		Hardware.intake.PORTCULLIS_POSITION = (Hardware.intake.FLOOR_POSITION + 0.211) % 1;
+		Hardware.intake.FULL_UP_POSITION = (Hardware.intake.FLOOR_POSITION + 0.261) % 1;
 
 	}
 
@@ -347,11 +356,11 @@ public class Robot extends IterativeRobot {
 
 		System.out.println("Robot: EncoderPos: " + Hardware.intakeAbsEncoder.get());
 
-		// if (Hardware.pressureSwitch.get()) {
-		// Hardware.compressorSpike.set(Relay.Value.kOff);
-		// } else {
-		// Hardware.compressorSpike.set(Relay.Value.kForward);
-		// }
+		if (Hardware.pressureSwitch.get()) {
+			Hardware.compressorSpike.set(Relay.Value.kOff);
+		} else {
+			Hardware.compressorSpike.set(Relay.Value.kForward);
+		}
 
 	}
 
@@ -376,6 +385,8 @@ public class Robot extends IterativeRobot {
 
 		// System.out.println("Ultrasonic value: " +
 		// Hardware.sonic.getRangeInches());
+		
+		SmartDashboard.putNumber("Graphable RPM", Hardware.shooter.getRate());
 
 		SmartDashboard.putString("RPM", (int) Hardware.shooter.getRate() + "," + (int) Hardware.shooter.getSetpoint());
 

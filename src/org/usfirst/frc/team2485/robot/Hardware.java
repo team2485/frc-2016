@@ -7,6 +7,7 @@ import org.usfirst.frc.team2485.subsystems.Intake;
 import org.usfirst.frc.team2485.subsystems.Shooter;
 import org.usfirst.frc.team2485.util.Battery;
 import org.usfirst.frc.team2485.util.ConstantsIO;
+import org.usfirst.frc.team2485.util.InvertedAbsoluteEncoder;
 import org.usfirst.frc.team2485.util.LidarWrapper;
 import org.usfirst.frc.team2485.util.SpeedControllerWrapper;
 
@@ -51,7 +52,7 @@ public class Hardware {
 
 	// Sensors
 	public static Encoder leftDriveEnc, rightDriveEnc;
-	public static AnalogPotentiometer intakeAbsEncoder;
+	public static InvertedAbsoluteEncoder intakeAbsEncoder;
 	public static AHRS ahrs;
 
 	public static Ultrasonic sonic;
@@ -96,14 +97,10 @@ public class Hardware {
 			leftDrive = new SpeedControllerWrapper(leftDriveVictorSPs,
 					Constants.kLeftDrivePDP);
 
-			// rollerVictorSPs = new VictorSP[2];
+			
 			lateralVictorSP = new VictorSP(Constants.kLateralRollerPWM);
 			intakeVictorSP = new VictorSP(Constants.kIntakeRollerPWM);
-			// int[] rollerPDPs = {Constants.kLateralRollerPDP,
-			// Constants.kIntakeRollerPDP};
-			// rollers = new SpeedControllerWrapper(rollerVictorSPs,
-			// rollerPDPs);
-
+			
 			intakeArmVictorSP = new VictorSP[2];
 			intakeArmVictorSP[0] = new VictorSP(Constants.kIntakeArmPWM[0]);
 			intakeArmVictorSP[1] = new VictorSP(Constants.kIntakeArmPWM[1]);
@@ -131,8 +128,8 @@ public class Hardware {
 			rightDriveEnc = new Encoder(Constants.kRightDriveEncoder[0],
 					Constants.kRightDriveEncoder[1]);
 
-			intakeAbsEncoder = new AnalogPotentiometer(
-					Constants.kIntakeArmAbsEncoder);
+			intakeAbsEncoder = new InvertedAbsoluteEncoder(
+					new AnalogPotentiometer(Constants.kIntakeArmAbsEncoder));
 
 			ahrs = new AHRS(SPI.Port.kMXP);
 			
@@ -140,7 +137,7 @@ public class Hardware {
 			
 			lidar = new LidarWrapper(Port.kMXP);
 			
-
+			
 		}
 
 		rightDrive.setInverted(false);
@@ -152,8 +149,10 @@ public class Hardware {
 		leftDrive.setRampRate(ConstantsIO.kDriveVoltageRamp);
 
 		//don't set the wrapper to inverted since one is inv and the other isn't
-		intakeArmVictorSP[0].setInverted(true);
-		intakeArmVictorSP[1].setInverted(false);
+		intakeArmVictorSP[0].setInverted(false);
+		intakeArmVictorSP[1].setInverted(true);
+		
+		
 
 		leftDriveEnc.setDistancePerPulse(0.01304 * 4);
 		rightDriveEnc.setDistancePerPulse(0.01295 * 4);
@@ -163,7 +162,7 @@ public class Hardware {
 		ahrs.zeroYaw();
 		
 		sonic.setAutomaticMode(true);
-
+		
 		driveTrain = new DriveTrain(true);
 		shooter = new Shooter();
 		intake = new Intake();
