@@ -53,7 +53,7 @@ public class Intake implements Loggable {
 		armPID.setInputRange(0.0, 1.0);
 		armPID.setContinuous();
 
-		armPID.setOutputRange(-0.1, 0.3);
+		armPID.setOutputRange(-0.15, 0.4);
 
 	}
 
@@ -75,10 +75,17 @@ public class Intake implements Loggable {
 		if (armPID.isEnabled()) {
 			armPID.disable();
 		}
-		 pwm = ThresholdHandler.deadbandAndScale(pwm,
-		 Constants.kMoveIntakeManuallyDeadband, 0.05, 0.5);
-//		pwm = ThresholdHandler.deadbandAndScaleDualRamp(pwm,
-//				Constants.kMoveIntakeManuallyDeadband, 0.05, 0.8, 0.4, 1.0);
+
+		if (pwm > 0) {
+
+			pwm = ThresholdHandler.deadbandAndScale(pwm,
+					Constants.kMoveIntakeManuallyDeadband, 0.05, 0.6);
+		} else {
+			pwm = ThresholdHandler.deadbandAndScale(pwm,
+					Constants.kMoveIntakeManuallyDeadband, 0.00, 0.2);
+		}
+		// pwm = ThresholdHandler.deadbandAndScaleDualRamp(pwm,
+		// Constants.kMoveIntakeManuallyDeadband, 0.05, 0.8, 0.4, 1.0);
 
 		// System.out.println("Intake: PWM: " + pwm +
 		// "\t\tand PID is disabled: "

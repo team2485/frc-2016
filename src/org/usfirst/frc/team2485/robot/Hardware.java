@@ -102,7 +102,7 @@ public class Hardware {
 
 			intakeArmVictorSP = new VictorSP(Constants.kIntakeArmPWM);
 			intakeArmSC = new SpeedControllerWrapper(intakeArmVictorSP,
-					Constants.kIntakeArmPWM);
+					Constants.kIntakeArmPDP);
 
 			leftShooterMotor = new CANTalon(Constants.kLeftShooterCAN);
 			rightShooterMotor = new CANTalon(Constants.kRightShooterCAN);

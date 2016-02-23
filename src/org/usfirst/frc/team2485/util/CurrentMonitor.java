@@ -18,7 +18,7 @@ public class CurrentMonitor {
 //		rightDriveMonitor = new CurrentMonitorGroup(Constants.kRightDrivePDP, 60);
 //		intakeArmMonitor = new CurrentMonitorGroup(Constants.kIntakeArmPDP, 40, 
 //				0.05, true, 0.25);
-		Hardware.intakeArmSC.setCurrentMonitor(intakeArmMonitor);
+//		Hardware.intakeArmSC.setCurrentMonitor(intakeArmMonitor);
 
 	}
 	
