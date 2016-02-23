@@ -87,8 +87,7 @@ public class Robot extends IterativeRobot {
 			autoChooser.addObject(curType.toString(), curType);
 		}
 
-		autoChooser.addDefault(AutoType.REACH_AUTO.toString(),
-				AutoType.REACH_AUTO);
+		autoChooser.addDefault(AutoType.REACH_AUTO.toString(), AutoType.REACH_AUTO);
 
 		autoPosChooser = new SendableChooser();
 
@@ -112,8 +111,7 @@ public class Robot extends IterativeRobot {
 		Hardware.ahrs.zeroYaw();
 		System.out.println("Robot - ahrs reading: " + Hardware.ahrs.getYaw());
 
-		autonomousSequencer = SequencerFactory.createAuto(
-				(AutoType) autoChooser.getSelected(),
+		autonomousSequencer = SequencerFactory.createAuto((AutoType) autoChooser.getSelected(),
 				(Integer) autoPosChooser.getSelected());
 
 	}
@@ -183,7 +181,7 @@ public class Robot extends IterativeRobot {
 		} else {
 			Hardware.driveTrain.setQuickTurn(false);
 		}
-
+		
 		if (Controllers.getAxis(Controllers.XBOX_AXIS_RTRIGGER) > 0.4) {
 			Hardware.driveTrain.setHighSpeed();
 		} else if (Controllers.getAxis(Controllers.XBOX_AXIS_LTRIGGER) > 0.4) {
@@ -195,8 +193,7 @@ public class Robot extends IterativeRobot {
 		if (Controllers.getButton(Controllers.XBOX_BTN_A)) {
 			if (!XBOXPressed) {
 				if (driverTeleopSequencer == null) {
-					driverTeleopSequencer = SequencerFactory
-							.getAutoAimSequence();
+					driverTeleopSequencer = SequencerFactory.getAutoAimSequence();
 					XBOXPressed = true;
 				}
 			}
@@ -228,20 +225,22 @@ public class Robot extends IterativeRobot {
 
 	private boolean joystickPressed = false;
 
-	private void operatorTeleopControl() {
-		
+	private void operatorTeleopControl() {		
 		// Axes
 		if (Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y,
 				Constants.kMoveIntakeManuallyDeadband) != 0) {
 
-			Hardware.intake.setManual(Controllers.getJoystickAxis(
-					Controllers.JOYSTICK_AXIS_Y,
-					Constants.kMoveIntakeManuallyDeadband));
+			Hardware.intake.setManual(
+					Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, Constants.kMoveIntakeManuallyDeadband));
 
-		} else {
+		}
+		// TODO get axis for thumbstick and uncomment once intake arm is fixed
+		// else if (Controllers.getJoystickAxis(4) > 0.4) {
+		// Hardware.intake.setManual(0.1);
+		// }
+		else {
 			if (!Hardware.intake.isPIDEnabled()) {
-				Hardware.intake.setSetpoint(Hardware.intake
-						.getCurrentPosition());
+				Hardware.intake.setSetpoint(Hardware.intake.getCurrentPosition());
 			}
 			// Hardware.intake.setManual(0);
 		}
@@ -250,16 +249,14 @@ public class Robot extends IterativeRobot {
 
 			if (operatorTeleopSequencer == null) {
 
-				operatorTeleopSequencer = new Sequencer(
-						new SequencedItem[] { new ShakeBoulderStager() });
+				operatorTeleopSequencer = new Sequencer(new SequencedItem[] { new ShakeBoulderStager() });
 
 			}
 		}
 		
 		// Buttons
 		if (Controllers.getJoystickButton(1)) {// trigger
-			operatorTeleopSequencer = SequencerFactory
-					.getShootHighGoalSequence();
+			operatorTeleopSequencer = SequencerFactory.getShootHighGoalSequence();
 			joystickPressed = true;
 		} else if (Controllers.getJoystickButton(2)) { // side trigger
 			if (!joystickPressed) {
@@ -357,8 +354,7 @@ public class Robot extends IterativeRobot {
 
 	public void testPeriodic() {
 
-		System.out.println("Robot: EncoderPos: "
-				+ Hardware.intakeAbsEncoder.get());
+		System.out.println("Robot: EncoderPos: " + Hardware.intakeAbsEncoder.get());
 
 		if (Hardware.pressureSwitch.get()) {
 			Hardware.compressorSpike.set(Relay.Value.kOff);
@@ -392,13 +388,11 @@ public class Robot extends IterativeRobot {
 		
 		SmartDashboard.putNumber("Graphable RPM", Hardware.shooter.getRate());
 
-		SmartDashboard.putString("RPM", (int) Hardware.shooter.getRate() + ","
-				+ (int) Hardware.shooter.getSetpoint());
+		SmartDashboard.putString("RPM", (int) Hardware.shooter.getRate() + "," + (int) Hardware.shooter.getSetpoint());
 
 		SmartDashboard.putNumber("Current Error", Hardware.shooter.getError());
 
-		SmartDashboard
-		.putNumber("Throttle", Hardware.shooter.getCurrentPower());
+		SmartDashboard.putNumber("Throttle", Hardware.shooter.getCurrentPower());
 
 		// SmartDashboard.putNumber("Battery", Hardware.battery.getVoltage());
 

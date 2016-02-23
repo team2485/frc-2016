@@ -75,10 +75,10 @@ public class Intake implements Loggable {
 		if (armPID.isEnabled()) {
 			armPID.disable();
 		}
-		// pwm = ThresholdHandler.deadbandAndScale(pwm,
-		// Constants.kMoveIntakeManuallyDeadband, 0.05, 0.5);
-		pwm = ThresholdHandler.deadbandAndScaleDualRamp(pwm,
-				Constants.kMoveIntakeManuallyDeadband, 0.05, 0.8, 0.4, 1.0);
+		 pwm = ThresholdHandler.deadbandAndScale(pwm,
+		 Constants.kMoveIntakeManuallyDeadband, 0.05, 0.5);
+//		pwm = ThresholdHandler.deadbandAndScaleDualRamp(pwm,
+//				Constants.kMoveIntakeManuallyDeadband, 0.05, 0.8, 0.4, 1.0);
 
 		// System.out.println("Intake: PWM: " + pwm +
 		// "\t\tand PID is disabled: "
