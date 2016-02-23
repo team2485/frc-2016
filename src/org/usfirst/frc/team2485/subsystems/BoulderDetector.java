@@ -20,8 +20,8 @@ public class BoulderDetector implements Loggable {
 
 	private boolean hasBoulder;
 	
-	private int numTimesBoulderDetected = 0;
-	private static final int MINIMUM_BOULDER_DETECTED_ITERATIONS = 10;
+	private int numTimesBoulderDetected = 0, numTimesBoulderNotDetected = 0;
+	private static final int MINIMUM_BOULDER_DETECTED_ITERATIONS = 5, MINIMUM_BOULDER_NOT_DETECTED_ITERATIONS = 5; //TODO tune value
 
 	
 	public BoulderDetector() {
@@ -41,43 +41,28 @@ public class BoulderDetector implements Loggable {
 		public void run() {
 
 			while (true) {
-
-			
+				
 				if (boulderDetected()) {
 					numTimesBoulderDetected++;
+					numTimesBoulderNotDetected = 0;
 				} else {
-					hasBoulder = false;
 					numTimesBoulderDetected = 0;
+					numTimesBoulderNotDetected++;
 				}
 				
 				if (numTimesBoulderDetected > MINIMUM_BOULDER_DETECTED_ITERATIONS && !hasBoulder) {
 					
 					hasBoulder = true;
-					Hardware.intake.setSetpoint(Intake.FULL_UP_POSITION, false);
+					
+//					Hardware.intake.setSetpoint(Intake.FULL_UP_POSITION, false);
+					Hardware.intake.stopRollers();
 					Hardware.boulderStager.setPosition(Position.NEUTRAL);
+					
 					System.out.println("BoulderDetector: setting position to FULL_UP_POSITION");
 					
+				} else if (numTimesBoulderNotDetected > MINIMUM_BOULDER_NOT_DETECTED_ITERATIONS && hasBoulder) {
+					hasBoulder = false;
 				}
-
-//				if (boulderDetected() && !hasBoulder) {
-//
-//					hasBoulder = true;
-//
-//					stopTimer = new Timer();
-//					stopTimer.schedule(new TimerTask() {
-//
-//						@Override
-//						public void run() {
-//							Hardware.intake.setSetpoint(Intake.LOW_NO_INTAKE, false);
-//							Hardware.boulderStager.setPosition(Position.NEUTRAL);
-//							System.out.println("BoulderDetector: setting position to LOW_NO_INTAKE");
-//							stopTimer = null;
-//						}
-//					}, 250);
-//				} else {
-//					hasBoulder = false;
-//					numTimesBoulderDetected = 0;
-//				}
 				
 				try {
 					Thread.sleep(20);
