@@ -23,7 +23,7 @@ public class Constants {
 						kRightDrivePDP = {12, 13, 14};
 	
 
-	public static final int[] kIntakeArmPWM = {0, 1} , kIntakeArmPDP = {0, 1};
+	public static final int kIntakeArmPWM = 0, kIntakeArmPDP = 0;
 	
 	public static final int kLateralRollerPWM = 8, kLateralRollerPDP = 10,
 			kIntakeRollerPWM = 9, kIntakeRollerPDP = 9;

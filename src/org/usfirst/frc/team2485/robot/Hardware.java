@@ -38,7 +38,7 @@ public class Hardware {
 
 	public static CANTalon leftShooterMotor, rightShooterMotor;
 
-	public static VictorSP[] intakeArmVictorSP;
+	public static VictorSP intakeArmVictorSP;
 	public static SpeedControllerWrapper intakeArmSC;
 
 	public static VictorSP lateralVictorSP;
@@ -56,7 +56,7 @@ public class Hardware {
 	public static AHRS ahrs;
 
 	public static Ultrasonic sonic;
-	
+
 	public static LidarWrapper lidar;
 
 	// Sequences && Auto
@@ -64,7 +64,7 @@ public class Hardware {
 
 	// Compressor
 	public static Relay compressorSpike;
-	public static DigitalInput pressureSwitch;	
+	public static DigitalInput pressureSwitch;
 
 	// Subsystems
 	public static DriveTrain driveTrain;
@@ -97,22 +97,19 @@ public class Hardware {
 			leftDrive = new SpeedControllerWrapper(leftDriveVictorSPs,
 					Constants.kLeftDrivePDP);
 
-			
 			lateralVictorSP = new VictorSP(Constants.kLateralRollerPWM);
 			intakeVictorSP = new VictorSP(Constants.kIntakeRollerPWM);
-			
-			intakeArmVictorSP = new VictorSP[2];
-			intakeArmVictorSP[0] = new VictorSP(Constants.kIntakeArmPWM[0]);
-			intakeArmVictorSP[1] = new VictorSP(Constants.kIntakeArmPWM[1]);
+
+			intakeArmVictorSP = new VictorSP(Constants.kIntakeArmPWM);
 			intakeArmSC = new SpeedControllerWrapper(intakeArmVictorSP,
-					Constants.kIntakeArmPDP);
+					Constants.kIntakeArmPWM);
 
 			leftShooterMotor = new CANTalon(Constants.kLeftShooterCAN);
 			rightShooterMotor = new CANTalon(Constants.kRightShooterCAN);
 
 			compressorSpike = new Relay(Constants.kCompressorSpikePort);
 			pressureSwitch = new DigitalInput(Constants.kPressureSwitchPort);
-			
+
 			shooterHoodSolenoid1 = new Solenoid(
 					Constants.kShooterHoodSolenoidLowerPort);
 			shooterHoodSolenoid2 = new Solenoid(
@@ -132,12 +129,12 @@ public class Hardware {
 					new AnalogPotentiometer(Constants.kIntakeArmAbsEncoder));
 
 			ahrs = new AHRS(SPI.Port.kMXP);
-			
-			sonic = new Ultrasonic(Constants.kUltrasonicPING, Constants.kUltrasonicECHO, Unit.kInches);
-			
+
+			sonic = new Ultrasonic(Constants.kUltrasonicPING,
+					Constants.kUltrasonicECHO, Unit.kInches);
+
 			lidar = new LidarWrapper(Port.kMXP);
-			
-			
+
 		}
 
 		rightDrive.setInverted(false);
@@ -148,21 +145,15 @@ public class Hardware {
 		leftDrive.setRampMode(true);
 		leftDrive.setRampRate(ConstantsIO.kDriveVoltageRamp);
 
-		//don't set the wrapper to inverted since one is inv and the other isn't
-		intakeArmVictorSP[0].setInverted(false);
-		intakeArmVictorSP[1].setInverted(true);
-		
-		
-
 		leftDriveEnc.setDistancePerPulse(0.01304 * 4);
 		rightDriveEnc.setDistancePerPulse(0.01295 * 4);
 
 		leftDriveEnc.setReverseDirection(true);
 
 		ahrs.zeroYaw();
-		
+
 		sonic.setAutomaticMode(true);
-		
+
 		driveTrain = new DriveTrain(true);
 		shooter = new Shooter();
 		intake = new Intake();
