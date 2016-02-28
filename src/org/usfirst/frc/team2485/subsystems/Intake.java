@@ -31,7 +31,7 @@ public class Intake implements Loggable {
 			LOW_NO_INTAKE_POSITION = (FLOOR_POSITION + 0.085) % 1,
 			INTAKE_POSITION = (FLOOR_POSITION + 0.120) % 1,
 			PORTCULLIS_POSITION = (FLOOR_POSITION + 0.261) % 1,
-			FULL_UP_POSITION = (FLOOR_POSITION + 0.348) % 1;
+			FULL_UP_POSITION = (FLOOR_POSITION + 0.352) % 1;
 
 	public Intake() {
 
@@ -53,7 +53,7 @@ public class Intake implements Loggable {
 		armPID.setInputRange(0.0, 1.0);
 		armPID.setContinuous();
 
-		armPID.setOutputRange(-0.15, 0.4);
+		armPID.setOutputRange(-0.22, 0.55);
 
 	}
 

@@ -17,13 +17,14 @@ public class BoulderDetector implements Loggable {
 	private Ultrasonic sonic;
 
 	private Timer stopTimer = null;
+	private Timer shakeTimer = null;
 
 	private boolean hasBoulder;
-	
-	private int numTimesBoulderDetected = 0, numTimesBoulderNotDetected = 0;
-	private static final int MINIMUM_BOULDER_DETECTED_ITERATIONS = 5, MINIMUM_BOULDER_NOT_DETECTED_ITERATIONS = 5; //TODO tune value
 
-	
+	private int numTimesBoulderDetected = 0, numTimesBoulderNotDetected = 0;
+	private static final int MINIMUM_BOULDER_DETECTED_ITERATIONS = 5,
+			MINIMUM_BOULDER_NOT_DETECTED_ITERATIONS = 5; // TODO tune value
+
 	public BoulderDetector() {
 
 		sonic = Hardware.sonic;
@@ -34,9 +35,11 @@ public class BoulderDetector implements Loggable {
 	private boolean boulderDetected() {
 		return sonic.getRangeInches() < 10;
 	}
-	
+
 	/**
-	 * Determines whether we have a boulder based on sonic sensor, may be delayed by 100 ms
+	 * Determines whether we have a boulder based on sonic sensor, may be
+	 * delayed by 100 ms
+	 * 
 	 * @return true if we have a boulder
 	 */
 	public boolean hasBoulder() {
@@ -49,7 +52,7 @@ public class BoulderDetector implements Loggable {
 		public void run() {
 
 			while (true) {
-				
+
 				if (boulderDetected()) {
 					numTimesBoulderDetected++;
 					numTimesBoulderNotDetected = 0;
@@ -57,21 +60,41 @@ public class BoulderDetector implements Loggable {
 					numTimesBoulderDetected = 0;
 					numTimesBoulderNotDetected++;
 				}
-				
-				if (numTimesBoulderDetected > MINIMUM_BOULDER_DETECTED_ITERATIONS && !hasBoulder) {
-					
+
+				if (numTimesBoulderDetected > MINIMUM_BOULDER_DETECTED_ITERATIONS
+						&& !hasBoulder) {
+
 					hasBoulder = true;
-					
-//					Hardware.intake.setSetpoint(Intake.FULL_UP_POSITION, false);
+
+					// Hardware.intake.setSetpoint(Intake.FULL_UP_POSITION,
+					// false);
 					Hardware.intake.stopRollers();
-					Hardware.boulderStager.setPosition(Position.NEUTRAL);
-					
-					System.out.println("BoulderDetector: setting position to FULL_UP_POSITION");
-					
-				} else if (numTimesBoulderNotDetected > MINIMUM_BOULDER_NOT_DETECTED_ITERATIONS && hasBoulder) {
+
+					if (Hardware.shooter.getSetpoint() == 0) {
+						Hardware.boulderStager.setPosition(Position.SHOOTING);
+
+						if (shakeTimer == null) {
+
+							shakeTimer = new Timer();
+							shakeTimer.schedule(new TimerTask() {
+
+								@Override
+								public void run() {
+									Hardware.boulderStager
+											.setPosition(Position.NEUTRAL);
+								}
+							}, 500);
+
+						}
+					} else {
+						Hardware.boulderStager.setPosition(Position.NEUTRAL);
+					}
+
+				} else if (numTimesBoulderNotDetected > MINIMUM_BOULDER_NOT_DETECTED_ITERATIONS
+						&& hasBoulder) {
 					hasBoulder = false;
 				}
-				
+
 				try {
 					Thread.sleep(20);
 				} catch (InterruptedException e) {

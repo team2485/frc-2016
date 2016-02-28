@@ -97,7 +97,7 @@ public class GRIPReciever {
 
 		System.out.println("GRIPReciever bestCenterX: " + bestCenterX);
 		
-		double angle = FIELD_OF_VIEW * (bestCenterX - 212) / 320;
+		double angle = FIELD_OF_VIEW * (bestCenterX - 221) / 320;
 		
 		return angle;
 

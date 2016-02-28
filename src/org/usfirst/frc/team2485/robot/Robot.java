@@ -14,6 +14,7 @@ import org.usfirst.frc.team2485.subsystems.Shooter.HoodPosition;
 import org.usfirst.frc.team2485.util.ConstantsIO;
 import org.usfirst.frc.team2485.util.Controllers;
 import org.usfirst.frc.team2485.util.CurrentMonitor;
+import org.usfirst.frc.team2485.util.GRIPReciever;
 import org.usfirst.frc.team2485.util.LidarWrapper;
 import org.usfirst.frc.team2485.util.Logger;
 
@@ -25,8 +26,10 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Relay.Direction;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.vision.USBCamera;
 
 /**
  * @author Aidan Fay
@@ -66,11 +69,19 @@ public class Robot extends IterativeRobot {
 		// 250.0);
 
 		// Logger.getInstance().addLoggable(Hardware.battery);
+		
+		GRIPReciever.setUpCameraSettings();
+		
+//		USBCamera cam = new USBCamera("cam0");
+//		
+//		cam.setBrightness(25);
+//		cam.setExposureManual(30);
+//		cam.setWhiteBalanceManual(35);
+		
+//		CameraServer.getInstance().
 
 		Logger.getInstance().addLoggable(Hardware.driveTrain);
 		Logger.getInstance().addLoggable(Hardware.shooter);
-
-		CameraServer.getInstance().startAutomaticCapture("cam0");
 
 		CurrentMonitor.getInstance(); // forces to construct
 
@@ -113,7 +124,11 @@ public class Robot extends IterativeRobot {
 
 		autonomousSequencer = SequencerFactory.createAuto((AutoType) autoChooser.getSelected(),
 				(Integer) autoPosChooser.getSelected());
-
+		
+		if (!CameraServer.getInstance().isAutoCaptureStarted()) {
+			CameraServer.getInstance().startAutomaticCapture("cam0");
+		}
+		
 	}
 
 	public void autonomousPeriodic() {
@@ -136,6 +151,10 @@ public class Robot extends IterativeRobot {
 		ConstantsIO.init();
 		Hardware.init();
 		Hardware.shooter.setBrakeMode(false);
+		
+		if (!CameraServer.getInstance().isAutoCaptureStarted()) {
+			CameraServer.getInstance().startAutomaticCapture("cam0");
+		}
 	}
 
 	public void teleopPeriodic() {
@@ -358,8 +377,26 @@ public class Robot extends IterativeRobot {
 			Hardware.compressorSpike.set(Relay.Value.kOff);
 		} else {
 			Hardware.compressorSpike.set(Relay.Value.kForward);
+			System.out.println("ON");
 		}
+		
+//		Hardware.compressorSpike.setSafetyEnabled(false);
 
+//		if (Controllers.getJoystickButton(7)) {
+//			Hardware.compressorSpike.set(Relay.Value.kOff);
+//		} else if (Controllers.getJoystickButton(8)) {
+//			Hardware.compressorSpike.set(Relay.Value.kOn);
+//		} else if (Controllers.getJoystickButton(11)) {
+//			Hardware.compressorSpike.set(Relay.Value.kForward);
+//		} else if (Controllers.getJoystickButton(10)) {
+//			Hardware.compressorSpike.set(Relay.Value.kReverse);
+//		} else if (Controllers.getJoystickButton(11)) {
+//			Hardware.compressorSpike.setDirection(Direction.kForward);
+//			Hardware.compressorSpike.set(Relay.Value.kOn);
+//		} else if (Controllers.getJoystickButton(12)) {
+//			Hardware.compressorSpike.setDirection(Direction.kReverse);
+//			Hardware.compressorSpike.set(Relay.Value.kOn);
+//		}
 	}
 
 	private void resetAndDisableSystems() {

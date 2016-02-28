@@ -16,10 +16,10 @@ public class Constants {
 	
 	public static final int kCompressorSpikePort = 0;
 	
-	public static final int[] kLeftDrivePWM = {4, 3, 2}, 
-							  kLeftDrivePDP = {15, 3, 2}, 
+	public static final int[] kLeftDrivePWM = {2, 3, 4}, 
+							  kLeftDrivePDP = {2, 3, 15}, 
 							  kRightDrivePWM = {5, 6, 7}, 
-							  kRightDrivePDP = {12, 13, 14};
+							  kRightDrivePDP = {14, 13, 12};
 							  //First 2 ports should be Sims, 3rd is 775
 
 	public static final int kIntakeArmPWM = 1, kIntakeArmPDP = 1;

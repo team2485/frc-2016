@@ -40,10 +40,11 @@ public class SpeedControllerWrapper implements SpeedController {
 			}
 		}
 
-		setScaleFactors(scaleFactors);
-
 		this.speedControllerList = speedControllerList;
 		this.pdpSlotsList = pdpSlotsList;
+		
+		setScaleFactors(scaleFactors);
+
 
 	}
 

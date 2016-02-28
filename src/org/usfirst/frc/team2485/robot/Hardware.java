@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Relay.Direction;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Ultrasonic;
@@ -95,10 +96,10 @@ public class Hardware {
 			leftDriveVictorSPs[2] = new VictorSP(Constants.kLeftDrivePWM[2]);
 
 			rightDrive = new SpeedControllerWrapper(rightDriveVictorSPs,
-					Constants.kRightDrivePDP);
+					Constants.kRightDrivePDP, new double[] {1.45, 1.45, 1});
 
 			leftDrive = new SpeedControllerWrapper(leftDriveVictorSPs,
-					Constants.kLeftDrivePDP);
+					Constants.kLeftDrivePDP, new double[] {1.45, 1.45, 1});
 
 			lateralVictorSP = new VictorSP(Constants.kLateralRollerPWM);
 			intakeVictorSP = new VictorSP(Constants.kIntakeRollerPWM);

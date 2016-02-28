@@ -27,7 +27,7 @@ public class Shooter implements Loggable {
 		LOW_ANGLE, HIGH_ANGLE, STOWED
 	};
 
-	public static final double RPM_LONG_SHOT = 5700, RPM_BATTER_SHOT = 4650,
+	public static final double RPM_LONG_SHOT = 5700, RPM_BATTER_SHOT = 5000,
 			RPM_LOW_GOAL_SHOT = 3500;
 
 	public static final HoodPosition DEFAULT_HOOD_POSITION = HoodPosition.HIGH_ANGLE;
@@ -53,13 +53,12 @@ public class Shooter implements Loggable {
 				ConstantsIO.kI_Shooter, ConstantsIO.kD_Shooter,
 				ConstantsIO.kF_Shooter, 0, ConstantsIO.kShooterVoltageRamp, 0);
 		
-//		rightShooterMotor.
 		rightShooterMotor.setVoltageRampRate(ConstantsIO.kShooterVoltageRamp);
 		rightShooterMotor.configPeakOutputVoltage(12.0, -12.0);
 
 		leftShooterMotor.changeControlMode(CANTalon.TalonControlMode.Follower);
 		leftShooterMotor.set(rightShooterMotor.getDeviceID());
-		leftShooterMotor.setVoltageRampRate(ConstantsIO.kShooterVoltageRamp);
+//		leftShooterMotor.setVoltageRampRate(ConstantsIO.kShooterVoltageRamp);
 
 
 		rightShooterMotor.reverseSensor(true);
