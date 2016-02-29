@@ -46,9 +46,7 @@ public class Shooter implements Loggable {
 		upperSolenoid = Hardware.shooterHoodSolenoid2;
 
 		rightShooterMotor
-				.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative); // also
-																			// possibly
-																			// CtreMagEncoder_Absolute
+				.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative); 
 		rightShooterMotor.setPID(ConstantsIO.kP_Shooter,
 				ConstantsIO.kI_Shooter, ConstantsIO.kD_Shooter,
 				ConstantsIO.kF_Shooter, 0, ConstantsIO.kShooterVoltageRamp, 0);
@@ -74,8 +72,8 @@ public class Shooter implements Loggable {
 	}
 
 	public void setHoodPosition(final HoodPosition newHoodPosition) {
-		System.out.println("Shooter: set hood position "
-				+ newHoodPosition.toString());
+//		System.out.println("Shooter: set hood position "
+//				+ newHoodPosition.toString());
 
 		if (newHoodPosition == HoodPosition.LOW_ANGLE) {
 			if (currHoodPosition == HoodPosition.HIGH_ANGLE) {
@@ -99,13 +97,8 @@ public class Shooter implements Loggable {
 
 			} else if (currHoodPosition == HoodPosition.STOWED) {
 				lowerSolenoid.set(false);
-				System.out.println("Shooter: stowed -> high angle");
 			}
 		} else { // setting to stowed
-
-			System.out
-					.println("Shooter: Hood is being set to stowed, cur pos is: "
-							+ currHoodPosition);
 
 			if (currHoodPosition == HoodPosition.LOW_ANGLE) {
 

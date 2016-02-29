@@ -11,7 +11,6 @@ import org.usfirst.frc.team2485.util.Loggable;
 import org.usfirst.frc.team2485.util.SpeedControllerWrapper;
 import org.usfirst.frc.team2485.util.ThresholdHandler;
 
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.VictorSP;
 
@@ -86,10 +85,6 @@ public class Intake implements Loggable {
 		}
 		// pwm = ThresholdHandler.deadbandAndScaleDualRamp(pwm,
 		// Constants.kMoveIntakeManuallyDeadband, 0.05, 0.8, 0.4, 1.0);
-
-		// System.out.println("Intake: PWM: " + pwm +
-		// "\t\tand PID is disabled: "
-		// + armPID.isEnabled());
 
 		double encoderPos = absEncoder.get();
 

@@ -41,10 +41,6 @@ import edu.wpi.first.wpilibj.vision.USBCamera;
  */
 public class Robot extends IterativeRobot {
 
-	// private SpeedController leftDriveSC1, leftDriveSC2, leftDriveSC3,
-	// rightDriveSC1, rightDriveSC2, rightDriveSC3;
-	// private Encoder driveEncoder;
-
 	private Sequencer autonomousSequencer, driverTeleopSequencer,
 	operatorTeleopSequencer;
 
@@ -57,18 +53,6 @@ public class Robot extends IterativeRobot {
 
 		Controllers.set(new Joystick(0), new Joystick(1));
 
-		// Logger.getInstance().addLoggable(Hardware.driveTrain);
-
-		// leftDriveSC1 = new SpeedControllerWrapper(new VictorSP(6), 0);
-		// leftDriveSC2 = new SpeedControllerWrapper(new VictorSP(5), 0);
-		// leftDriveSC3 = new SpeedControllerWrapper(new VictorSP(1), 0);
-		// rightDriveSC1 = new SpeedControllerWrapper(new VictorSP(0), 0);
-
-		// driveEncoder = new Encoder(0, 0);
-		// driveEncoder.setDistancePerPulse(Math.PI*2*WHEEL_RADIUS_INCHES /
-		// 250.0);
-
-		// Logger.getInstance().addLoggable(Hardware.battery);
 		
 		GRIPReciever.setUpCameraSettings();
 		
@@ -80,6 +64,7 @@ public class Robot extends IterativeRobot {
 		
 //		CameraServer.getInstance().
 
+		// Logger.getInstance().addLoggable(Hardware.battery);
 		Logger.getInstance().addLoggable(Hardware.driveTrain);
 		Logger.getInstance().addLoggable(Hardware.shooter);
 
@@ -87,7 +72,7 @@ public class Robot extends IterativeRobot {
 
 		initAutoChooser();
 
-		System.out.println("initialized");
+//		System.out.println("initialized");
 	}
 
 	private void initAutoChooser() {
@@ -120,7 +105,6 @@ public class Robot extends IterativeRobot {
 		Hardware.init();
 
 		Hardware.ahrs.zeroYaw();
-		System.out.println("Robot - ahrs reading: " + Hardware.ahrs.getYaw());
 
 		autonomousSequencer = SequencerFactory.createAuto((AutoType) autoChooser.getSelected(),
 				(Integer) autoPosChooser.getSelected());
@@ -171,10 +155,6 @@ public class Robot extends IterativeRobot {
 			operatorTeleopSequencer = null;
 		}
 
-		// if (Hardware.intake.isPIDEnabled()) {
-		// System.out.println("Robot: arm PID is enabled");
-		// }
-
 		updateAllPeriodic();
 
 		updateDashboard();
@@ -211,16 +191,17 @@ public class Robot extends IterativeRobot {
 
 		if (Controllers.getButton(Controllers.XBOX_BTN_A)) {
 			if (!XBOXPressed) {
+				//Auto aim
 				if (driverTeleopSequencer == null) {
 					driverTeleopSequencer = SequencerFactory.getAutoAimSequence();
 					XBOXPressed = true;
 				}
 			}
-		} else if (Controllers.getButton(Controllers.XBOX_BTN_X)) {
+		} else if (Controllers.getButton(Controllers.XBOX_BTN_X)) { 
 			if (!XBOXPressed) {
+				// Intake
 				Hardware.boulderStager.setPosition(Position.INTAKE);
 				Hardware.intake.setSetpoint(Intake.INTAKE_POSITION, true);
-				// System.out.println("Robot: X was in fact pressed");
 				XBOXPressed = true;
 			}
 		} else if (Controllers.getButton(Controllers.XBOX_BTN_B)) {
@@ -256,7 +237,7 @@ public class Robot extends IterativeRobot {
 			if (Hardware.intake.isPIDEnabled()) {
 				Hardware.intake.setManual(0);
 			}
-			Hardware.intakeArmSC.set(0.2); // TODO tune this value
+			Hardware.intakeArmSC.set(0.2); 
 		}
 		else {
 			if (!Hardware.intake.isPIDEnabled()) {
@@ -341,9 +322,7 @@ public class Robot extends IterativeRobot {
 			}
 		} else {
 			joystickPressed = false;
-		} // int main = void();
-
-		
+		}
 		
 		updateDashboard();
 	}
@@ -371,32 +350,14 @@ public class Robot extends IterativeRobot {
 
 	public void testPeriodic() {
 
-		System.out.println("Robot: EncoderPos: " + Hardware.intakeAbsEncoder.get());
+//		System.out.println("Robot: EncoderPos: " + Hardware.intakeAbsEncoder.get());
 
 		if (Hardware.pressureSwitch.get()) {
 			Hardware.compressorSpike.set(Relay.Value.kOff);
 		} else {
 			Hardware.compressorSpike.set(Relay.Value.kForward);
-			System.out.println("ON");
 		}
 		
-//		Hardware.compressorSpike.setSafetyEnabled(false);
-
-//		if (Controllers.getJoystickButton(7)) {
-//			Hardware.compressorSpike.set(Relay.Value.kOff);
-//		} else if (Controllers.getJoystickButton(8)) {
-//			Hardware.compressorSpike.set(Relay.Value.kOn);
-//		} else if (Controllers.getJoystickButton(11)) {
-//			Hardware.compressorSpike.set(Relay.Value.kForward);
-//		} else if (Controllers.getJoystickButton(10)) {
-//			Hardware.compressorSpike.set(Relay.Value.kReverse);
-//		} else if (Controllers.getJoystickButton(11)) {
-//			Hardware.compressorSpike.setDirection(Direction.kForward);
-//			Hardware.compressorSpike.set(Relay.Value.kOn);
-//		} else if (Controllers.getJoystickButton(12)) {
-//			Hardware.compressorSpike.setDirection(Direction.kReverse);
-//			Hardware.compressorSpike.set(Relay.Value.kOn);
-//		}
 	}
 
 	private void resetAndDisableSystems() {

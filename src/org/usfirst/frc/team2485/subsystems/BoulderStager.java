@@ -7,10 +7,8 @@ import org.usfirst.frc.team2485.robot.Hardware;
 import org.usfirst.frc.team2485.util.Loggable;
 
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Ultrasonic;
 
 /**
- * also known as RockYourPebblesOff
  * 
  * @author Amanda Wasserman
  * @author Vicky Comunale
@@ -39,7 +37,7 @@ public class BoulderStager implements Loggable {
 
 	public void setPosition(Position position) {
 		
-		System.out.println("BoulderStager: SetPos: " + position.toString());
+//		System.out.println("BoulderStager: SetPos: " + position.toString());
 
 		this.position = position;
 

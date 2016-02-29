@@ -42,9 +42,7 @@ public class ConstantsIO {
 			e1.printStackTrace();
 			
 		}
-		
-//		System.out.println(data);
-		
+				
 		kP_Shooter = Double.parseDouble(data.get("kP_Shooter"));
 		kI_Shooter = Double.parseDouble(data.get("kI_Shooter"));
 		kD_Shooter = Double.parseDouble(data.get("kD_Shooter"));

@@ -138,8 +138,6 @@ public class DriveTrain implements Loggable {
 	 */
 	public void warlordDrive(double controllerY, double controllerX) {
 
-		// System.out.println("ControllerY: " + controllerY);
-
 		boolean isHighGear = isQuickTurn;
 
 		double steeringNonLinearity;

@@ -13,7 +13,6 @@ import org.usfirst.frc.team2485.util.LidarWrapper;
 import org.usfirst.frc.team2485.util.SpeedControllerWrapper;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.ni.vision.NIVision.LegFeature;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.CANTalon;
@@ -21,12 +20,10 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.Relay.Direction;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.Ultrasonic.Unit;
-import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.VictorSP;
 
 public class Hardware {
@@ -45,8 +42,6 @@ public class Hardware {
 
 	public static VictorSP lateralVictorSP;
 	public static VictorSP intakeVictorSP;
-	// public static VictorSP[] rollerVictorSPs;
-	// public static SpeedControllerWrapper rollers;
 
 	// Solenoids
 	public static Solenoid shooterHoodSolenoid1, shooterHoodSolenoid2,
