@@ -2,8 +2,6 @@ package org.usfirst.frc.team2485.robot;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.usfirst.frc.team2485.util.ConstantsIO;
 
@@ -30,6 +28,7 @@ public class Constants {
 	public static final int[] kLeftDriveEncoder = {2, 3}, 
 			kRightDriveEncoder = {4, 5};
 	
+	public static final int[] kShooterEncoder = {0, 1};
 
 	public static final int kIntakeArmAbsEncoder = 0;
 	

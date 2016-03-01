@@ -8,10 +8,13 @@ import java.util.TimerTask;
 import org.usfirst.frc.team2485.robot.Hardware;
 import org.usfirst.frc.team2485.util.ConstantsIO;
 import org.usfirst.frc.team2485.util.Loggable;
+import org.usfirst.frc.team2485.util.SpeedControllerWrapper;
 
 import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.SpeedController;
 
 /**
  * @author Jeremy McCulloch
@@ -19,7 +22,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 public class Shooter implements Loggable {
 
 	/**
-	 * Low Angle = Long shot <br>
+	 * Low Angle = Long Shot <br>
 	 * High Angle = Batter Shot <br>
 	 * Stowed = Don't Shoot <br>
 	 */
@@ -27,17 +30,22 @@ public class Shooter implements Loggable {
 		LOW_ANGLE, HIGH_ANGLE, STOWED
 	};
 
-	public static final double RPM_LONG_SHOT = 5700, RPM_BATTER_SHOT = 5000,
-			RPM_LOW_GOAL_SHOT = 3500;
+	public static final double RPS_LONG_SHOT = 95, 
+		RPS_BATTER_SHOT = 73,//used to be 70 @ drive practice
+			RPS_LOW_GOAL_SHOT = 60;
 
 	public static final HoodPosition DEFAULT_HOOD_POSITION = HoodPosition.HIGH_ANGLE;
 
 	private CANTalon rightShooterMotor, leftShooterMotor;
+	private SpeedControllerWrapper shooterMotors;
 	private Solenoid lowerSolenoid, upperSolenoid;
-
+	private Encoder enc;
 	private HoodPosition currHoodPosition;
+	public PIDController ratePID;
 
 	public Shooter() {
+
+		enc = Hardware.shooterEnc;
 
 		rightShooterMotor = Hardware.rightShooterMotor;
 		leftShooterMotor = Hardware.leftShooterMotor;
@@ -45,25 +53,17 @@ public class Shooter implements Loggable {
 		lowerSolenoid = Hardware.shooterHoodSolenoid1;
 		upperSolenoid = Hardware.shooterHoodSolenoid2;
 
-		rightShooterMotor
-				.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative); 
-		rightShooterMotor.setPID(ConstantsIO.kP_Shooter,
-				ConstantsIO.kI_Shooter, ConstantsIO.kD_Shooter,
-				ConstantsIO.kF_Shooter, 0, ConstantsIO.kShooterVoltageRamp, 0);
-		
-		rightShooterMotor.setVoltageRampRate(ConstantsIO.kShooterVoltageRamp);
-		rightShooterMotor.configPeakOutputVoltage(12.0, -12.0);
+		rightShooterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 
-		leftShooterMotor.changeControlMode(CANTalon.TalonControlMode.Follower);
-		leftShooterMotor.set(rightShooterMotor.getDeviceID());
-//		leftShooterMotor.setVoltageRampRate(ConstantsIO.kShooterVoltageRamp);
+		leftShooterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+		leftShooterMotor.setInverted(true);
 
+		shooterMotors = new SpeedControllerWrapper(new SpeedController[] { leftShooterMotor, rightShooterMotor },
+				new int[] { 0, 0 });// CANTalons monitor their own current
 
-		rightShooterMotor.reverseSensor(true);
-		rightShooterMotor.reverseOutput(false); // This reverses direction of
-												// shooter
-		leftShooterMotor.reverseOutput(true); // always reversed because it's
-												// relative to master
+		ratePID = new PIDController(ConstantsIO.kP_Shooter, ConstantsIO.kI_Shooter, ConstantsIO.kD_Shooter,
+				ConstantsIO.kF_Shooter, enc, shooterMotors);
+		ratePID.setOutputRange(0, 1);
 
 		currHoodPosition = DEFAULT_HOOD_POSITION;
 
@@ -72,6 +72,7 @@ public class Shooter implements Loggable {
 	}
 
 	public void setHoodPosition(final HoodPosition newHoodPosition) {
+		
 //		System.out.println("Shooter: set hood position "
 //				+ newHoodPosition.toString());
 
@@ -118,6 +119,7 @@ public class Shooter implements Loggable {
 		}
 
 		currHoodPosition = newHoodPosition;
+		
 	}
 
 	public void resetHood() {
@@ -128,8 +130,10 @@ public class Shooter implements Loggable {
 
 	public void setTargetSpeed(double setpoint) {
 
-		rightShooterMotor.changeControlMode(CANTalon.TalonControlMode.Speed);
-		rightShooterMotor.set(setpoint);
+		ratePID.setSetpoint(setpoint);
+		if (!ratePID.isEnabled()) {
+			ratePID.enable();
+		}
 
 	}
 
@@ -138,38 +142,41 @@ public class Shooter implements Loggable {
 	 * Currently not working
 	 */
 	public void setSpeedOffLidar() {
+		
 		setTargetSpeed(0.0 /* Lidar magic */);
+	
 	}
 
 	public double getSetpoint() {
-		return rightShooterMotor.getSetpoint();
+		
+		return ratePID.getSetpoint();
+		
 	}
 
 	public void setPWM(double pwm) {
 
-		rightShooterMotor
-				.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-		rightShooterMotor.set(pwm);
+		if (ratePID.isEnabled()) {
+			ratePID.disable();
+		}
+		shooterMotors.set(pwm);
 
 	}
 
 	public void disableShooter() {
 
-		rightShooterMotor
-				.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-		rightShooterMotor.set(0.0);
+		setPWM(0);
 
 	}
 
 	public double getRate() {
 
-		return rightShooterMotor.getSpeed();
+		return enc.getRate();
 
 	}
 
 	public double getError() {
 
-		return rightShooterMotor.getSetpoint() - rightShooterMotor.getSpeed();
+		return getSetpoint() - getRate();
 
 	}
 
@@ -187,28 +194,27 @@ public class Shooter implements Loggable {
 	 *            the maximum error, as a percent, from 0.0 to 1.0
 	 */
 	public boolean isOnTargetPercentage(double maxPercentError) {
+		
 		return isOnTarget(maxPercentError * getSetpoint());
+		
 	}
 
 	public boolean isPID() {
 
-		return rightShooterMotor.getControlMode() == CANTalon.TalonControlMode.Speed;
-
+		return ratePID.isEnabled();
+		
 	}
 
 	public boolean isReadyToFire() {
 
-		return isOnTargetPercentage(0.10)
-				&& currHoodPosition != HoodPosition.STOWED;
+		return isOnTargetPercentage(0.10) && currHoodPosition != HoodPosition.STOWED;
 
 	}
 
 	public double getCurrentPower() {
 
-		// Calls get on the left motor (the follower) which returns the
-		// throttle, because follow is effectively PercentVbus
-
-		return leftShooterMotor.get();
+		return shooterMotors.get();
+		
 	}
 
 	public void setBrakeMode(boolean brakeMode) {
@@ -225,10 +231,10 @@ public class Shooter implements Loggable {
 
 		logData.put("Name", "Shooter");
 		logData.put("RPM", rightShooterMotor.getEncVelocity());
-		logData.put("Setpoint", rightShooterMotor.getSetpoint());
-		logData.put("Control Mode", rightShooterMotor.getControlMode());
+		logData.put("Setpoint", ratePID.getSetpoint());
 
 		return logData;
+		
 	}
 
 }

@@ -4,8 +4,6 @@ import org.usfirst.frc.team2485.auto.SequencedItem;
 import org.usfirst.frc.team2485.auto.Sequencer;
 import org.usfirst.frc.team2485.auto.SequencerFactory;
 import org.usfirst.frc.team2485.auto.SequencerFactory.AutoType;
-import org.usfirst.frc.team2485.auto.sequenceditems.SetHoodPosition;
-import org.usfirst.frc.team2485.auto.sequenceditems.SetStager;
 import org.usfirst.frc.team2485.auto.sequenceditems.ShakeBoulderStager;
 import org.usfirst.frc.team2485.subsystems.BoulderStager.Position;
 import org.usfirst.frc.team2485.subsystems.Intake;
@@ -15,21 +13,14 @@ import org.usfirst.frc.team2485.util.ConstantsIO;
 import org.usfirst.frc.team2485.util.Controllers;
 import org.usfirst.frc.team2485.util.CurrentMonitor;
 import org.usfirst.frc.team2485.util.GRIPReciever;
-import org.usfirst.frc.team2485.util.LidarWrapper;
 import org.usfirst.frc.team2485.util.Logger;
 
 import edu.wpi.first.wpilibj.CameraServer;
-import edu.wpi.first.wpilibj.I2C.Port;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.Relay.Direction;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.vision.USBCamera;
 
 /**
  * @author Aidan Fay
@@ -276,7 +267,7 @@ public class Robot extends IterativeRobot {
 			if (!joystickPressed) {
 				// Set high angle for batter shot
 				Hardware.shooter.setHoodPosition(HoodPosition.HIGH_ANGLE);
-				Hardware.shooter.setTargetSpeed(Shooter.RPM_BATTER_SHOT);
+				Hardware.shooter.setTargetSpeed(Shooter.RPS_BATTER_SHOT);
 				joystickPressed = true;
 			}
 		} else if (Controllers.getJoystickButton(5)) {
@@ -287,7 +278,7 @@ public class Robot extends IterativeRobot {
 			if (!joystickPressed) {
 				// Set low angle for long shot
 				Hardware.shooter.setHoodPosition(HoodPosition.LOW_ANGLE);
-				Hardware.shooter.setTargetSpeed(Shooter.RPM_LONG_SHOT);
+				Hardware.shooter.setTargetSpeed(Shooter.RPS_LONG_SHOT);
 				joystickPressed = true;
 			}
 		} else if (Controllers.getJoystickButton(7)) {
@@ -375,7 +366,7 @@ public class Robot extends IterativeRobot {
 
 	}
 
-	private PowerDistributionPanel pdp = new PowerDistributionPanel();
+//	private PowerDistributionPanel pdp = new PowerDistributionPanel();
 
 	public void updateDashboard() {
 

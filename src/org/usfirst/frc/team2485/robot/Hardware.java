@@ -16,9 +16,11 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.I2C.Port;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -48,7 +50,7 @@ public class Hardware {
 			boulderStagerSolenoid1, boulderStagerSolenoid2;
 
 	// Sensors
-	public static Encoder leftDriveEnc, rightDriveEnc;
+	public static Encoder leftDriveEnc, rightDriveEnc, shooterEnc;
 	public static InvertedAbsoluteEncoder intakeAbsEncoder;
 	public static AHRS ahrs;
 
@@ -123,6 +125,8 @@ public class Hardware {
 					Constants.kLeftDriveEncoder[1]);
 			rightDriveEnc = new Encoder(Constants.kRightDriveEncoder[0],
 					Constants.kRightDriveEncoder[1]);
+			shooterEnc = new Encoder(Constants.kShooterEncoder[0], Constants.kShooterEncoder[1],
+					false, EncodingType.k1X);
 
 			intakeAbsEncoder = new InvertedAbsoluteEncoder(
 					new AnalogPotentiometer(Constants.kIntakeArmAbsEncoder));
@@ -150,6 +154,11 @@ public class Hardware {
 		rightDriveEnc.setDistancePerPulse(0.01295 * 4);
 
 		leftDriveEnc.setReverseDirection(true);
+		
+		shooterEnc.setDistancePerPulse(1.0/250);
+		shooterEnc.setPIDSourceType(PIDSourceType.kRate);
+		shooterEnc.setReverseDirection(true);
+
 
 		ahrs.zeroYaw();
 
