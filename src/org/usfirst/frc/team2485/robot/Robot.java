@@ -326,11 +326,12 @@ public class Robot extends IterativeRobot {
 		resetAndDisableSystems();
 		ConstantsIO.init();
 		Hardware.init();
-		Hardware.intake.FLOOR_POSITION = Hardware.intakeAbsEncoder.get();
-		Hardware.intake.LOW_NO_INTAKE_POSITION = (Hardware.intake.FLOOR_POSITION + 0.055) % 1;
-		Hardware.intake.INTAKE_POSITION = (Hardware.intake.FLOOR_POSITION + 0.085) % 1;
-		Hardware.intake.PORTCULLIS_POSITION = (Hardware.intake.FLOOR_POSITION + 0.211) % 1;
-		Hardware.intake.FULL_UP_POSITION = (Hardware.intake.FLOOR_POSITION + 0.261) % 1;
+		
+		Intake.FLOOR_POSITION = Hardware.intakeAbsEncoder.get();
+		Intake.LOW_NO_INTAKE_POSITION = (Intake.FLOOR_POSITION + 0.055) % 1;
+		Intake.INTAKE_POSITION = (Intake.FLOOR_POSITION + 0.085) % 1;
+		Intake.PORTCULLIS_POSITION = (Intake.FLOOR_POSITION + 0.211) % 1;
+		Intake.FULL_UP_POSITION = (Intake.FLOOR_POSITION + 0.261) % 1;
 
 	}
 
@@ -379,6 +380,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Throttle", Hardware.shooter.getCurrentPower());
 
 		SmartDashboard.putBoolean("Boulder Detector", Hardware.boulderDetector.hasBoulder());
+		
+		SmartDashboard.putNumber("Lidar Distance", Hardware.lidar.getDistance());
 
 		/*
 		 * Expects values separated by a comma: Current Angle,Encoder Reading

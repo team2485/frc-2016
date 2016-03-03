@@ -486,17 +486,17 @@ public class DriveTrain implements Loggable {
 		// "|DriveTrain.rotateTo| Angle Error: " + rotateToPID.getError() +
 		// "\t Output: " + dummyRotateToOutput.get());
 		
-		System.out.println("DriveTrain: RotateTo target: " + rotateToPID.getSetpoint());
-		System.out.println("DriveTrain: RotateTo error: " + rotateToPID.getError());		
-		System.out.println("DriveTrain: RotateTo angle: " + ahrs.getYaw());		
-		System.out.println("DriveTrain: RotayeTo Is on Target?: " + rotateToPID.onTarget());
+//		System.out.println("DriveTrain: RotateTo target: " + rotateToPID.getSetpoint());
+//		System.out.println("DriveTrain: RotateTo error: " + rotateToPID.getError());		
+//		System.out.println("DriveTrain: RotateTo angle: " + ahrs.getYaw());		
+//		System.out.println("DriveTrain: RotayeTo Is on Target?: " + rotateToPID.onTarget());
 
 		if (Math.abs(rotateToPID.getError()) < ABS_TOLERANCE_ROTATETO)
 			ahrsOnTargetCounter++;
 		else
 			ahrsOnTargetCounter = 0;
 		
-		System.out.println("DriveTrain: On Target Itterations: " + ahrsOnTargetCounter);
+//		System.out.println("DriveTrain: On Target Itterations: " + ahrsOnTargetCounter);
 
 		if (ahrsOnTargetCounter >= MINIMUM_AHRS_ON_TARGET_ITERATIONS) {
 			setLeftRight(0, 0);
@@ -506,7 +506,7 @@ public class DriveTrain implements Loggable {
 
 		double ahrsOutput = dummyRotateToOutput.get();
 		
-		System.out.println("AHRS Outpyut: " + ahrsOutput);
+//		System.out.println("AHRS Outpyut: " + ahrsOutput);
 
 		// left and right are opposite on porpoise
 		setLeftRight(ahrsOutput, -ahrsOutput);

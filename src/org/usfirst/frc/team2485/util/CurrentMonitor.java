@@ -48,7 +48,7 @@ public class CurrentMonitor {
 //		leftDriveMonitor.monitorCurrent();
 //		rightDriveMonitor.monitorCurrent();
 		
-		intakeArmMonitor.monitorCurrent();
+//		intakeArmMonitor.monitorCurrent();
 		
 	}
 	
