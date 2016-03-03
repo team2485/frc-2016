@@ -81,7 +81,7 @@ public class SequencerFactory {
 						new ZeroDriveEncoder(),
 						new SequencedMultipleItem(
 								new DriveTo(85, 4, 0.65),
-								new SpinUpShooter(Shooter.RPM_BATTER_SHOT)
+								new SpinUpShooter(Shooter.RPS_BATTER_SHOT)
 							),
 						new DisableDriveToPID(), 
 						new AlignToTower(),
@@ -109,7 +109,7 @@ public class SequencerFactory {
 						// removed when long shot works
 						new DisableDriveToPID(),
 						new SequencedMultipleItem(
-								new SpinUpShooter(Shooter.RPM_BATTER_SHOT), 
+								new SpinUpShooter(Shooter.RPS_BATTER_SHOT), 
 								new AlignToTower(3.0)
 							),
 						new DisableRotateToPID(), 
@@ -133,7 +133,7 @@ public class SequencerFactory {
 						// removed when long shot works
 						new DisableDriveToPID(),
 						new SequencedMultipleItem(
-								new SpinUpShooter(Shooter.RPM_BATTER_SHOT), 
+								new SpinUpShooter(Shooter.RPS_BATTER_SHOT), 
 								new AlignToTower(3.0)
 							),
 						new DisableRotateToPID(), 
@@ -158,7 +158,7 @@ public class SequencerFactory {
 						new SequencedMultipleItem(new DriveTo(70, 2, 0.4),
 								new SetIntakeArm(Intake.INTAKE_POSITION)),
 						new SequencedMultipleItem(new SpinUpShooter(
-								Shooter.RPM_BATTER_SHOT), new SetHoodPosition(
+								Shooter.RPS_BATTER_SHOT), new SetHoodPosition(
 								HoodPosition.HIGH_ANGLE)),
 						new DriveTo(distPreTurn), // avoid zeroing encoders such
 						// that distPreTurn remains
@@ -184,7 +184,7 @@ public class SequencerFactory {
 						new SequencedMultipleItem(new SetIntakeArm(
 								Intake.INTAKE_POSITION), new SetHoodPosition(
 								HoodPosition.HIGH_ANGLE)),
-						new SpinUpShooter(Shooter.RPM_BATTER_SHOT),
+						new SpinUpShooter(Shooter.RPS_BATTER_SHOT),
 						new DriveTo(distPreTurn), new DisableDriveToPID(),
 						new RotateTo(degreesToTurn), new DisableRotateToPID(),
 						new ZeroDriveEncoder(), new DriveTo(distPostTurn),
