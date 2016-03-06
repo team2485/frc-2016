@@ -30,8 +30,8 @@ public class Shooter implements Loggable {
 		LOW_ANGLE, HIGH_ANGLE, STOWED
 	};
 
-	public static final double RPS_LONG_SHOT = 95, 
-		RPS_BATTER_SHOT = 73,//used to be 70 @ drive practice
+	public static final double RPS_LONG_SHOT = 95, //should be 95...changed for a test
+		RPS_BATTER_SHOT = 79,//changed from 80, Friday morning
 			RPS_LOW_GOAL_SHOT = 60;
 
 	public static final HoodPosition DEFAULT_HOOD_POSITION = HoodPosition.HIGH_ANGLE;

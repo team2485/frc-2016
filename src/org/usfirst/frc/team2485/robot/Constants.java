@@ -20,15 +20,15 @@ public class Constants {
 							  kRightDrivePDP = {14, 13, 12};
 							  //First 2 ports should be Sims, 3rd is 775
 
-	public static final int kIntakeArmPWM = 1, kIntakeArmPDP = 1;
+	public static final int kIntakeArmPWM = 0, kIntakeArmPDP = 0;
 	
 	public static final int kLateralRollerPWM = 9, kLateralRollerPDP = 9,
 			kIntakeRollerPWM = 8, kIntakeRollerPDP = 10;
 	
-	public static final int[] kLeftDriveEncoder = {2, 3}, 
+	public static final int[] kLeftDriveEncoder = {3, 2}, 
 			kRightDriveEncoder = {4, 5};
 	
-	public static final int[] kShooterEncoder = {0, 1};
+	public static final int[] kShooterEncoder = {6, 7};
 
 	public static final int kIntakeArmAbsEncoder = 0;
 	

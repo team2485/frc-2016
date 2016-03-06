@@ -26,11 +26,12 @@ public class Intake implements Loggable {
 
 	public static final double ABSOLUTE_TOLERANCE = 0.01;
 
-	public static double FLOOR_POSITION = 0.106,
-			LOW_NO_INTAKE_POSITION = (FLOOR_POSITION + 0.085) % 1,
-			INTAKE_POSITION = (FLOOR_POSITION + 0.120) % 1,
+	public static double FLOOR_POSITION = 0.122,
+
+	LOW_NO_INTAKE_POSITION = (FLOOR_POSITION + 0.085) % 1,
+			INTAKE_POSITION = (FLOOR_POSITION + 0.09) % 1,
 			PORTCULLIS_POSITION = (FLOOR_POSITION + 0.261) % 1,
-			FULL_UP_POSITION = (FLOOR_POSITION + 0.352) % 1;
+			FULL_UP_POSITION = (FLOOR_POSITION + 0.320) % 1;
 
 	public Intake() {
 

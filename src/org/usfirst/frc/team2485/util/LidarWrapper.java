@@ -31,16 +31,20 @@ public class LidarWrapper extends SensorBase implements PIDSource {
 
 		m_i2c.write(0x00, 0x04);
 
-		read(0x8f, buffer, 2);
-
-		return  (Integer.toUnsignedLong(buffer[0] << 8) + Byte.toUnsignedInt(buffer[1])) / 2.54;
+		try {
+			read(0x8f, buffer, 2);
+		} catch (BadLidarDataException e) {
+			return 0;
+		}
+		return (Integer.toUnsignedLong(buffer[0] << 8) + Byte
+				.toUnsignedInt(buffer[1])) / 2.54;
 	}
-	
+
 	/**
 	 * @return rate in inches / s
 	 */
 	public double getRate() {
-		
+
 		byte[] buffer;
 		buffer = new byte[1];
 
@@ -49,10 +53,14 @@ public class LidarWrapper extends SensorBase implements PIDSource {
 		m_i2c.write(0x04, 0xa0);
 		m_i2c.write(0x00, 0x04);
 
-		read(0x09, buffer, 1);
+		try {
+			read(0x09, buffer, 1);
+		} catch (BadLidarDataException e) {
+			return 0;
+		}
 
 		return 10 * Integer.toUnsignedLong(buffer[0]) / 2.54;
-		
+
 	}
 
 	private void read(int register, byte[] buffer, int count) {
@@ -64,7 +72,8 @@ public class LidarWrapper extends SensorBase implements PIDSource {
 			boolean nack = m_i2c.writeBulk(testSignal);
 
 			if (nack) {
-				throw new BadLidarDataException("WriteBulk failed to write (in bulk): " + testSignal);
+				throw new BadLidarDataException(
+						"WriteBulk failed to write (in bulk): " + testSignal);
 			}
 
 			byte testBuffer[] = new byte[1];
@@ -73,7 +82,8 @@ public class LidarWrapper extends SensorBase implements PIDSource {
 
 			busyCounter++;
 			if (busyCounter > 9999) {
-				throw new BadLidarDataException("Lidar was too busy: " + busyFlag);
+				throw new BadLidarDataException("Lidar was too busy: "
+						+ busyFlag);
 			}
 		}
 
@@ -81,7 +91,9 @@ public class LidarWrapper extends SensorBase implements PIDSource {
 			byte[] registerSignal = { (byte) register };
 			boolean nack = m_i2c.writeBulk(registerSignal);
 			if (nack) {
-				throw new BadLidarDataException("Unable to write (bulk) register signal: " + registerSignal);
+				throw new BadLidarDataException(
+						"Unable to write (bulk) register signal: "
+								+ registerSignal);
 			}
 			m_i2c.readOnly(buffer, count);
 		}
@@ -111,9 +123,9 @@ public class LidarWrapper extends SensorBase implements PIDSource {
 			System.err.println("Lidar does not support PIDSourceType.kRate");
 
 		}
-		
+
 	}
-	
+
 	@SuppressWarnings("serial")
 	class BadLidarDataException extends RuntimeException {
 

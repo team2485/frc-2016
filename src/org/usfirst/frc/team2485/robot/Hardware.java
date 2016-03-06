@@ -150,10 +150,10 @@ public class Hardware {
 		leftDrive.setRampMode(true);
 		leftDrive.setRampRate(ConstantsIO.kDriveVoltageRamp);
 
-		leftDriveEnc.setDistancePerPulse(0.01304 * 4);
+		leftDriveEnc.setDistancePerPulse(0.01295 * 4);
 		rightDriveEnc.setDistancePerPulse(0.01295 * 4);
 
-		leftDriveEnc.setReverseDirection(true);
+//		leftDriveEnc.setReverseDirection(true);
 		
 		shooterEnc.setDistancePerPulse(1.0/250);
 		shooterEnc.setPIDSourceType(PIDSourceType.kRate);

@@ -61,8 +61,8 @@ public class AlignToTower implements SequencedItem {
 							curTurnDone = false;
 
 							if (Math.abs(angleOffset) <= 1) {
-								System.out
-										.println("AlignToTower: New angle is less than 1");
+//								System.out
+//										.println("AlignToTower: New angle is less than 1");
 								finished = true;
 							}
 
@@ -75,16 +75,16 @@ public class AlignToTower implements SequencedItem {
 		} else {
 			curTurnDone = Hardware.driveTrain.rotateTo(angleTarget);
 
-			System.out.println("AlignToTower: Target Angle: " + angleTarget
-					+ " Current Angle: " + Hardware.ahrs.getYaw());
+//			System.out.println("AlignToTower: Target Angle: " + angleTarget
+//					+ " Current Angle: " + Hardware.ahrs.getYaw());
 		}
 	}
 
 	@Override
 	public double duration() {
 
-		if (finished)
-			System.out.println("Finished is true in AlignToTower");
+//		if (finished)
+//			System.out.println("Finished is true in AlignToTower");
 		return finished ? 0 : timeout;
 	}
 }

@@ -85,7 +85,7 @@ public class DriveTrain implements Loggable {
 	public DriveTrain(boolean useAhrs) {
 		this.leftDrive = Hardware.leftDrive;
 		this.rightDrive = Hardware.rightDrive;
-		this.encoder = Hardware.rightDriveEnc;
+		this.encoder = Hardware.leftDriveEnc;
 
 		if (useAhrs) {
 			ahrs = Hardware.ahrs;

@@ -10,6 +10,7 @@ import org.usfirst.frc.team2485.auto.sequenceditems.SetHoodPosition;
 import org.usfirst.frc.team2485.auto.sequenceditems.SetIntakeArm;
 import org.usfirst.frc.team2485.auto.sequenceditems.SetRollers;
 import org.usfirst.frc.team2485.auto.sequenceditems.SetStager;
+import org.usfirst.frc.team2485.auto.sequenceditems.ShakeBoulderStager;
 import org.usfirst.frc.team2485.auto.sequenceditems.ShootHighGoal;
 import org.usfirst.frc.team2485.auto.sequenceditems.ShootLowGoal;
 import org.usfirst.frc.team2485.auto.sequenceditems.SpinUpShooter;
@@ -69,24 +70,28 @@ public class SequencerFactory {
 						new SetIntakeArm(Intake.INTAKE_POSITION),
 						new SequencedPause(0.5),
 						new SequencedMultipleItem(
-								new DriveTo(200, 5, 0.5),
+//								new DriveTo(140, 5, 0.5),
+								new DriveTo(206, 5, 0.5),
 								new SetHoodPosition(HoodPosition.STOWED)
 							),
 						new DisableDriveToPID(),
 						new SequencedMultipleItem(
-								new RotateTo(53),
+								new RotateTo(57), // Added 2 degrees, Friday morning
 								new SetHoodPosition(HoodPosition.HIGH_ANGLE)
 							),
 						new DisableRotateToPID(),
 						new ZeroDriveEncoder(),
+						new ShakeBoulderStager(),
+						new SequencedPause(0.4),
 						new SequencedMultipleItem(
-								new DriveTo(85, 4, 0.65),
+								new DriveTo(50, 3.5, 0.65), //reduced by 5, Friday morning
 								new SpinUpShooter(Shooter.RPS_BATTER_SHOT)
 							),
 						new DisableDriveToPID(), 
-						new AlignToTower(),
+						/*new AlignToTower(),*/
 						new DisableRotateToPID(), 
-						new ShootHighGoal(5) 
+						new SequencedPause(1.25),
+//						new ShootHighGoal(5) 
 					});
 	
 			case ROCK_WALL_AUTO:
@@ -108,12 +113,12 @@ public class SequencerFactory {
 						new DriveTo(distPostTurn, 3, 0.65), // Approaches batter, may be
 						// removed when long shot works
 						new DisableDriveToPID(),
-						new SequencedMultipleItem(
-								new SpinUpShooter(Shooter.RPS_BATTER_SHOT), 
-								new AlignToTower(3.0)
-							),
-						new DisableRotateToPID(), 
-						new ShootHighGoal(5) 
+//						new SequencedMultipleItem(
+//								new SpinUpShooter(Shooter.RPS_BATTER_SHOT), 
+//								new AlignToTower(3.0)
+//							),
+//						new DisableRotateToPID(), 
+//						new ShootHighGoal(5) 
 					});
 			case ROUGH_TERRAIN_AUTO:
 			case MOAT_AUTO:
@@ -125,19 +130,19 @@ public class SequencerFactory {
 								new SetHoodPosition(HoodPosition.HIGH_ANGLE)
 							),
 						new DisableDriveToPID(),
-						new SetIntakeArm(Intake.INTAKE_POSITION),
-						new RotateTo(degreesToTurn),
-						new DisableRotateToPID(),
-						new ZeroDriveEncoder(),
-						new DriveTo(distPostTurn, 3, 0.75), // Approaches batter, may be
-						// removed when long shot works
-						new DisableDriveToPID(),
-						new SequencedMultipleItem(
-								new SpinUpShooter(Shooter.RPS_BATTER_SHOT), 
-								new AlignToTower(3.0)
-							),
-						new DisableRotateToPID(), 
-						new ShootHighGoal(5) 
+//						new SetIntakeArm(Intake.INTAKE_POSITION),
+//						new RotateTo(degreesToTurn),
+//						new DisableRotateToPID(),
+//						new ZeroDriveEncoder(),
+//						new DriveTo(distPostTurn, 3, 0.75), // Approaches batter, may be
+//						// removed when long shot works
+//						new DisableDriveToPID(),
+//						new SequencedMultipleItem(
+//								new SpinUpShooter(Shooter.RPS_BATTER_SHOT), 
+//								new AlignToTower(3.0)
+//							),
+//						new DisableRotateToPID(), 
+//						new ShootHighGoal(5) 
 					});
 	
 			case PORTCULLIS_AUTO:
@@ -163,11 +168,16 @@ public class SequencerFactory {
 						new DriveTo(distPreTurn), // avoid zeroing encoders such
 						// that distPreTurn remains
 						// absolute and correct
-						new DisableDriveToPID(), new RotateTo(degreesToTurn),
-						new DisableRotateToPID(), new ZeroDriveEncoder(),
-						new DriveTo(distPostTurn), new DisableDriveToPID(),
-						new AlignToTower(), new DisableRotateToPID(),
-						new ShootHighGoal(5) });
+						new DisableDriveToPID(), 
+						new RotateTo(degreesToTurn),
+						new DisableRotateToPID(), 
+						new ZeroDriveEncoder(),
+						new DriveTo(distPostTurn), 
+						new DisableDriveToPID(),
+//						new AlignToTower(), 
+//						new DisableRotateToPID(),
+//						new ShootHighGoal(5) 
+						});
 	
 			case CHEVAL_DE_FRISE_AUTO:
 	
@@ -188,8 +198,12 @@ public class SequencerFactory {
 						new DriveTo(distPreTurn), new DisableDriveToPID(),
 						new RotateTo(degreesToTurn), new DisableRotateToPID(),
 						new ZeroDriveEncoder(), new DriveTo(distPostTurn),
-						new DisableDriveToPID(), new AlignToTower(),
-						new DisableRotateToPID(), new ShootHighGoal(5) });
+						new DisableDriveToPID(), 
+//						new AlignToTower(),
+//						new DisableRotateToPID(), 
+//						new ShootHighGoal(5) 
+						});
+						
 				default: 
 					return new Sequencer();
 		}

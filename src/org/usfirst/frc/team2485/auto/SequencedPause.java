@@ -15,7 +15,7 @@ public final class SequencedPause implements SequencedItem {
 
     /**
      * Initializes a {@code SequencedPause} with the specified duration.
-     * @param duration
+     * @param duration in seconds
      */
     public SequencedPause(double duration) {
         this.duration = duration;
