@@ -27,7 +27,6 @@ public class ShootHighGoal implements SequencedItem {
 
 	@Override
 	public void run() {
-
 		if (Hardware.shooter.isReadyToFire()) {
 			finished = true;
 			Hardware.boulderStager.setPosition(Position.SHOOTING);

@@ -208,9 +208,7 @@ public class Shooter implements Loggable {
 	 *            the maximum error, as a percent, from 0.0 to 1.0
 	 */
 	public boolean isOnTargetPercentage(double maxPercentError) {
-		
 		return isOnTarget(maxPercentError * getSetpoint());
-		
 	}
 
 	public boolean isPID() {
@@ -220,9 +218,7 @@ public class Shooter implements Loggable {
 	}
 
 	public boolean isReadyToFire() {
-
-		return isOnTargetPercentage(0.10) && currHoodPosition != HoodPosition.STOWED;
-
+		return isOnTargetPercentage(0.08) && currHoodPosition != HoodPosition.STOWED;
 	}
 
 	public double getCurrentPower() {
