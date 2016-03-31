@@ -91,12 +91,10 @@ public class Shooter implements Loggable {
 
 		if (newHoodPosition == HoodPosition.LOW_ANGLE) {
 			if (currHoodPosition == HoodPosition.HIGH_ANGLE) {
-				upperSolenoid.set(true); // This should extend the upper
-											// piston
+				upperSolenoid.set(true); // This should extend the upper piston
 			} else if (currHoodPosition == HoodPosition.STOWED) {
-				lowerSolenoid.set(false); // Retracting the lower piston pulls
-											// open the shooter
-
+				lowerSolenoid.set(false); // Retracting the lower piston pulls open the shooter
+				
 				new Timer().schedule(new TimerTask() {
 
 					@Override

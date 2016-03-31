@@ -92,10 +92,10 @@ public class Hardware {
 		leftDriveVictorSPs[2] = new VictorSP(Constants.kLeftDrivePWM[2]);
 
 		rightDrive = new SpeedControllerWrapper(rightDriveVictorSPs,
-				Constants.kRightDrivePDP, new double[] {1.45, 1.45, 1.45});
+				Constants.kRightDrivePDP, new double[] {1.45, 1.45, 1});
 
 		leftDrive = new SpeedControllerWrapper(leftDriveVictorSPs,
-				Constants.kLeftDrivePDP, new double[] {1.45, 1.45, 1.45});
+				Constants.kLeftDrivePDP, new double[] {1.45, 1.45, 1});
 
 		lateralVictorSP = new VictorSP(Constants.kLateralRollerPWM);
 		intakeVictorSP = new VictorSP(Constants.kIntakeRollerPWM);

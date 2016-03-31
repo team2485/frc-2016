@@ -5,6 +5,7 @@ import org.usfirst.frc.team2485.auto.sequenceditems.AlignToTower;
 import org.usfirst.frc.team2485.auto.sequenceditems.DisableDriveToPID;
 import org.usfirst.frc.team2485.auto.sequenceditems.DisableRotateToPID;
 import org.usfirst.frc.team2485.auto.sequenceditems.DriveTo;
+import org.usfirst.frc.team2485.auto.sequenceditems.Hat;
 import org.usfirst.frc.team2485.auto.sequenceditems.RotateTo;
 import org.usfirst.frc.team2485.auto.sequenceditems.SetHoodPosition;
 import org.usfirst.frc.team2485.auto.sequenceditems.SetIntakeArm;
@@ -100,10 +101,11 @@ public class SequencerFactory {
 				return new Sequencer(new SequencedItem[] {
 						new SequencedMultipleItem(
 								new DriveTo(distPreTurn, 6, 0.6), // changed to 6 seconds from 4
-								new SetIntakeArm(Intake.FULL_UP_POSITION),
+								new Hat(true),
 								new SetHoodPosition(HoodPosition.HIGH_ANGLE)
 							),
 						new DisableDriveToPID(),
+						new Hat(false),
 						new SetIntakeArm(Intake.INTAKE_POSITION),
 						new RotateTo(degreesToTurn, 3),
 						new DisableRotateToPID(),
@@ -124,10 +126,11 @@ public class SequencerFactory {
 				return new Sequencer(new SequencedItem[] {
 						new SequencedMultipleItem(
 								new DriveTo(distPreTurn, 5, 0.6), // changed to 4.5 seconds from 4
-								new SetIntakeArm(Intake.FULL_UP_POSITION),
+								new Hat(true),
 								new SetHoodPosition(HoodPosition.HIGH_ANGLE)
 							),
 						new DisableDriveToPID(),
+						new Hat(false),
 						new SetIntakeArm(Intake.INTAKE_POSITION),
 						new RotateTo(degreesToTurn),
 						new DisableRotateToPID(),
@@ -195,9 +198,10 @@ public class SequencerFactory {
 						new DriveTo(40, 1),
 						new DisableDriveToPID(),
 						new SequencedMultipleItem(
-								new DriveTo(90, 4, 0.5),
-								new SetIntakeArm(Intake.FULL_UP_POSITION)
+								new DriveTo(90, 3),
+								new Hat(true)
 							),
+						new Hat(false),
 						new SequencedMultipleItem(
 								new SetIntakeArm(Intake.INTAKE_POSITION),
 								new SetHoodPosition(HoodPosition.HIGH_ANGLE)

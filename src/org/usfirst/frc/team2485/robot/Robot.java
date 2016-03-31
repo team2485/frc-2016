@@ -249,21 +249,14 @@ public class Robot extends IterativeRobot {
 			Hardware.intake.setManual(
 					Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_Y, Constants.kMoveIntakeManuallyDeadband));
 
-		} else if (Controllers.getOperatorHatSwitch() != -1) {
+		}
+		
+		if (Controllers.getOperatorHatSwitch() != -1) {
 			if (Hardware.intake.isPIDEnabled()) {
 				Hardware.intake.setManual(0);
 			}
 			Hardware.intakeArmSC.set(Constants.kHatPowerValue);
-		} else {
-			if (!Hardware.intake.isPIDEnabled()) {
-				Hardware.intake.setSetpoint(Hardware.intake.getCurrentPosition());
-				Hardware.boulderStager.setPosition(Position.SHOOTING);
-			}
-			// Hardware.intake.setManual(0);
-		}
-
-		if (Controllers.getJoystickAxis(Controllers.JOYSTICK_AXIS_THROTTLE) > 0) {
-
+			Hardware.boulderStager.setPosition(Position.SHOOTING);
 		}
 
 		// Buttons
@@ -285,7 +278,7 @@ public class Robot extends IterativeRobot {
 				if (operatorTeleopSequencer == null) {
 					operatorTeleopSequencer = new Sequencer(new SequencedItem[] { 
 							new ShakeBoulderStager() 
-							});
+						});
 					joystickPressed = true;
 				}
 			}
