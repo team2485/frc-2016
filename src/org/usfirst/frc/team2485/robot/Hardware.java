@@ -73,92 +73,91 @@ public class Hardware {
 	public static Intake intake;
 
 	public static BoulderStager boulderStager;
-	
+
 	public static BoulderDetector boulderDetector;
 
 	public static void init() {
-		if (battery == null) {
 
-			battery = new Battery();
+		battery = new Battery();
 
-			// Victor SPs
-			rightDriveVictorSPs = new VictorSP[3];
-			rightDriveVictorSPs[0] = new VictorSP(Constants.kRightDrivePWM[0]);
-			rightDriveVictorSPs[1] = new VictorSP(Constants.kRightDrivePWM[1]);
-			rightDriveVictorSPs[2] = new VictorSP(Constants.kRightDrivePWM[2]);
+		// Victor SPs
+		rightDriveVictorSPs = new VictorSP[3];
+		rightDriveVictorSPs[0] = new VictorSP(Constants.kRightDrivePWM[0]);
+		rightDriveVictorSPs[1] = new VictorSP(Constants.kRightDrivePWM[1]);
+		rightDriveVictorSPs[2] = new VictorSP(Constants.kRightDrivePWM[2]);
 
-			leftDriveVictorSPs = new VictorSP[3];
-			leftDriveVictorSPs[0] = new VictorSP(Constants.kLeftDrivePWM[0]);
-			leftDriveVictorSPs[1] = new VictorSP(Constants.kLeftDrivePWM[1]);
-			leftDriveVictorSPs[2] = new VictorSP(Constants.kLeftDrivePWM[2]);
+		leftDriveVictorSPs = new VictorSP[3];
+		leftDriveVictorSPs[0] = new VictorSP(Constants.kLeftDrivePWM[0]);
+		leftDriveVictorSPs[1] = new VictorSP(Constants.kLeftDrivePWM[1]);
+		leftDriveVictorSPs[2] = new VictorSP(Constants.kLeftDrivePWM[2]);
 
-			rightDrive = new SpeedControllerWrapper(rightDriveVictorSPs,
-					Constants.kRightDrivePDP, new double[] {1.45, 1.45, 1});
+		rightDrive = new SpeedControllerWrapper(rightDriveVictorSPs,
+				Constants.kRightDrivePDP, new double[] {1.45, 1.45, 1.45});
 
-			leftDrive = new SpeedControllerWrapper(leftDriveVictorSPs,
-					Constants.kLeftDrivePDP, new double[] {1.45, 1.45, 1});
+		leftDrive = new SpeedControllerWrapper(leftDriveVictorSPs,
+				Constants.kLeftDrivePDP, new double[] {1.45, 1.45, 1.45});
 
-			lateralVictorSP = new VictorSP(Constants.kLateralRollerPWM);
-			intakeVictorSP = new VictorSP(Constants.kIntakeRollerPWM);
+		lateralVictorSP = new VictorSP(Constants.kLateralRollerPWM);
+		intakeVictorSP = new VictorSP(Constants.kIntakeRollerPWM);
 
-			intakeArmVictorSP = new VictorSP(Constants.kIntakeArmPWM);
-			intakeArmSC = new SpeedControllerWrapper(intakeArmVictorSP,
-					Constants.kIntakeArmPDP);
+		intakeArmVictorSP = new VictorSP(Constants.kIntakeArmPWM);
+		intakeArmSC = new SpeedControllerWrapper(intakeArmVictorSP,
+				Constants.kIntakeArmPDP);
 
-			leftShooterMotor = new CANTalon(Constants.kLeftShooterCAN);
-			rightShooterMotor = new CANTalon(Constants.kRightShooterCAN);
+		leftShooterMotor = new CANTalon(Constants.kLeftShooterCAN);
+		rightShooterMotor = new CANTalon(Constants.kRightShooterCAN);
 
-			compressorSpike = new Relay(Constants.kCompressorSpikePort);
-			pressureSwitch = new DigitalInput(Constants.kPressureSwitchPort);
+		compressorSpike = new Relay(Constants.kCompressorSpikePort);
+		pressureSwitch = new DigitalInput(Constants.kPressureSwitchPort);
 
-			shooterHoodSolenoid1 = new Solenoid(
-					Constants.kShooterHoodSolenoidLowerPort);
-			shooterHoodSolenoid2 = new Solenoid(
-					Constants.kShooterHoodSolenoidUpperPort);
+		shooterHoodSolenoid1 = new Solenoid(
+				Constants.kShooterHoodSolenoidLowerPort);
+		shooterHoodSolenoid2 = new Solenoid(
+				Constants.kShooterHoodSolenoidUpperPort);
 
-			boulderStagerSolenoid1 = new Solenoid(
-					Constants.kBoulderStagerSolenoid1Port);
-			boulderStagerSolenoid2 = new Solenoid(
-					Constants.kBoulderStagerSolenoid2Port);
+		boulderStagerSolenoid1 = new Solenoid(
+				Constants.kBoulderStagerSolenoid1Port);
+		boulderStagerSolenoid2 = new Solenoid(
+				Constants.kBoulderStagerSolenoid2Port);
 
-			leftDriveEnc = new Encoder(Constants.kLeftDriveEncoder[0],
-					Constants.kLeftDriveEncoder[1]);
-			rightDriveEnc = new Encoder(Constants.kRightDriveEncoder[0],
-					Constants.kRightDriveEncoder[1]);
-			shooterEnc = new Encoder(Constants.kShooterEncoder[0], Constants.kShooterEncoder[1],
-					false, EncodingType.k1X);
+		leftDriveEnc = new Encoder(Constants.kLeftDriveEncoder[0],
+				Constants.kLeftDriveEncoder[1]);
+		rightDriveEnc = new Encoder(Constants.kRightDriveEncoder[0],
+				Constants.kRightDriveEncoder[1]);
+		shooterEnc = new Encoder(Constants.kShooterEncoder[0], Constants.kShooterEncoder[1],
+				false, EncodingType.k1X);
 
-			intakeAbsEncoder = new InvertedAbsoluteEncoder(
-					new AnalogPotentiometer(Constants.kIntakeArmAbsEncoder));
+		intakeAbsEncoder = new InvertedAbsoluteEncoder(
+				new AnalogPotentiometer(Constants.kIntakeArmAbsEncoder));
 
-			ahrs = new AHRS(SPI.Port.kMXP);
+		ahrs = new AHRS(SPI.Port.kMXP);
 
-			sonic = new Ultrasonic(Constants.kUltrasonicPING,
-					Constants.kUltrasonicECHO, Unit.kInches);
+		sonic = new Ultrasonic(Constants.kUltrasonicPING,
+				Constants.kUltrasonicECHO, Unit.kInches);
 
-			lidar = new LidarWrapper(Port.kMXP);
+		lidar = new LidarWrapper(Port.kMXP);
 
-			boulderDetector = new BoulderDetector();
-
-		}
+		boulderDetector = new BoulderDetector();
 
 		rightDrive.setInverted(false);
 		rightDrive.setRampMode(true);
-		rightDrive.setRampRate(ConstantsIO.kDriveVoltageRamp);
 
 		leftDrive.setInverted(true);
 		leftDrive.setRampMode(true);
-		leftDrive.setRampRate(ConstantsIO.kDriveVoltageRamp);
 
 		leftDriveEnc.setDistancePerPulse(0.01295 * 4);
 		rightDriveEnc.setDistancePerPulse(0.01295 * 4);
 
-//		leftDriveEnc.setReverseDirection(true);
-		
+		//		leftDriveEnc.setReverseDirection(true);
+
 		shooterEnc.setDistancePerPulse(1.0/250);
 		shooterEnc.setPIDSourceType(PIDSourceType.kRate);
 		shooterEnc.setReverseDirection(true);
 
+		leftShooterMotor.setInverted(false);
+		rightShooterMotor.setInverted(true);
+		rightShooterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+		leftShooterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 
 		ahrs.zeroYaw();
 
@@ -169,6 +168,17 @@ public class Hardware {
 		intake = new Intake();
 		boulderStager = new BoulderStager();
 
+	}
+	
+	public static void updateConstants() {
+		
+		
+		rightDrive.setRampRate(ConstantsIO.kDriveVoltageRamp);
+		leftDrive.setRampRate(ConstantsIO.kDriveVoltageRamp);
+		driveTrain.updateConstants();
+		shooter.updateConstants();
+		intake.updateConstants();
+		
 	}
 
 }

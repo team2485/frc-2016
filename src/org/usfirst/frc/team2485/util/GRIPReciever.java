@@ -95,9 +95,17 @@ public class GRIPReciever {
 //		double Z = Math.sqrt(R * R - bestCenterX * bestCenterX - bestCenterY * bestCenterY);
 //		angle = Math.toDegrees(Math.atan(bestCenterX / Z));
 
-		System.out.println("GRIPReciever bestCenterX: " + bestCenterX);
 		
-		double angle = FIELD_OF_VIEW * (bestCenterX - 221) / 320;
+		//TODO: Calibrate these numbers...
+		double currentCenterValue = 156.5;	//this is the batter shot
+		if(bestCenterY > 100)
+			currentCenterValue = 163;		//this is the long shot from the outer works
+		
+		System.out.println("GRIPReciever bestCenterX: " + bestCenterX + 
+					"\tbestCenterY: " + bestCenterY + "\tcurrentCenterValue: " + currentCenterValue);
+		
+		
+		double angle = FIELD_OF_VIEW * (bestCenterX - currentCenterValue) / 320;
 		
 		return angle;
 

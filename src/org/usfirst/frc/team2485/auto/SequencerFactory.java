@@ -91,6 +91,7 @@ public class SequencerFactory {
 						/*new AlignToTower(),*/
 						new DisableRotateToPID(), 
 						new SequencedPause(1.25),
+						
 //						new ShootHighGoal(5) 
 					});
 	
@@ -223,7 +224,8 @@ public class SequencerFactory {
 	}
 
 	public static Sequencer getAutoAimSequence() {
-		return new Sequencer(new SequencedItem[] { new AlignToTower(),
+		return new Sequencer(new SequencedItem[] {
+				new AlignToTower(),
 				new DisableRotateToPID() });
 	}
 	// @formatter:on

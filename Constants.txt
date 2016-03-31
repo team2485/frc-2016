@@ -3,32 +3,48 @@
 # Any line without an equals sign is a comment. 
 # Don't worry about whitespace.
 
+kDegsToRot = 1.5
+
+
+kLongShotRPS = 88
+
+kBatterShotRPS = 71
+
 # PID Gains
-kP_Shooter = 0.01
+
+kP_Shooter = 0.2
+
 kI_Shooter = 0.0
-kD_Shooter = 0.0
-kF_Shooter = 0.027
+kD_Shooter = 0.0002
+
+kF_Shooter = 0.0068
 
 kP_DriveTo = 0.03
 kI_DriveTo = 0.0
 kD_DriveTo = 0.0
 
-kP_RotateLargeAngle = 0.04
-kI_RotateLargeAngle = 0.0
-kD_RotateLargeAngle = 0.01
 
-kP_RotateSmallAngle = 0.06
-kI_RotateSmallAngle = 0.0
-kD_RotateSmallAngle = 0.01
+
+kP_RotateLargeAngle = 0.05
+kI_RotateLargeAngle = 0.005
+kD_RotateLargeAngle = 0.05
+
+kP_RotateSmallAngle = 0.09
+
+
+kI_RotateSmallAngle = 0.01
+
+
+kD_RotateSmallAngle = 0.0
 
 kP_IntakeArm = 7.0
 kI_IntakeArm = 0.00
-kD_IntakeArm = 0.00'
+kD_IntakeArm = 0.00
 
 
 # Voltage Ramping
 kDriveVoltageRamp = 0.05
 kShooterVoltageRamp = 0.05
 
-kIntakeRollerSpeed = 0.5
+kIntakeRollerSpeed = 0.7
 kLateralRollerSpeed = 0.5

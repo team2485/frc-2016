@@ -47,7 +47,7 @@ public class Intake implements Loggable {
 
 		armPID = new PIDController(ConstantsIO.kP_IntakeArm,
 				ConstantsIO.kI_IntakeArm, ConstantsIO.kD_IntakeArm, absEncoder,
-				armSpeedControllerWrapper);
+				armSpeedControllerWrapper, 00.0100);
 		armPID.setAbsoluteTolerance(ABSOLUTE_TOLERANCE);
 
 		armPID.setInputRange(0.0, 1.0);
@@ -55,6 +55,11 @@ public class Intake implements Loggable {
 
 		armPID.setOutputRange(-0.22, 0.55);
 
+	}
+	
+	public void updateConstants() {
+		armPID.setPID(ConstantsIO.kP_IntakeArm,
+				ConstantsIO.kI_IntakeArm, ConstantsIO.kD_IntakeArm);
 	}
 
 	public void startRollers(double lateralValue, double intakeValue) {

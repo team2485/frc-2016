@@ -30,9 +30,11 @@ public class Shooter implements Loggable {
 		LOW_ANGLE, HIGH_ANGLE, STOWED
 	};
 
-	public static final double RPS_LONG_SHOT = 95, //should be 95...changed for a test
-		RPS_BATTER_SHOT = 79,//changed from 80, Friday morning
+	//Adjusted from ConstantsIO
+	public static double RPS_LONG_SHOT = 95, //should be 95...changed for a test
+		RPS_BATTER_SHOT = 80,//changed from 80 for practice bot with 1:1 gearing
 			RPS_LOW_GOAL_SHOT = 60;
+	private boolean clearedI;
 
 	public static final HoodPosition DEFAULT_HOOD_POSITION = HoodPosition.HIGH_ANGLE;
 
@@ -54,21 +56,32 @@ public class Shooter implements Loggable {
 		upperSolenoid = Hardware.shooterHoodSolenoid2;
 
 		rightShooterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-
 		leftShooterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-		leftShooterMotor.setInverted(true);
+		
 
 		shooterMotors = new SpeedControllerWrapper(new SpeedController[] { leftShooterMotor, rightShooterMotor },
 				new int[] { 0, 0 });// CANTalons monitor their own current
 
 		ratePID = new PIDController(ConstantsIO.kP_Shooter, ConstantsIO.kI_Shooter, ConstantsIO.kD_Shooter,
-				ConstantsIO.kF_Shooter, enc, shooterMotors);
+				ConstantsIO.kF_Shooter, enc, shooterMotors, 0.010);
 		ratePID.setOutputRange(0, 1);
 
 		currHoodPosition = DEFAULT_HOOD_POSITION;
 
 		disableShooter();
+		
+		new ClearTotalErrorThread().start();
 
+	}
+	
+	public void updateConstants() {
+		
+		ratePID.setPID(ConstantsIO.kP_Shooter, ConstantsIO.kI_Shooter, ConstantsIO.kD_Shooter,
+				ConstantsIO.kF_Shooter);
+		
+		RPS_BATTER_SHOT = ConstantsIO.kBatterShotRPS;
+		RPS_LONG_SHOT = ConstantsIO.kLongShotRPS;
+		
 	}
 
 	public void setHoodPosition(final HoodPosition newHoodPosition) {
@@ -131,6 +144,7 @@ public class Shooter implements Loggable {
 	public void setTargetSpeed(double setpoint) {
 
 		ratePID.setSetpoint(setpoint);
+		clearedI = false; // clear each time the setpoint changes
 		if (!ratePID.isEnabled()) {
 			ratePID.enable();
 		}
@@ -213,7 +227,7 @@ public class Shooter implements Loggable {
 
 	public double getCurrentPower() {
 
-		return shooterMotors.get();
+		return ratePID.get();
 		
 	}
 
@@ -230,11 +244,33 @@ public class Shooter implements Loggable {
 		Map<String, Object> logData = new HashMap<String, Object>();
 
 		logData.put("Name", "Shooter");
-		logData.put("RPM", rightShooterMotor.getEncVelocity());
+		logData.put("RPM", enc.getRate());
 		logData.put("Setpoint", ratePID.getSetpoint());
 
 		return logData;
 		
+	}
+	
+	private class ClearTotalErrorThread extends Thread {
+		@Override
+		public void run() {
+			while (true) {
+				
+				if (!clearedI && getRate() > getSetpoint()) {
+					clearedI = true;
+					ratePID.reset();
+					ratePID.enable();
+				}
+				
+				try {
+					Thread.sleep(20);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				
+			}
+			
+		}
 	}
 
 }

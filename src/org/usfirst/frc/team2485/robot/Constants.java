@@ -43,6 +43,7 @@ public class Constants {
 	
 	public static final float kMoveIntakeManuallyDeadband = 0.3f;
 	
+	public static final double kHatPowerValue = 0.2;
 	
 	private static HashMap<String, String> constantsMap;
 	

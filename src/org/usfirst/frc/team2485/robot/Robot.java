@@ -36,13 +36,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends IterativeRobot {
 
 	private Sequencer autonomousSequencer, driverTeleopSequencer, operatorTeleopSequencer;
-
 	private SendableChooser autoChooser, autoPosChooser;
 
 	public void robotInit() {
 
 		ConstantsIO.init();
 		Hardware.init();
+		Hardware.updateConstants();
 		
 		initAutoChooser();
 
@@ -98,7 +98,7 @@ public class Robot extends IterativeRobot {
 		resetAndDisableSystems();
 
 		ConstantsIO.init();
-		Hardware.init();
+		Hardware.updateConstants();
 
 		Hardware.ahrs.zeroYaw();
 
@@ -152,7 +152,7 @@ public class Robot extends IterativeRobot {
 	public void teleopInit() {
 		resetAndDisableSystems();
 		ConstantsIO.init();
-		Hardware.init();
+		Hardware.updateConstants();
 		Hardware.shooter.setBrakeMode(false);
 
 		
@@ -207,13 +207,13 @@ public class Robot extends IterativeRobot {
 		}
 
 		if (Controllers.getButton(Controllers.XBOX_BTN_A)) {
-//			if (!XBOXPressed) {
-//				// Auto aim
-//				if (driverTeleopSequencer == null) {
-//					driverTeleopSequencer = SequencerFactory.getAutoAimSequence();
-//					XBOXPressed = true;
-//				}
-//			}
+			if (!XBOXPressed) {
+				// Auto aim
+				if (driverTeleopSequencer == null) {
+					driverTeleopSequencer = SequencerFactory.getAutoAimSequence();
+					XBOXPressed = true;
+				}
+			}
 		} else if (Controllers.getButton(Controllers.XBOX_BTN_X)) {
 			if (!XBOXPressed) {
 				// Intake
@@ -253,10 +253,11 @@ public class Robot extends IterativeRobot {
 			if (Hardware.intake.isPIDEnabled()) {
 				Hardware.intake.setManual(0);
 			}
-			Hardware.intakeArmSC.set(0.2);
+			Hardware.intakeArmSC.set(Constants.kHatPowerValue);
 		} else {
 			if (!Hardware.intake.isPIDEnabled()) {
 				Hardware.intake.setSetpoint(Hardware.intake.getCurrentPosition());
+				Hardware.boulderStager.setPosition(Position.SHOOTING);
 			}
 			// Hardware.intake.setManual(0);
 		}
@@ -355,9 +356,10 @@ public class Robot extends IterativeRobot {
 
 		resetAndDisableSystems();
 		ConstantsIO.init();
-		Hardware.init();
+		Hardware.updateConstants();
 
-		System.out.println("Intake arm position: " + Hardware.intake.getCurrentPosition());
+		System.out.println("Robot: Intake arm position: " + Hardware.intake.getCurrentPosition());
+		System.out.println("Robot: Sonic Sensor: " + Hardware.sonic.getRangeInches());
 	}
 
 	public void testPeriodic() {
@@ -366,20 +368,27 @@ public class Robot extends IterativeRobot {
 		// Hardware.intakeAbsEncoder.get());
 		
 //		System.out.println(Hardware.leftDriveEnc.getDistance());
-		System.out.println("Intake arm position: " + Hardware.intake.getCurrentPosition());
-		System.out.println("Shooter enc: " + Hardware.shooter.getRate());
-
+//		System.out.println("Intake arm position: " + Hardware.intake.getCurrentPosition());
+//		System.out.println("Robot: testPeriodic(): Shooter enc: " + Hardware.shooter.getRate());
+				
+//		Hardware.shooter.setPWM(ConstantsIO.kF_Shooter * Shooter.RPS_BATTER_SHOT);
+		
+		
+		
 		if (Hardware.pressureSwitch.get()) {
 			Hardware.compressorSpike.set(Relay.Value.kOff);
 		} else {
 			Hardware.compressorSpike.set(Relay.Value.kForward);
 		}
-
+		
+		updateDashboard();
 	}
 
 	private void resetAndDisableSystems() {
 
 		Hardware.driveTrain.disableAhrsPID();
+		
+		
 		Hardware.driveTrain.driveStraightPID.disable();
 		Hardware.driveTrain.disableDriveToPID();
 		Hardware.driveTrain.emergencyStop();
@@ -405,8 +414,7 @@ public class Robot extends IterativeRobot {
 
 		SmartDashboard.putString("RPM", (int)( Hardware.shooter.getRate() * 60 )+ "," + (int) Hardware.shooter.getSetpoint() * 60);
 
-		// SmartDashboard.putNumber("Current Error",
-		// Hardware.shooter.getError());
+		 SmartDashboard.putNumber("Current Error", Hardware.shooter.getError());
 
 		SmartDashboard.putNumber("Throttle", Hardware.shooter.getCurrentPower());
 

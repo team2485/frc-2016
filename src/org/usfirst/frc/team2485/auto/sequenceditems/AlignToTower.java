@@ -31,7 +31,7 @@ public class AlignToTower implements SequencedItem {
 	}
 	
 	public AlignToTower() {
-		this(2.0);
+		this(3.0);
 	}
 
 	@Override

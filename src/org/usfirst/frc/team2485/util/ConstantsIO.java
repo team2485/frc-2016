@@ -34,6 +34,8 @@ public class ConstantsIO {
 
 	public static double kIntakeRollerSpeed, kLateralRollerSpeed;
 	
+	public static double kDegsToRot, kLongShotRPS, kBatterShotRPS;
+	
 	public static void init() {
 		
 		try {
@@ -42,6 +44,18 @@ public class ConstantsIO {
 			e1.printStackTrace();
 			
 		}
+		
+		
+		
+		
+		//TODO remove this
+		kDegsToRot = Double.parseDouble(data.get("kDegsToRot"));
+		kLongShotRPS = Double.parseDouble(data.get("kLongShotRPS"));
+		kBatterShotRPS = Double.parseDouble(data.get("kBatterShotRPS"));
+
+		
+		
+		
 				
 		kP_Shooter = Double.parseDouble(data.get("kP_Shooter"));
 		kI_Shooter = Double.parseDouble(data.get("kI_Shooter"));
@@ -69,7 +83,6 @@ public class ConstantsIO {
 		
 		kIntakeRollerSpeed = Double.parseDouble(data.get("kIntakeRollerSpeed"));
 		kLateralRollerSpeed = Double.parseDouble(data.get("kLateralRollerSpeed"));
-
 
 	}
 
