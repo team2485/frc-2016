@@ -43,12 +43,12 @@ public class GRIPReciever {
 
 	public static double getAngle() throws GRIPTargetNotFoundException {
 
-
 		NetworkTable table = NetworkTable.getTable("GRIP");
 
 		ITable goalsTable = table.getSubTable("goals");
 
-		double[] widths = goalsTable.getNumberArray("width", new double[] { -1000 });
+		double[] widths = goalsTable.getNumberArray("width",
+				new double[] { -1000 });
 
 		Set<String> keySet = goalsTable.getKeys();
 
@@ -56,7 +56,8 @@ public class GRIPReciever {
 
 		for (String curKey : keySet) {
 
-			double[] oldDoubles = goalsTable.getNumberArray(curKey, new double[] { -1000 });
+			double[] oldDoubles = goalsTable.getNumberArray(curKey,
+					new double[] { -1000 });
 
 			Double[] newDoubles = new Double[oldDoubles.length];
 
@@ -88,29 +89,33 @@ public class GRIPReciever {
 		double bestCenterY = data.get("centerY")[widest];
 
 		// make relative to center
-//		bestCenterX -= IMAGE_WIDTH / 2;
-//		bestCenterY -= IMAGE_HEIGHT / 2;
+		// bestCenterX -= IMAGE_WIDTH / 2;
+		// bestCenterY -= IMAGE_HEIGHT / 2;
 
-//		double R = IMAGE_WIDTH / (2 * Math.sin(Math.toRadians(FIELD_OF_VIEW / 2)));
-//		double Z = Math.sqrt(R * R - bestCenterX * bestCenterX - bestCenterY * bestCenterY);
-//		angle = Math.toDegrees(Math.atan(bestCenterX / Z));
+		// double R = IMAGE_WIDTH / (2 * Math.sin(Math.toRadians(FIELD_OF_VIEW /
+		// 2)));
+		// double Z = Math.sqrt(R * R - bestCenterX * bestCenterX - bestCenterY
+		// * bestCenterY);
+		// angle = Math.toDegrees(Math.atan(bestCenterX / Z));
 
+		// TODO: Calibrate these numbers...
+		double currentCenterValue = 156.5; // this is the batter shot
 		
-		//TODO: Calibrate these numbers...
-		double currentCenterValue = 156.5;	//this is the batter shot
-		if(bestCenterY > 100)
-			currentCenterValue = 163;		//this is the long shot from the outer works
-		
-		System.out.println("GRIPReciever bestCenterX: " + bestCenterX + 
-					"\tbestCenterY: " + bestCenterY + "\tcurrentCenterValue: " + currentCenterValue);
-		
-		
+		if (bestCenterY > 120) {
+			currentCenterValue = 163; /* this is the long shot from the outer
+										works */
+		}
+
+		System.out.println("GRIPReciever bestCenterX: " + bestCenterX
+				+ "\tbestCenterY: " + bestCenterY + "\tcurrentCenterValue: "
+				+ currentCenterValue);
+
 		double angle = FIELD_OF_VIEW * (bestCenterX - currentCenterValue) / 320;
-		
+
 		return angle;
 
 	}
-	
+
 	public static class GRIPTargetNotFoundException extends Exception {
 
 		GRIPTargetNotFoundException(String message) {

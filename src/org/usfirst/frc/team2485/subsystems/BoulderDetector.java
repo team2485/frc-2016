@@ -82,6 +82,7 @@ public class BoulderDetector implements Loggable {
 								public void run() {
 									Hardware.boulderStager
 											.setPosition(Position.NEUTRAL);
+									shakeTimer = null;
 								}
 							}, 500);
 
