@@ -158,17 +158,12 @@ public class SequencerFactory {
 						new DriveTo(30),
 						new DisableDriveToPID(),
 						new SequencedMultipleItem(
-								new DriveTo(40, 2, 0.4),
+								new DriveTo(80, 1.5f, 0.4),
 								new SetIntakeArm(Intake.FLOOR_POSITION)
 							),
 						new DisableDriveToPID(),
 						new SequencedMultipleItem(
-								new DriveTo(50, 2, 0.4),
-								new SetIntakeArm(Intake.PORTCULLIS_POSITION)
-							),
-						new DisableDriveToPID(),
-						new SequencedMultipleItem(
-								new DriveTo(70, 2, 0.4),
+								new DriveTo(130, 2, 0.4),
 								new SetIntakeArm(Intake.INTAKE_POSITION)
 							),
 						new SequencedMultipleItem(
