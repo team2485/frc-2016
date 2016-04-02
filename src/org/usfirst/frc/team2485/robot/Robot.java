@@ -1,5 +1,6 @@
 package org.usfirst.frc.team2485.robot;
 
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -102,8 +103,11 @@ public class Robot extends IterativeRobot {
 
 		Hardware.ahrs.zeroYaw();
 
-		autonomousSequencer = SequencerFactory.createAuto((AutoType) autoChooser.getSelected(),
-				(Integer) autoPosChooser.getSelected());
+//		autonomousSequencer = SequencerFactory.createAuto((AutoType) autoChooser.getSelected(),
+//				(Integer) autoPosChooser.getSelected());
+		
+		autonomousSequencer = SequencerFactory.createAuto(AutoType.values()[ConstantsIO.autoType],
+			ConstantsIO.autoPos);
 
 		camThread = new Thread( new Runnable() {
 			

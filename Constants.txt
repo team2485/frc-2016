@@ -3,6 +3,14 @@
 # Any line without an equals sign is a comment. 
 # Don't worry about whitespace.
 
+# autoType is the index of the desired auto in the following list starting from 0:
+# LOW_BAR_AUTO, RAMPARTS_AUTO, ROUGH_TERRAIN_AUTO, MOAT_AUTO, ROCK_WALL_AUTO, PORTCULLIS_AUTO, CHEVAL_DE_FRISE_AUTO, REACH_AUTO
+# autoPos is int from 1 to 5
+autoType = 1
+autoPos = 1
+
+
+
 kDegsToRot = 1.5
 
 

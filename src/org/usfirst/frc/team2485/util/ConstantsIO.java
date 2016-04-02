@@ -24,6 +24,8 @@ public class ConstantsIO {
 	
 	public static HashMap<String, String> data;
 	
+	public static int autoType, autoPos;
+	
 	public static double kP_Shooter, kI_Shooter, kD_Shooter, kF_Shooter;
 	public static double kP_DriveTo, kI_DriveTo, kD_DriveTo;
 	public static double kP_RotateSmallAngle, kI_RotateSmallAngle, kD_RotateSmallAngle;
@@ -47,15 +49,22 @@ public class ConstantsIO {
 		
 		
 		
+	
+		
 		
 		//TODO remove this
 		kDegsToRot = Double.parseDouble(data.get("kDegsToRot"));
-		kLongShotRPS = Double.parseDouble(data.get("kLongShotRPS"));
-		kBatterShotRPS = Double.parseDouble(data.get("kBatterShotRPS"));
+		
+		
+		
+		
+		
+		autoPos = Integer.parseInt(data.get("autoPos"));
+		autoType = Integer.parseInt(data.get("autoType"));
 
 		
-		
-		
+		kLongShotRPS = Double.parseDouble(data.get("kLongShotRPS"));
+		kBatterShotRPS = Double.parseDouble(data.get("kBatterShotRPS"));
 				
 		kP_Shooter = Double.parseDouble(data.get("kP_Shooter"));
 		kI_Shooter = Double.parseDouble(data.get("kI_Shooter"));
