@@ -82,7 +82,7 @@ public class SequencerFactory {
 						new ShakeBoulderStager(),
 						new SequencedPause(0.4),
 						new SequencedMultipleItem(
-								new DriveTo(55, 3.5, 0.65),
+								new DriveTo(61, 3.5, 0.65),
 								new SpinUpShooter(Shooter.RPS_BATTER_SHOT)
 							),
 						new DisableDriveToPID(), 
