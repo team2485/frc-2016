@@ -39,15 +39,15 @@ public class DriveTrain implements Loggable {
 	private DummyOutput dummyRotateToOutput;
 	private DummyOutput dummyDriveToEncoderOutput;
 	private DummyOutput dummyDriveStraightOutput;
-	private DummyOutput dummyDriveToLidarOutput;
+//	private DummyOutput dummyDriveToLidarOutput;
 
 	public PIDController rotateToPID;
 	public PIDController driveStraightPID;
 	public PIDController driveToEncoderPID;
-	public PIDController driveToLidarPID;
+//	public PIDController driveToLidarPID;
 
 	private int ahrsOnTargetCounter = 0;
-	private static final int MINIMUM_AHRS_ON_TARGET_ITERATIONS = 10;
+	private static final int MINIMUM_AHRS_ON_TARGET_ITERATIONS = 4; //used to be 10
 	private static final double ROTATE_TO_MIN_OUTPUT = 0.1;
 
 	// public static double
@@ -101,7 +101,7 @@ public class DriveTrain implements Loggable {
 						ConstantsIO.kD_RotateLargeAngle, ahrs,
 						dummyRotateToOutput, 0.010f);
 				rotateToPID.setAbsoluteTolerance(ABS_TOLERANCE_ROTATETO);
-				rotateToPID.setOutputRange(-0.4, 0.4);
+//				rotateToPID.setOutputRange(-0.5, 0.5);
 
 				dummyDriveStraightOutput = new DummyOutput();
 				driveStraightPID = new PIDController(
@@ -123,11 +123,11 @@ public class DriveTrain implements Loggable {
 				dummyDriveToEncoderOutput);
 		driveToEncoderPID.setAbsoluteTolerance(ABS_TOLERANCE_DRIVETO);
 
-		dummyDriveToLidarOutput = new DummyOutput();
-		driveToLidarPID = new PIDController(ConstantsIO.kP_DriveTo,
-				ConstantsIO.kI_DriveTo, ConstantsIO.kD_DriveTo, Hardware.lidar,
-				dummyDriveToLidarOutput, .01);
-		driveToLidarPID.setAbsoluteTolerance(ABS_TOLERANCE_DRIVETO);
+//		dummyDriveToLidarOutput = new DummyOutput();
+//		driveToLidarPID = new PIDController(ConstantsIO.kP_DriveTo,
+//				ConstantsIO.kI_DriveTo, ConstantsIO.kD_DriveTo, Hardware.lidar,
+//				dummyDriveToLidarOutput, .01);
+//		driveToLidarPID.setAbsoluteTolerance(ABS_TOLERANCE_DRIVETO);
 
 		encoder.reset();
 	}
@@ -136,8 +136,8 @@ public class DriveTrain implements Loggable {
 		
 		driveToEncoderPID.setPID(ConstantsIO.kP_DriveTo,
 				ConstantsIO.kI_DriveTo, ConstantsIO.kD_DriveTo);
-		driveToLidarPID.setPID(ConstantsIO.kP_DriveTo,
-				ConstantsIO.kI_DriveTo, ConstantsIO.kD_DriveTo);
+//		driveToLidarPID.setPID(ConstantsIO.kP_DriveTo,
+//				ConstantsIO.kI_DriveTo, ConstantsIO.kD_DriveTo);
 		driveStraightPID.setPID(ConstantsIO.kP_RotateLargeAngle,
 						ConstantsIO.kI_RotateLargeAngle, ConstantsIO.kD_RotateLargeAngle);
 		rotateToPID.setPID(ConstantsIO.kP_RotateLargeAngle,
@@ -390,16 +390,20 @@ public class DriveTrain implements Loggable {
 		if (ahrs != null) {
 			rotateToPID.disable();
 		}
-		setLeftRight(0, 0);
+		emergencyStop();
 	}
 
 	public void disableDriveToPID() {
 		driveToEncoderPID.disable();
 		driveStraightPID.disable();
+		emergencyStop();
 	}
 
 	public boolean driveTo(double inches, double maxAbsOutput) {
 
+		System.out.println("DriveTrain: driveTo: enc inches: " + encoder.getDistance());
+		
+		
 		if (!driveToEncoderPID.isEnabled()) {
 			driveToEncoderPID.enable();
 			// System.out.println("|DriveTrain.driveTo| Enabling driveStraight PID in driveTo "
@@ -437,46 +441,48 @@ public class DriveTrain implements Loggable {
 		return false;
 	}
 
-	public boolean driveToLidar(double inchesToWall, double maxAbsOutput) {
-
-		if (!driveToEncoderPID.isEnabled()) {
-
-			driveToLidarPID.enable();
-			driveToLidarPID.setSetpoint(inchesToWall);
-
-			driveStraightPID.enable();
-			driveStraightPID.setSetpoint(ahrs.getYaw());
-
-		}
-
-		driveToLidarPID.setOutputRange(-maxAbsOutput, maxAbsOutput);
-
-		// System.out.println(encPID.getError());
-
-		double lidarPIDOutput = dummyDriveToLidarOutput.get();
-		double driveStraightOutput = dummyDriveStraightOutput.get();
-
-		// System.out.println("|DriveTrain.driveTo| Encoder Output: " +
-		// encoderOutput);
-
-		double leftOutput = lidarPIDOutput + driveStraightOutput;
-		double rightOutput = lidarPIDOutput - driveStraightOutput;
-
-		setLeftRight(leftOutput, rightOutput);
-
-		// done?
-		if (driveToLidarPID.onTarget()
-				&& Math.abs(Hardware.lidar.getRate()) < lowEncRate) {
-			setLeftRight(0.0, 0.0);
-			driveToLidarPID.disable();
-			driveStraightPID.disable();
-			return true;
-		}
-		return false;
-	}
+//	public boolean driveToLidar(double inchesToWall, double maxAbsOutput) {
+//
+//		if (!driveToEncoderPID.isEnabled()) {
+//
+//			driveToLidarPID.enable();
+//			driveToLidarPID.setSetpoint(inchesToWall);
+//
+//			driveStraightPID.enable();
+//			driveStraightPID.setSetpoint(ahrs.getYaw());
+//
+//		}
+//
+//		driveToLidarPID.setOutputRange(-maxAbsOutput, maxAbsOutput);
+//
+//		// System.out.println(encPID.getError());
+//
+//		double lidarPIDOutput = dummyDriveToLidarOutput.get();
+//		double driveStraightOutput = dummyDriveStraightOutput.get();
+//
+//		// System.out.println("|DriveTrain.driveTo| Encoder Output: " +
+//		// encoderOutput);
+//
+//		double leftOutput = lidarPIDOutput + driveStraightOutput;
+//		double rightOutput = lidarPIDOutput - driveStraightOutput;
+//
+//		setLeftRight(leftOutput, rightOutput);
+//
+//		// done?
+//		if (driveToLidarPID.onTarget()
+//				&& Math.abs(Hardware.lidar.getRate()) < lowEncRate) {
+//			setLeftRight(0.0, 0.0);
+//			driveToLidarPID.disable();
+//			driveStraightPID.disable();
+//			return true;
+//		}
+//		return false;
+//	}
 
 	public boolean rotateTo(double angle) { // may need to check for moving to
 											// fast when pid is on target
+		
+		System.out.println("DriveTrain: DriveTo: desired = " + rotateToPID.getSetpoint() + " current = " + ahrs.getYaw());
 		if (rotateToPID == null)
 			throw new IllegalStateException("can't rotateTo when ahrs is null");
 
@@ -527,11 +533,11 @@ public class DriveTrain implements Loggable {
 			
 			ahrsOnTargetCounter = 0;
 			
-			if (ahrsOutput > 0 && ahrsOutput < ROTATE_TO_MIN_OUTPUT) {
-				ahrsOutput = ROTATE_TO_MIN_OUTPUT;
-			} else if (ahrsOutput < 0 && ahrsOutput > -ROTATE_TO_MIN_OUTPUT) {
-				ahrsOutput = -ROTATE_TO_MIN_OUTPUT;
-			}
+//			if (ahrsOutput > 0 && ahrsOutput < ROTATE_TO_MIN_OUTPUT) {
+//				ahrsOutput = ROTATE_TO_MIN_OUTPUT;
+//			} else if (ahrsOutput < 0 && ahrsOutput > -ROTATE_TO_MIN_OUTPUT) {
+//				ahrsOutput = -ROTATE_TO_MIN_OUTPUT;
+//			}
 			
 		}
 		

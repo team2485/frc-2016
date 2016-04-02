@@ -12,7 +12,7 @@ public class DisableRotateToPID implements SequencedItem {
 
 	@Override
 	public double duration() {
-		return 0.05;
+		return 0.03;
 	}
 
 }

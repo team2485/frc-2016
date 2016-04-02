@@ -8,7 +8,9 @@ import org.usfirst.frc.team2485.subsystems.Shooter.HoodPosition;
  * @author Jeremy McCulloch
  */
 public class SetHoodPosition implements SequencedItem {
+	
 	private HoodPosition desiredHoodPosition;
+	
 	public SetHoodPosition(HoodPosition desiredHoodPosition) {
 		this.desiredHoodPosition = desiredHoodPosition;
 	}

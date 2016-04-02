@@ -45,7 +45,7 @@ public class SequencerFactory {
 				break;
 				
 			case 3:
-				degreesToTurn = 10;
+				degreesToTurn = 20;
 				break;
 				
 			case 4:
@@ -69,7 +69,7 @@ public class SequencerFactory {
 						new SetIntakeArm(Intake.INTAKE_POSITION),
 						new SequencedPause(0.6),
 						new SequencedMultipleItem(
-								new DriveTo(206, 5, 0.5),
+								new DriveTo(206, 5, 0.7),
 								new SetHoodPosition(HoodPosition.STOWED)
 							),
 						new DisableDriveToPID(),
@@ -82,7 +82,7 @@ public class SequencerFactory {
 						new ShakeBoulderStager(),
 						new SequencedPause(0.4),
 						new SequencedMultipleItem(
-								new DriveTo(55, 3.5, 0.65),
+								new DriveTo(61, 3.5, 0.75),
 								new SpinUpShooter(Shooter.RPS_BATTER_SHOT)
 							),
 						new DisableDriveToPID(), 
@@ -94,19 +94,20 @@ public class SequencerFactory {
 			case ROCK_WALL_AUTO:
 			case RAMPARTS_AUTO:
 				
+				
 				if (defenseLocation == 4) {
 					degreesToTurn = -8;
 				}
 				
 				return new Sequencer(new SequencedItem[] {
 						new SequencedMultipleItem(
-								new DriveTo(distPreTurn, 6, 0.6), // changed to 6 seconds from 4
+								new DriveTo(distPreTurn, 6, 0.75), // changed to 6 seconds from 4
 								new Hat(true),
 								new SetHoodPosition(HoodPosition.HIGH_ANGLE)
 							),
 						new DisableDriveToPID(),
 						new Hat(false),
-						new SetIntakeArm(Intake.INTAKE_POSITION),
+//						new SetIntakeArm(Intake.INTAKE_POSITION),
 						new RotateTo(degreesToTurn, 3),
 						new DisableRotateToPID(),
 						new ZeroDriveEncoder(),
@@ -158,17 +159,12 @@ public class SequencerFactory {
 						new DriveTo(30),
 						new DisableDriveToPID(),
 						new SequencedMultipleItem(
-								new DriveTo(40, 2, 0.4),
+								new DriveTo(80, 1.5f, 0.4),
 								new SetIntakeArm(Intake.FLOOR_POSITION)
 							),
 						new DisableDriveToPID(),
 						new SequencedMultipleItem(
-								new DriveTo(50, 2, 0.4),
-								new SetIntakeArm(Intake.PORTCULLIS_POSITION)
-							),
-						new DisableDriveToPID(),
-						new SequencedMultipleItem(
-								new DriveTo(70, 2, 0.4),
+								new DriveTo(130, 2, 0.4),
 								new SetIntakeArm(Intake.INTAKE_POSITION)
 							),
 						new SequencedMultipleItem(

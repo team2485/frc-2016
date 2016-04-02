@@ -98,11 +98,10 @@ public class GRIPReciever {
 		// * bestCenterY);
 		// angle = Math.toDegrees(Math.atan(bestCenterX / Z));
 
-		// TODO: Calibrate these numbers...
-		double currentCenterValue = 156.5; // this is the batter shot
+		double currentCenterValue = 158; // this is the batter shot
 		
 		if (bestCenterY > 120) {
-			currentCenterValue = 163; /* this is the long shot from the outer
+			currentCenterValue = 175; /* this is the long shot from the outer
 										works */
 		}
 

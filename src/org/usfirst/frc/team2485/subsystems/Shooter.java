@@ -7,6 +7,8 @@ import java.util.TimerTask;
 
 import org.usfirst.frc.team2485.robot.Hardware;
 import org.usfirst.frc.team2485.util.ConstantsIO;
+import org.usfirst.frc.team2485.util.DummyInput;
+import org.usfirst.frc.team2485.util.DummyOutput;
 import org.usfirst.frc.team2485.util.Loggable;
 import org.usfirst.frc.team2485.util.SpeedControllerWrapper;
 
@@ -43,7 +45,9 @@ public class Shooter implements Loggable {
 	private Solenoid lowerSolenoid, upperSolenoid;
 	private Encoder enc;
 	private HoodPosition currHoodPosition;
-	public PIDController ratePID;
+	private PIDController ratePID;
+//	private DummyOutput dummmyOut;
+//	private DummyInput dummyIn;
 
 	public Shooter() {
 
@@ -149,15 +153,15 @@ public class Shooter implements Loggable {
 
 	}
 
-	/**
+	/*
 	 * Set shooter speed based distance read of Lidar <br>
 	 * Currently not working
 	 */
-	public void setSpeedOffLidar() {
-		
-		setTargetSpeed(0.0 /* Lidar magic */);
-	
-	}
+//	public void setSpeedOffLidar() {
+//		
+//		setTargetSpeed(0.0 /* Lidar magic */);
+//	
+//	}
 
 	public double getSetpoint() {
 		
@@ -176,7 +180,10 @@ public class Shooter implements Loggable {
 
 	public void disableShooter() {
 
-		setPWM(0);
+		if (ratePID.isEnabled()) {
+			ratePID.disable();
+		}
+		shooterMotors.emergencyStop();
 
 	}
 
@@ -250,8 +257,8 @@ public class Shooter implements Loggable {
 		public void run() {
 			while (true) {
 				
-				if (!clearedI && getRate() > getSetpoint()) {
-					clearedI = true;
+				if (!clearedI && getRate() > getSetpoint() && ratePID.isEnabled()) {
+					clearedI = true;	
 					ratePID.reset();
 					ratePID.enable();
 				}

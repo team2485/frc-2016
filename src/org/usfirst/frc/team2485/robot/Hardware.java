@@ -56,7 +56,7 @@ public class Hardware {
 
 	public static Ultrasonic sonic;
 
-	public static LidarWrapper lidar;
+//	public static LidarWrapper lidar;
 
 	// Sequences && Auto
 	public static Sequencer autoSequence;
@@ -135,7 +135,7 @@ public class Hardware {
 		sonic = new Ultrasonic(Constants.kUltrasonicPING,
 				Constants.kUltrasonicECHO, Unit.kInches);
 
-		lidar = new LidarWrapper(Port.kMXP);
+//		lidar = new LidarWrapper(Port.kMXP);
 
 		boulderDetector = new BoulderDetector();
 
@@ -154,8 +154,8 @@ public class Hardware {
 		shooterEnc.setPIDSourceType(PIDSourceType.kRate);
 		shooterEnc.setReverseDirection(true);
 
-		leftShooterMotor.setInverted(false);
-		rightShooterMotor.setInverted(true);
+		leftShooterMotor.setInverted(true);
+		rightShooterMotor.setInverted(false);
 		rightShooterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 		leftShooterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 

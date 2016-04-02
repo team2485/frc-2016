@@ -5,6 +5,16 @@
 
 kDegsToRot = 1.5
 
+#Auto Types are in the following order, starting from 0
+#LOW_BAR_AUTO, RAMPARTS_AUTO, ROUGH_TERRAIN_AUTO, MOAT_AUTO, 
+#ROCK_WALL_AUTO, PORTCULLIS_AUTO, CHEVAL_DE_FRISE_AUTO, REACH_AUTO
+
+autoType = 1
+
+#Auto Pos is the position of the defense, with Low Bar always in pos 1
+
+autoPos = 0
+
 
 kLongShotRPS = 88
 

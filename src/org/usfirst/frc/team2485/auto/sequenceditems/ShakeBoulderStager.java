@@ -17,9 +17,13 @@ public class ShakeBoulderStager implements SequencedItem {
 		
 		long runTime = System.currentTimeMillis() - startTime;
 		
-		if (runTime < 250) {
+
+		if (runTime < 300) {
 			Hardware.boulderStager.setPosition(Position.SHOOTING);
-		} else {
+		} else if (runTime < 600) {
+			Hardware.boulderStager.setPosition(Position.INTAKE);
+		}
+		else {
 			Hardware.boulderStager.setPosition(Position.NEUTRAL);
 		}
 		
@@ -27,7 +31,7 @@ public class ShakeBoulderStager implements SequencedItem {
 
 	@Override
 	public double duration() {
-		return 0.3;
+		return 0.7;
 	}
 
 }
