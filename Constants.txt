@@ -3,58 +3,50 @@
 # Any line without an equals sign is a comment. 
 # Don't worry about whitespace.
 
-kDegsToRot = 1.5
-
-#Auto Types are in the following order, starting from 0
-#LOW_BAR_AUTO, RAMPARTS_AUTO, ROUGH_TERRAIN_AUTO, MOAT_AUTO, 
-#ROCK_WALL_AUTO, PORTCULLIS_AUTO, CHEVAL_DE_FRISE_AUTO, REACH_AUTO
-
-autoType = 1
-
-#Auto Pos is the position of the defense, with Low Bar always in pos 1
-
-autoPos = 0
-
-
-kLongShotRPS = 88
-
-kBatterShotRPS = 71
-
 # PID Gains
 
-kP_Shooter = 0.2
+kDegsToRot = 55
 
-kI_Shooter = 0.0
-kD_Shooter = 0.0002
+#Auto Types are in the following order, starting from 0:
+#LOW_BAR_AUTO->0, RAMPARTS_AUTO->1, ROUGH_TERRAIN_AUTO->2, MOAT_AUTO->3,
+#ROCK_WALL_AUTO->4, PORTCULLIS_AUTO->5, CHEVAL_DE_FRISE_AUTO->6, REACH_AUTO->7
 
-kF_Shooter = 0.0068
+autoType = 0
+
+
+#Auto Pos is the position of the defense, with the Low Bar in pos 1
+
+autoPos = 1
+
+kBatterShotRPS = 78.5
+kLongShotRPS = 88
+
+
+kP_Shooter = 0.04
+kI_Shooter = 0.004
+kD_Shooter = 0.0
+kF_Shooter = 0.0077
 
 kP_DriveTo = 0.03
 kI_DriveTo = 0.0
 kD_DriveTo = 0.0
 
+kP_RotateLargeAngle = 0.075
+kI_RotateLargeAngle = 0.0
+kD_RotateLargeAngle = 0.025
 
-
-kP_RotateLargeAngle = 0.05
-kI_RotateLargeAngle = 0.005
-kD_RotateLargeAngle = 0.05
-
-kP_RotateSmallAngle = 0.09
-
-
-kI_RotateSmallAngle = 0.01
-
-
-kD_RotateSmallAngle = 0.0
+kP_RotateSmallAngle = 0.13
+kI_RotateSmallAngle = 0.005
+kD_RotateSmallAngle = 0.01
 
 kP_IntakeArm = 7.0
-kI_IntakeArm = 0.00
-kD_IntakeArm = 0.00
+kI_IntakeArm = 0.0
+kD_IntakeArm = 0.0
 
 
 # Voltage Ramping
 kDriveVoltageRamp = 0.05
 kShooterVoltageRamp = 0.05
 
-kIntakeRollerSpeed = 0.7
-kLateralRollerSpeed = 0.5
+kIntakeRollerSpeed = 1.0
+kLateralRollerSpeed = 1.0

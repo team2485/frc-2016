@@ -15,6 +15,7 @@ import org.usfirst.frc.team2485.util.SpeedControllerWrapper;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 
@@ -46,8 +47,9 @@ public class Shooter implements Loggable {
 	private Encoder enc;
 	private HoodPosition currHoodPosition;
 	private PIDController ratePID;
-//	private DummyOutput dummmyOut;
-//	private DummyInput dummyIn;
+	
+	private DummyOutput dummyOut;
+	private DummyInput dummyIn;
 
 	public Shooter() {
 
@@ -62,19 +64,22 @@ public class Shooter implements Loggable {
 		rightShooterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 		leftShooterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 		
-
+		dummyOut = new DummyOutput();
+		dummyIn = new DummyInput(PIDSourceType.kDisplacement);
+		
 		shooterMotors = new SpeedControllerWrapper(new SpeedController[] { leftShooterMotor, rightShooterMotor },
 				new int[] { 0, 0 });// CANTalons monitor their own current
 
 		ratePID = new PIDController(ConstantsIO.kP_Shooter, ConstantsIO.kI_Shooter, ConstantsIO.kD_Shooter,
-				ConstantsIO.kF_Shooter, enc, shooterMotors, 0.010);
-		ratePID.setOutputRange(0, 1);
+				dummyIn, dummyOut, 0.010);
 
 		currHoodPosition = DEFAULT_HOOD_POSITION;
 
 		disableShooter();
 		
 		new ClearTotalErrorThread().start();
+		
+		new RatePIDThread().start();
 
 	}
 	
@@ -271,6 +276,36 @@ public class Shooter implements Loggable {
 				
 			}
 			
+		}
+	}
+	
+	private class RatePIDThread extends Thread {
+		@Override
+		public void run() {
+			while (true) {
+				
+				dummyIn.set(enc.getRate());
+				
+				double out = dummyOut.get() + ConstantsIO.kF_Shooter * getSetpoint();
+				if (out < 0) {
+					out = 0;
+				} else if (out > 1) {
+					out = 1;
+				}
+				
+				if (isPID()) {
+					shooterMotors.set(out);
+				} else {
+					shooterMotors.set(0);
+				}
+				
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 

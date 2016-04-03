@@ -6,15 +6,20 @@ import edu.wpi.first.wpilibj.PIDSourceType;
 public class DummyInput implements PIDSource {
 
 	private double input;
+	private PIDSourceType pidSource;
+	
+	public DummyInput(PIDSourceType pidSource) {
+		this.pidSource = pidSource;
+	}
 	
 	@Override
 	public void setPIDSourceType(PIDSourceType pidSource) {
-		
+		this.pidSource = pidSource;
 	}
 
 	@Override
 	public PIDSourceType getPIDSourceType() {
-		return PIDSourceType.kDisplacement;
+		return pidSource;
 	}
 
 	@Override
