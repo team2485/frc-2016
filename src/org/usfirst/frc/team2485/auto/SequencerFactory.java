@@ -69,7 +69,7 @@ public class SequencerFactory {
 						new SetIntakeArm(Intake.INTAKE_POSITION),
 						new SequencedPause(0.6),
 						new SequencedMultipleItem(
-								new DriveTo(206, 5, 0.7),
+								new DriveTo(206, 5, 0.5),
 								new SetHoodPosition(HoodPosition.STOWED)
 							),
 						new DisableDriveToPID(),
@@ -82,7 +82,7 @@ public class SequencerFactory {
 						new ShakeBoulderStager(),
 						new SequencedPause(0.4),
 						new SequencedMultipleItem(
-								new DriveTo(61, 3.5, 0.75),
+								new DriveTo(61, 3.5, 0.65),
 								new SpinUpShooter(Shooter.RPS_BATTER_SHOT)
 							),
 						new DisableDriveToPID(), 
