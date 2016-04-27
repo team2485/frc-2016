@@ -2,7 +2,7 @@ package org.usfirst.frc.team2485.auto.sequenceditems;
 
 import org.usfirst.frc.team2485.auto.SequencedItem;
 import org.usfirst.frc.team2485.robot.Hardware;
-import org.usfirst.frc.team2485.subsystems.BoulderStager.Position;
+import org.usfirst.frc.team2485.subsystems.BoulderStager.StagerPosition;
 
 public class ShakeBoulderStager implements SequencedItem {
 
@@ -19,12 +19,12 @@ public class ShakeBoulderStager implements SequencedItem {
 		
 
 		if (runTime < 300) {
-			Hardware.boulderStager.setPosition(Position.SHOOTING);
+			Hardware.boulderStager.setPosition(StagerPosition.SHOOTING);
 		} else if (runTime < 600) {
-			Hardware.boulderStager.setPosition(Position.INTAKE);
+			Hardware.boulderStager.setPosition(StagerPosition.INTAKE);
 		}
 		else {
-			Hardware.boulderStager.setPosition(Position.NEUTRAL);
+			Hardware.boulderStager.setPosition(StagerPosition.NEUTRAL);
 		}
 		
 	}

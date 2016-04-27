@@ -3,20 +3,18 @@ package org.usfirst.frc.team2485.auto.sequenceditems;
 import org.usfirst.frc.team2485.auto.SequencedItem;
 import org.usfirst.frc.team2485.robot.Hardware;
 
-/**
- * @author Patrick Wamsley 
- */
+public class WaitForBoulder implements SequencedItem {
 
-public class ResetDriveEncoders implements SequencedItem {
+	private double timeout = 3;
 
 	@Override
 	public void run() {
-		Hardware.driveTrain.resetEncoders();	
+		System.out.println("blah");
 	}
 
 	@Override
 	public double duration() {
-		return 0.05;
+		return Hardware.boulderDetector.hasBoulder() ? 0 : timeout;
 	}
-
 }
+ 

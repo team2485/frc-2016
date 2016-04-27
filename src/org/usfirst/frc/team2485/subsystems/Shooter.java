@@ -7,17 +7,15 @@ import java.util.TimerTask;
 
 import org.usfirst.frc.team2485.robot.Hardware;
 import org.usfirst.frc.team2485.util.ConstantsIO;
-import org.usfirst.frc.team2485.util.DummyInput;
-import org.usfirst.frc.team2485.util.DummyOutput;
 import org.usfirst.frc.team2485.util.Loggable;
 import org.usfirst.frc.team2485.util.SpeedControllerWrapper;
+import org.usfirst.frc.team2485.util.WarlordsPIDController;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * @author Jeremy McCulloch
@@ -37,7 +35,7 @@ public class Shooter implements Loggable {
 	public static double RPS_LONG_SHOT = 95, //should be 95...changed for a test
 		RPS_BATTER_SHOT = 80,//changed from 80 for practice bot with 1:1 gearing
 			RPS_LOW_GOAL_SHOT = 60;
-	private boolean clearedI;
+//	private boolean clearedI;
 
 	public static final HoodPosition DEFAULT_HOOD_POSITION = HoodPosition.HIGH_ANGLE;
 
@@ -46,13 +44,10 @@ public class Shooter implements Loggable {
 	private Solenoid lowerSolenoid, upperSolenoid;
 	private Encoder enc;
 	private HoodPosition currHoodPosition;
-	private PIDController ratePID;
-	
-	private DummyOutput dummyOut;
-	private DummyInput dummyIn;
+	public WarlordsPIDController ratePID;
 
 	public Shooter() {
-
+		
 		enc = Hardware.shooterEnc;
 
 		rightShooterMotor = Hardware.rightShooterMotor;
@@ -64,22 +59,29 @@ public class Shooter implements Loggable {
 		rightShooterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 		leftShooterMotor.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 		
-		dummyOut = new DummyOutput();
-		dummyIn = new DummyInput(PIDSourceType.kDisplacement);
-		
+
 		shooterMotors = new SpeedControllerWrapper(new SpeedController[] { leftShooterMotor, rightShooterMotor },
 				new int[] { 0, 0 });// CANTalons monitor their own current
 
-		ratePID = new PIDController(ConstantsIO.kP_Shooter, ConstantsIO.kI_Shooter, ConstantsIO.kD_Shooter,
-				dummyIn, dummyOut, 0.010);
+		ratePID = new WarlordsPIDController(ConstantsIO.kP_Shooter, ConstantsIO.kI_Shooter, ConstantsIO.kD_Shooter,
+				ConstantsIO.kF_Shooter, enc, shooterMotors);
+		ratePID.setBufferLength(3);
+		
+//		System.out.println("PID values: " + ConstantsIO.kP_Shooter + "\t\t" + ConstantsIO.kF_Shooter);
+		
+		ratePID.setOutputRange(0, 1);
 
 		currHoodPosition = DEFAULT_HOOD_POSITION;
+		
+		RPS_BATTER_SHOT = ConstantsIO.kBatterShotRPS;
+		RPS_LONG_SHOT = ConstantsIO.kLongShotRPS;
+		
+		SmartDashboard.putNumber("RPS Batter Shot", RPS_BATTER_SHOT);
+		SmartDashboard.putNumber("RPS Long Shot", RPS_LONG_SHOT);
 
 		disableShooter();
 		
-		new ClearTotalErrorThread().start();
-		
-		new RatePIDThread().start();
+//		new ClearTotalErrorThread().start();
 
 	}
 	
@@ -149,9 +151,19 @@ public class Shooter implements Loggable {
 	}
 
 	public void setTargetSpeed(double setpoint) {
+		
+		if (setpoint == RPS_BATTER_SHOT) {
+			RPS_BATTER_SHOT = SmartDashboard.getNumber("RPS Batter Shot");
+			setpoint = RPS_BATTER_SHOT;
+		}
+		
+		if (setpoint == RPS_LONG_SHOT) {
+			RPS_LONG_SHOT = SmartDashboard.getNumber("RPS Long Shot");
+			setpoint = RPS_LONG_SHOT;
+		}
 
 		ratePID.setSetpoint(setpoint);
-		clearedI = false; // clear each time the setpoint changes
+//		clearedI = false; // clear each time the setpoint changes
 		if (!ratePID.isEnabled()) {
 			ratePID.enable();
 		}
@@ -172,6 +184,10 @@ public class Shooter implements Loggable {
 		
 		return ratePID.getSetpoint();
 		
+	}
+	
+	public HoodPosition getHoodPosition() {
+		return currHoodPosition;
 	}
 
 	public void setPWM(double pwm) {
@@ -203,6 +219,10 @@ public class Shooter implements Loggable {
 		return getSetpoint() - getRate();
 
 	}
+	
+	public double getAvgError() {
+		return ratePID.getAvgError();
+	}
 
 	public boolean isOnTarget(double maxError) {
 
@@ -218,7 +238,9 @@ public class Shooter implements Loggable {
 	 *            the maximum error, as a percent, from 0.0 to 1.0
 	 */
 	public boolean isOnTargetPercentage(double maxPercentError) {
+		
 		return isOnTarget(maxPercentError * getSetpoint());
+		
 	}
 
 	public boolean isPID() {
@@ -233,7 +255,7 @@ public class Shooter implements Loggable {
 
 	public double getCurrentPower() {
 
-		return ratePID.get();
+		return shooterMotors.get();
 		
 	}
 
@@ -257,56 +279,26 @@ public class Shooter implements Loggable {
 		
 	}
 	
-	private class ClearTotalErrorThread extends Thread {
-		@Override
-		public void run() {
-			while (true) {
-				
-				if (!clearedI && getRate() > getSetpoint() && ratePID.isEnabled()) {
-					clearedI = true;	
-					ratePID.reset();
-					ratePID.enable();
-				}
-				
-				try {
-					Thread.sleep(20);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				
-			}
-			
-		}
-	}
-	
-	private class RatePIDThread extends Thread {
-		@Override
-		public void run() {
-			while (true) {
-				
-				dummyIn.set(enc.getRate());
-				
-				double out = dummyOut.get() + ConstantsIO.kF_Shooter * getSetpoint();
-				if (out < 0) {
-					out = 0;
-				} else if (out > 1) {
-					out = 1;
-				}
-				
-				if (isPID()) {
-					shooterMotors.set(out);
-				} else {
-					shooterMotors.set(0);
-				}
-				
-				try {
-					Thread.sleep(10);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-	}
+//	private class ClearTotalErrorThread extends Thread {
+//		@Override
+//		public void run() {
+//			while (true) {
+//				
+//				if (!clearedI && getRate() > getSetpoint()) {
+//					clearedI = true;
+//					ratePID.reset();
+//					ratePID.enable();
+//				}
+//				
+//				try {
+//					Thread.sleep(20);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+//				
+//			}
+//			
+//		}
+//	}
 
 }

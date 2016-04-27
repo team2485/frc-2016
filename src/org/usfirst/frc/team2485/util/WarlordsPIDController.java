@@ -15,18 +15,20 @@ import edu.wpi.first.wpilibj.PIDSource;
  */
 public class WarlordsPIDController {
 	
-	private double kP, kI, kD, kF;
+	private double kP, kI, kD, kF, kC;
 	private PIDSource source;
-	private PIDOutput output;
+	private PIDOutput[] outputs;
 	
-	private double totalError = 0, lastError;
+	private double integralTerm, lastPropTerm;
 	private double setpoint;
 	private double sensorVal, result;
+	private boolean saturateHighFlag, saturateLowFlag;
+	private double saturateError;
+	private double decoupleInput;
 	
 	private boolean enabled = false;
 	
 	private double minOutput = -1, maxOutput = 1;
-	private double minITerm = 0, maxITerm = 0; // if min >= max then integral term is not clamped
 	
 	private double percentTolerance = 0.0, absoluteTolerance = 0.0;
 	private boolean usesPercentTolerance = false;
@@ -49,13 +51,14 @@ public class WarlordsPIDController {
 	 * @param kI integral term, multiplied by the total (sum) error
 	 * @param kD derivative term, multiplied by the change of the error
 	 * @param kF feedforward term, multiplied by the setpoint, (usually) only used in rate control
+	 * @param kC coupling constant
 	 * @param source input device / sensor used to monitor progress towards setpoint
-	 * @param output output device / motor  used to approach setpoint
+	 * @param outputs output device(s) / motor(s)  used to approach setpoint
 	 * @param period how often PID calculation is done (millis)
 	 * @param bufferLength number of values used to calculate averageError
 	 */
-	public WarlordsPIDController(double kP, double kI, double kD, double kF, 
-			PIDSource source, PIDOutput output, long period, int bufferLength) {
+	public WarlordsPIDController(double kP, double kI, double kD, double kF, double kC, 
+			long period, int bufferLength, PIDSource source, PIDOutput... outputs) {
 		
 		this.kP = kP;
 		this.kI = kI;
@@ -63,7 +66,7 @@ public class WarlordsPIDController {
 		this.kF = kF;
 		
 		this.source = source;
-		this.output = output;
+		this.outputs = outputs;
 		this.period = period;
 		
 		pidTimer = new Timer();
@@ -73,6 +76,21 @@ public class WarlordsPIDController {
 		this.errorBuffer = new LinkedList<Double>();
 	}
 	
+	/**
+	 * 
+	 * @param kP proportional term, multiplied by the current error
+	 * @param kI integral term, multiplied by the total (sum) error
+	 * @param kD derivative term, multiplied by the change of the error
+	 * @param kF feedforward term, multiplied by the setpoint, (usually) only used in rate control
+	 * @param source input device / sensor used to monitor progress towards setpoint
+	 * @param outputs output device(s) / motor(s)  used to approach setpoint
+	 * @param period how often PID calculation is done (millis)
+	 * @param bufferLength number of values used to calculate averageError
+	 */
+	public WarlordsPIDController(double kP, double kI, double kD, double kF,
+			long period, int bufferLength, PIDSource source, PIDOutput... outputs) {
+		this(kP, kI, kD, kF, 0, period, bufferLength, source, outputs);
+	}
 	
 	/**
 	 * 
@@ -80,13 +98,13 @@ public class WarlordsPIDController {
 	 * @param kI integral term, multiplied by the total (sum) error
 	 * @param kD derivative term, multiplied by the change of the error
 	 * @param source input device / sensor used to monitor progress towards setpoint
-	 * @param output output device / motor  used to approach setpoint
+	 * @param outputs output device(s) / motor(s)  used to approach setpoint
 	 * @param period how often PID calculation is done (millis)
 	 * @param bufferLength number of values used to calculate averageError
 	 */
 	public WarlordsPIDController(double kP, double kI, double kD, 
-			PIDSource source, PIDOutput output, long period, int bufferLength) {
-		this(kP, kI, kD, 0, source, output, period, bufferLength);
+			long period, int bufferLength, PIDSource source, PIDOutput... outputs) {
+		this(kP, kI, kD, 0, period, bufferLength, source, outputs);
 	}
 	
 	/**
@@ -96,12 +114,12 @@ public class WarlordsPIDController {
 	 * @param kD derivative term, multiplied by the change of the error
 	 * @param kF feedforward term, multiplied by the setpoint, (usually) only used in rate control
 	 * @param source input device / sensor used to monitor progress towards setpoint
-	 * @param output output device / motor  used to approach setpoint
+	 * @param outputs output device(s) / motor(s)  used to approach setpoint
 	 * @param period how often PID calculation is done (millis)
 	 */
 	public WarlordsPIDController(double kP, double kI, double kD, double kF, 
-			PIDSource source, PIDOutput output, long period) {
-		this(kP, kI, kD, kF, source, output, period, DEFAULT_BUFFER_LENGTH);
+			long period, PIDSource source, PIDOutput... outputs) {
+		this(kP, kI, kD, kF, period, DEFAULT_BUFFER_LENGTH, source, outputs);
 	}
 	
 	/**
@@ -110,12 +128,12 @@ public class WarlordsPIDController {
 	 * @param kI integral term, multiplied by the total (sum) error
 	 * @param kD derivative term, multiplied by the change of the error
 	 * @param source input device / sensor used to monitor progress towards setpoint
-	 * @param output output device / motor  used to approach setpoint
+	 * @param outputs output device(s) / motor(s)  used to approach setpoint
 	 * @param period how often PID calculation is done (millis)
 	 */
 	public WarlordsPIDController(double kP, double kI, double kD, 
-			PIDSource source, PIDOutput output, long period) {
-		this(kP, kI, kD, source, output, period, DEFAULT_BUFFER_LENGTH);
+			long period, PIDSource source, PIDOutput... outputs) {
+		this(kP, kI, kD, period, DEFAULT_BUFFER_LENGTH, source, outputs);
 	}
 	
 	/**
@@ -125,11 +143,11 @@ public class WarlordsPIDController {
 	 * @param kD derivative term, multiplied by the change of the error
 	 * @param kF feedforward term, multiplied by the setpoint, (usually) only used in rate control
 	 * @param source input device / sensor used to monitor progress towards setpoint
-	 * @param output output device / motor  used to approach setpoint
+	 * @param outputs output device(s) / motor(s)  used to approach setpoint
 	 */
 	public WarlordsPIDController(double kP, double kI, double kD, double kF, 
-			PIDSource source, PIDOutput output) {
-		this(kP, kI, kD, kF, source, output, DEFAULT_PERIOD);
+			PIDSource source, PIDOutput... outputs) {
+		this(kP, kI, kD, kF, DEFAULT_PERIOD, source, outputs);
 	}
 	
 	/**
@@ -141,10 +159,17 @@ public class WarlordsPIDController {
 	 * @param output output device / motor  used to approach setpoint
 	 */
 	public WarlordsPIDController(double kP, double kI, double kD, 
-			PIDSource source, PIDOutput output) {
-		this(kP, kI, kD, source, output, DEFAULT_PERIOD);
+			PIDSource source, PIDOutput... outputs) {
+		this(kP, kI, kD, DEFAULT_PERIOD, source, outputs);
 	}
+		
 	
+	public void setPID(double kP, double kI, double kD, double kF) {
+		this.kP = kP;
+		this.kI = kI;
+		this.kD = kD;
+		this.kF = kF;
+	}
 	/**
 	 * @return time between PID calculations (millis)
 	 */
@@ -159,11 +184,16 @@ public class WarlordsPIDController {
 		return enabled;
 	} 
 	
-	/**
-	 * @param enabled true to make PID start controlling the output motor
-	 */
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
+	
+	public void enable() {
+		this.enabled = true;
+	}
+	
+	
+	public void disable() {
+		this.enabled = false;
+		this.integralTerm = 0;
+		this.lastPropTerm = 0;
 	}
 	
 	/**
@@ -176,15 +206,15 @@ public class WarlordsPIDController {
 		this.maxOutput = maxOutput;
 	}
 	
-	/**
-	 * Clamps the integral term between minITerm and maxITerm, does not clamp if min >= max
-	 * @param minITerm min value of integral term
-	 * @param maxITerm max value of integral term
-	 */
-	public void setIZone(double minITerm, double maxITerm) {
-		this.minITerm = minITerm;
-		this.maxITerm = maxITerm;
-	}
+//	/**
+//	 * Clamps the integral term between minITerm and maxITerm, does not clamp if min >= max
+//	 * @param minITerm min value of integral term
+//	 * @param maxITerm max value of integral term
+//	 */
+//	public void setIZone(double minITerm, double maxITerm) {
+//		this.minITerm = minITerm;
+//		this.maxITerm = maxITerm;
+//	}
 	
 	/**
 	 * Sets input range to be used in continuous mode
@@ -218,7 +248,13 @@ public class WarlordsPIDController {
 	 */
 	public void setSetpoint(double setpoint) {
 		this.setpoint = setpoint;
-		errorBuffer = new LinkedList<Double>();
+		synchronized (errorBuffer) {
+			errorBuffer = new LinkedList<Double>();
+		}
+	}
+	
+	public double getSetpoint() {
+		return setpoint;
 	}
 	
 	/**
@@ -246,11 +282,13 @@ public class WarlordsPIDController {
 	 * @return average of the last bufferlength errors, or fewer if not enough are available
 	 */
 	public double getAvgError() {
-		double sum = 0;
-		for (Iterator<Double> iterator = errorBuffer.iterator(); iterator.hasNext();) {
-			sum += (double) iterator.next();
+		synchronized (errorBuffer) {
+			double sum = 0;
+			for (Iterator<Double> iterator = errorBuffer.iterator(); iterator.hasNext();) {
+				sum += (double) iterator.next();
+			}
+			return sum / errorBuffer.size();
 		}
-		return sum / errorBuffer.size();
 	}
 	
 	/**
@@ -284,11 +322,11 @@ public class WarlordsPIDController {
 	/**
 	 * Frees all resources related to PID calculations
 	 */
-	public void free() {
+	public void finalize() {
 		pidTimer.cancel();
 		pidTimer = null;
 		source = null;
-		output = null;
+		outputs = null;
 	}
 	
 	/**
@@ -306,31 +344,50 @@ public class WarlordsPIDController {
 			
 		}
 		
-		double deltaError = error - lastError;
-		totalError += error;
+		double propTerm = kP * error;
+		double integralError = kI*propTerm + decoupleInput + kC * saturateError;
 		
-		if (kI != 0 && maxITerm > minITerm) {
-			if (totalError*kI < minITerm) {
-				totalError = minITerm / kI;
-			} else if (totalError*kI > maxITerm) {
-				totalError = maxITerm / kI;
+		if (saturateLowFlag) {
+			if (integralError > 0) {
+				integralTerm += integralError;
+			}
+		} else if (saturateHighFlag) {
+			if (integralError < 0) {
+				integralTerm += integralError;
+			}
+		} else {
+			integralTerm += integralError;			
+		}
+		
+		double derivativeTerm = kD * (propTerm - lastPropTerm);
+		
+		double outputPreSat = propTerm + integralTerm + derivativeTerm + kF*setpoint;
+				
+		if (outputPreSat < minOutput) {
+			result = minOutput;
+			saturateLowFlag = true;
+			saturateHighFlag = false;
+		} else if (outputPreSat > maxOutput) {
+			result = maxOutput;
+			saturateLowFlag = false;
+			saturateHighFlag = true;
+		} else {
+			result = outputPreSat;
+			saturateLowFlag = false;
+			saturateHighFlag = false;
+		}
+		
+		saturateError = result - outputPreSat;
+		
+		lastPropTerm = propTerm;
+		
+		synchronized (errorBuffer) {
+			errorBuffer.add(error);
+			while (errorBuffer.size() > bufferLength) {
+				errorBuffer.remove();
 			}
 		}
 		
-		result = kP * error + kI * totalError + kD * deltaError + kF * setpoint;
-		
-		if (result < minOutput) {
-			result = minOutput;
-		} else if (result > maxOutput) {
-			result = maxOutput;
-		}
-		
-		errorBuffer.add(error);
-		while (errorBuffer.size() > bufferLength) {
-			errorBuffer.remove();
-		}
-		
-		lastError = error;
 	}
 	
 	private class PIDTask extends TimerTask {
@@ -342,9 +399,11 @@ public class WarlordsPIDController {
 				
 				sensorVal = source.pidGet();
 				calculate();
-				output.pidWrite(result);
 				
-				System.out.println(sensorVal + " " + result);
+				for (PIDOutput out : outputs) {
+					out.pidWrite(result);
+				}
+				
 				
 			}
 			

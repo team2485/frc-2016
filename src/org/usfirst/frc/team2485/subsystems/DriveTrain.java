@@ -7,13 +7,16 @@ import org.usfirst.frc.team2485.robot.Hardware;
 import org.usfirst.frc.team2485.util.ConstantsIO;
 import org.usfirst.frc.team2485.util.DummyOutput;
 import org.usfirst.frc.team2485.util.Loggable;
+import org.usfirst.frc.team2485.util.MultipleEncoderWrapper;
+import org.usfirst.frc.team2485.util.MultipleEncoderWrapper.MultipleEncoderWrapperMode;
+import org.usfirst.frc.team2485.util.RampRate;
 import org.usfirst.frc.team2485.util.SpeedControllerWrapper;
 import org.usfirst.frc.team2485.util.ThresholdHandler;
+import org.usfirst.frc.team2485.util.WarlordsPIDController;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDSourceType;
 
 /**
  * @author Aidan Fay
@@ -21,14 +24,13 @@ import edu.wpi.first.wpilibj.PIDController;
 public class DriveTrain implements Loggable {
 
 	private SpeedControllerWrapper leftDrive, rightDrive;
-	private Encoder encoder;
 
 	private final double NORMAL_SPEED_RATING = 0.8, FAST_SPEED_RATING = 1.0,
 			SLOW_SPEED_RATING = 0.6;
 
 	private double driveSpeed = NORMAL_SPEED_RATING;
 
-	private boolean smallAngleMode;
+//	private boolean smallAngleMode;
 	
 	// private double lastLeft, lastRight;
 
@@ -41,14 +43,19 @@ public class DriveTrain implements Loggable {
 	private DummyOutput dummyDriveStraightOutput;
 //	private DummyOutput dummyDriveToLidarOutput;
 
-	public PIDController rotateToPID;
-	public PIDController driveStraightPID;
-	public PIDController driveToEncoderPID;
-//	public PIDController driveToLidarPID;
+	public WarlordsPIDController rotateToPID;
+	private WarlordsPIDController leftVelocityPID, rightVelocityPID;
+	public WarlordsPIDController driveStraightPID;
+	public WarlordsPIDController driveToEncoderPID;
+	public WarlordsPIDController driveToLidarPID;
 
+	private RampRate leftVelocityRamp, rightVelocityRamp;
+	
+	private MultipleEncoderWrapper minDriveEncoderDist;
+	
 	private int ahrsOnTargetCounter = 0;
-	private static final int MINIMUM_AHRS_ON_TARGET_ITERATIONS = 4; //used to be 10
-	private static final double ROTATE_TO_MIN_OUTPUT = 0.1;
+	private static final int MINIMUM_AHRS_ON_TARGET_ITERATIONS = 4;
+//	private static final double ROTATE_TO_MIN_OUTPUT = 0.1;
 
 	// public static double
 	// kP_G_Rotate = 0.03,
@@ -89,26 +96,34 @@ public class DriveTrain implements Loggable {
 		
 		this.leftDrive = Hardware.leftDrive;
 		this.rightDrive = Hardware.rightDrive;
-		this.encoder = Hardware.leftDriveEnc;
+		
+		rightVelocityRamp = new RampRate(ConstantsIO.kDriveVelocityUpRamp, ConstantsIO.kDriveVelocityDownRamp);
+		leftVelocityRamp = new RampRate(ConstantsIO.kDriveVelocityUpRamp, ConstantsIO.kDriveVelocityDownRamp);
 
+		minDriveEncoderDist = new MultipleEncoderWrapper(PIDSourceType.kDisplacement, 
+				MultipleEncoderWrapperMode.MIN, Hardware.leftDriveEnc,
+				Hardware.rightDriveEnc);
+		
 		if (useAhrs) {
 			ahrs = Hardware.ahrs;
 			if (ahrs != null) {
 				dummyRotateToOutput = new DummyOutput();
-				rotateToPID = new PIDController(
+				rotateToPID = new WarlordsPIDController(
 						ConstantsIO.kP_RotateLargeAngle,
 						ConstantsIO.kI_RotateLargeAngle,
 						ConstantsIO.kD_RotateLargeAngle, ahrs,
-						dummyRotateToOutput, 0.010f);
+						dummyRotateToOutput);
 				rotateToPID.setAbsoluteTolerance(ABS_TOLERANCE_ROTATETO);
-//				rotateToPID.setOutputRange(-0.5, 0.5);
+				rotateToPID.setOutputRange(-10, 10);
+				rotateToPID.setInputRange(-180, 180);
+				rotateToPID.setContinuous(true);
 
 				dummyDriveStraightOutput = new DummyOutput();
-				driveStraightPID = new PIDController(
+				driveStraightPID = new WarlordsPIDController(
 						ConstantsIO.kP_RotateLargeAngle,
 						ConstantsIO.kI_RotateLargeAngle,
 						ConstantsIO.kD_RotateLargeAngle, ahrs,
-						dummyDriveStraightOutput, 0.010);
+						dummyDriveStraightOutput);
 				driveStraightPID
 						.setAbsoluteTolerance(ABS_TOLERANCE_DRIVESTRAIGHT);
 				driveStraightPID.setOutputRange(-0.8, 0.8);
@@ -118,8 +133,8 @@ public class DriveTrain implements Loggable {
 		}
 
 		dummyDriveToEncoderOutput = new DummyOutput();
-		driveToEncoderPID = new PIDController(ConstantsIO.kP_DriveTo,
-				ConstantsIO.kI_DriveTo, ConstantsIO.kD_DriveTo, encoder,
+		driveToEncoderPID = new WarlordsPIDController(ConstantsIO.kP_DriveTo,
+				ConstantsIO.kI_DriveTo, ConstantsIO.kD_DriveTo, minDriveEncoderDist,
 				dummyDriveToEncoderOutput);
 		driveToEncoderPID.setAbsoluteTolerance(ABS_TOLERANCE_DRIVETO);
 
@@ -129,22 +144,37 @@ public class DriveTrain implements Loggable {
 //				dummyDriveToLidarOutput, .01);
 //		driveToLidarPID.setAbsoluteTolerance(ABS_TOLERANCE_DRIVETO);
 
-		encoder.reset();
+		rightVelocityPID = new WarlordsPIDController(ConstantsIO.kP_DriveVelocity, ConstantsIO.kI_DriveVelocity, 
+				ConstantsIO.kD_DriveVelocity, ConstantsIO.kF_DriveVelocity, 
+				Hardware.rightRateEncoder, rightDrive);
+		leftVelocityPID = new WarlordsPIDController(ConstantsIO.kP_DriveVelocity, ConstantsIO.kI_DriveVelocity, 
+				ConstantsIO.kD_DriveVelocity, ConstantsIO.kF_DriveVelocity, 
+				Hardware.leftRateEncoder, leftDrive);
+		
+		Hardware.leftDriveEnc.reset();
+		Hardware.rightDriveEnc.reset();
+
 	}
 	
 	public void updateConstants() {
 		
 		driveToEncoderPID.setPID(ConstantsIO.kP_DriveTo,
-				ConstantsIO.kI_DriveTo, ConstantsIO.kD_DriveTo);
-//		driveToLidarPID.setPID(ConstantsIO.kP_DriveTo,
-//				ConstantsIO.kI_DriveTo, ConstantsIO.kD_DriveTo);
+				ConstantsIO.kI_DriveTo, ConstantsIO.kD_DriveTo, 0);
 		driveStraightPID.setPID(ConstantsIO.kP_RotateLargeAngle,
-						ConstantsIO.kI_RotateLargeAngle, ConstantsIO.kD_RotateLargeAngle);
+						ConstantsIO.kI_RotateLargeAngle, ConstantsIO.kD_RotateLargeAngle, 0);
 		rotateToPID.setPID(ConstantsIO.kP_RotateLargeAngle,
-						ConstantsIO.kI_RotateLargeAngle, ConstantsIO.kD_RotateLargeAngle);
-		
+						ConstantsIO.kI_RotateLargeAngle, ConstantsIO.kD_RotateLargeAngle, 0);
 	}
 
+	/**
+	 * Resets DriveTrain but does not zero encoders
+	 */
+	public void reset() {
+		disableAhrsPID();
+		disableDriveToPID();
+		emergencyStop();
+	}
+	
 	/**
 	 * W.A.R. Lord Drive This drive method is based off of Team 254's Ultimate
 	 * Ascent cheesyDrive code.
@@ -281,6 +311,36 @@ public class DriveTrain implements Loggable {
 		this.isQuickTurn = isQuickTurn;
 	}
 
+	public void setLeftRightVelocity(double leftOutput, double rightOutput) {
+		
+		System.out.println("Set Left Right Vel: " + leftOutput + ", " + rightOutput);
+		
+		leftVelocityPID.setPID(ConstantsIO.kP_DriveVelocity, ConstantsIO.kI_DriveVelocity, 
+				ConstantsIO.kD_DriveVelocity, ConstantsIO.kF_DriveVelocity);
+		rightVelocityPID.setPID(ConstantsIO.kP_DriveVelocity, ConstantsIO.kI_DriveVelocity, 
+				ConstantsIO.kD_DriveVelocity, ConstantsIO.kF_DriveVelocity);
+		
+		leftVelocityPID.enable();
+		rightVelocityPID.enable();
+		leftVelocityPID.setSetpoint(leftOutput);
+		rightVelocityPID.setSetpoint(rightOutput);
+	}
+	
+	public void brake() {
+		
+		leftVelocityPID.setPID(ConstantsIO.kP_DriveBrake, ConstantsIO.kI_DriveBrake, 
+				ConstantsIO.kD_DriveBrake, ConstantsIO.kF_DriveBrake);
+		rightVelocityPID.setPID(ConstantsIO.kP_DriveBrake, ConstantsIO.kI_DriveBrake, 
+				ConstantsIO.kD_DriveBrake, ConstantsIO.kF_DriveBrake);
+		
+		leftVelocityPID.enable();
+		rightVelocityPID.enable();
+		
+		leftVelocityPID.setSetpoint(0);
+		rightVelocityPID.setSetpoint(0);
+		
+	}
+	
 	/**
 	 * Sends outputs values to the left and right side of the drive base.
 	 *
@@ -293,6 +353,9 @@ public class DriveTrain implements Loggable {
 	 */
 	public void setLeftRight(double leftOutput, double rightOutput) {
 
+		leftVelocityPID.disable();
+		rightVelocityPID.disable();
+		
 		leftOutput *= driveSpeed;
 		rightOutput *= driveSpeed;
 
@@ -321,6 +384,10 @@ public class DriveTrain implements Loggable {
 	}
 	
 	public void emergencyStop() {
+
+		leftVelocityPID.disable();
+		rightVelocityPID.disable();
+		
 		leftDrive.emergencyStop();
 		rightDrive.emergencyStop();
 	}
@@ -346,18 +413,19 @@ public class DriveTrain implements Loggable {
 		driveSpeed = NORMAL_SPEED_RATING;
 	}
 
-	public void resetSensors() {
-		encoder.reset();
-		ahrs.zeroYaw();
+//	public void resetSensors() {
+//		Hardware.leftDriveEnc.reset();
+//		ahrs.zeroYaw();
+//	}
+
+	public void resetEncoders() {
+		Hardware.leftDriveEnc.reset();
+		Hardware.rightDriveEnc.reset();
 	}
 
-	public void resetEncoder() {
-		encoder.reset();
-	}
-
-	public double getEncoderOutput() {
-		return encoder.getDistance();
-	}
+//	public double getEncoderOutput() {
+//		return encoder.getDistance();
+//	}
 
 	public double getAngle() {
 		if (ahrs == null)
@@ -367,7 +435,7 @@ public class DriveTrain implements Loggable {
 
 	public void setPIDGyroDrive() {
 		if (ahrs != null) {
-			driveStraightPID.setPID(kP_G_Drive, kI_G_Drive, kD_G_Drive);
+			driveStraightPID.setPID(kP_G_Drive, kI_G_Drive, kD_G_Drive, 0);
 			driveStraightPID.setAbsoluteTolerance(ABS_TOLERANCE_DRIVESTRAIGHT);
 		}
 	}
@@ -376,140 +444,130 @@ public class DriveTrain implements Loggable {
 		if (ahrs != null) {
 			rotateToPID.setPID(ConstantsIO.kP_RotateLargeAngle,
 					ConstantsIO.kI_RotateLargeAngle,
-					ConstantsIO.kD_RotateLargeAngle);
+					ConstantsIO.kD_RotateLargeAngle, 0);
 			rotateToPID.setAbsoluteTolerance(ABS_TOLERANCE_ROTATETO);
 		}
 	}
 
 	public void initPIDEncoder() {
 		driveToEncoderPID.setPID(ConstantsIO.kP_DriveTo,
-				ConstantsIO.kI_DriveTo, ConstantsIO.kD_DriveTo);
+				ConstantsIO.kI_DriveTo, ConstantsIO.kD_DriveTo, 0);
 	}
 
 	public void disableAhrsPID() {
 		if (ahrs != null) {
 			rotateToPID.disable();
 		}
-		emergencyStop();
 	}
 
 	public void disableDriveToPID() {
 		driveToEncoderPID.disable();
 		driveStraightPID.disable();
-		emergencyStop();
+		rotateToPID.disable();
 	}
-
-	public boolean driveTo(double inches, double maxAbsOutput) {
-
-		System.out.println("DriveTrain: driveTo: enc inches: " + encoder.getDistance());
-		
-		
+	
+	public boolean driveToAndRotateTo(double inches, double startAngle, 
+			double endAngle, double maxAbsVelocity) {
 		if (!driveToEncoderPID.isEnabled()) {
 			driveToEncoderPID.enable();
-			// System.out.println("|DriveTrain.driveTo| Enabling driveStraight PID in driveTo "
-			// + encoder.getDistance()
-			// + " , " + inches);
-			driveToEncoderPID.setSetpoint(inches);
-
-			driveStraightPID.enable();
-			driveStraightPID.setSetpoint(ahrs.getYaw());
+			rotateToPID.enable();
+			rotateToPID.setSetpoint(startAngle);
 		}
+		driveToEncoderPID.setSetpoint(inches);
 
-		driveToEncoderPID.setOutputRange(-maxAbsOutput, maxAbsOutput);
-
-		// System.out.println(encPID.getError());
-
+		driveToEncoderPID.setOutputRange(-maxAbsVelocity, maxAbsVelocity);
+		rotateToPID.setOutputRange(-maxAbsVelocity, maxAbsVelocity);
+		
+		double percentDone = (Hardware.leftDriveEnc.getDistance() + 
+				Hardware.rightDriveEnc.getDistance()) / (inches+0.00000001) / 2;
+		if (percentDone > 1) {
+			percentDone = 1;
+		} else if (percentDone < 0) {
+			percentDone = 0;
+		}
+		rotateToPID.setSetpoint(startAngle + (endAngle - startAngle) * percentDone); 
+		
 		double encoderOutput = dummyDriveToEncoderOutput.get();
-		double driveStraightOutput = dummyDriveStraightOutput.get();
+		double rotateToOutput = dummyRotateToOutput.get();
+		
+		double leftVelocity = encoderOutput + rotateToOutput;
+		double rightVelocity = encoderOutput - rotateToOutput;
+		
+		System.out.println("DriveTrain:driveTo: pre-ramp rightVel " + rightVelocity + "leftVel:" + leftVelocity);
 
-		// System.out.println("|DriveTrain.driveTo| Encoder Output: " +
-		// encoderOutput);
+		leftVelocity = leftVelocityRamp.getNextValue(leftVelocity);
+		rightVelocity = rightVelocityRamp.getNextValue(rightVelocity);
 
-		double leftOutput = encoderOutput + driveStraightOutput;
-		double rightOutput = encoderOutput - driveStraightOutput;
+		System.out.println("DriveTrain:driveTo: post-ramp rightVel " + rightVelocity + "leftVel:" + leftVelocity);
+		setLeftRightVelocity(leftVelocity, rightVelocity);
+		
+		if (Math.abs(rotateToPID.getError()) < ABS_TOLERANCE_DRIVESTRAIGHT) {
+			ahrsOnTargetCounter++;
+		} else {
+			
+			ahrsOnTargetCounter = 0;
+			
+//			if (ahrsOutput > 0 && ahrsOutput < ROTATE_TO_MIN_OUTPUT) {
+//				ahrsOutput = ROTATE_TO_MIN_OUTPUT;
+//			} else if (ahrsOutput < 0 && ahrsOutput > -ROTATE_TO_MIN_OUTPUT) {
+//				ahrsOutput = -ROTATE_TO_MIN_OUTPUT;
+//			}
+			
+		}
+		
+		double avgVelocity = (Hardware.leftDriveEnc.getRate() + Hardware.rightDriveEnc.getRate()) / 2;
+		
 
-		setLeftRight(leftOutput, rightOutput);
-
-		// done?
-		if (driveToEncoderPID.onTarget()
-				&& Math.abs(encoder.getRate()) < lowEncRate) {
-			setLeftRight(0.0, 0.0);
+		System.out.println("DriveTrain:driveTo:target " + driveToEncoderPID.getSetpoint() + "error " + driveToEncoderPID.getError() );
+		System.out.println("DriveTrain:driveTo:targAngle " + rotateToPID.getSetpoint() + "error " + rotateToPID.getError() );
+		if (Math.abs(driveToEncoderPID.getError()) < ABS_TOLERANCE_DRIVETO 
+				&& Math.abs(avgVelocity) < lowEncRate &&
+				ahrsOnTargetCounter >= MINIMUM_AHRS_ON_TARGET_ITERATIONS) {
+			setLeftRightVelocity(0.0, 0.0);
 			driveToEncoderPID.disable();
 			driveStraightPID.disable();
+			rotateToPID.disable();
 			return true;
 		}
+		
 		return false;
+		
 	}
 
-//	public boolean driveToLidar(double inchesToWall, double maxAbsOutput) {
-//
-//		if (!driveToEncoderPID.isEnabled()) {
-//
-//			driveToLidarPID.enable();
-//			driveToLidarPID.setSetpoint(inchesToWall);
-//
-//			driveStraightPID.enable();
-//			driveStraightPID.setSetpoint(ahrs.getYaw());
-//
-//		}
-//
-//		driveToLidarPID.setOutputRange(-maxAbsOutput, maxAbsOutput);
-//
-//		// System.out.println(encPID.getError());
-//
-//		double lidarPIDOutput = dummyDriveToLidarOutput.get();
-//		double driveStraightOutput = dummyDriveStraightOutput.get();
-//
-//		// System.out.println("|DriveTrain.driveTo| Encoder Output: " +
-//		// encoderOutput);
-//
-//		double leftOutput = lidarPIDOutput + driveStraightOutput;
-//		double rightOutput = lidarPIDOutput - driveStraightOutput;
-//
-//		setLeftRight(leftOutput, rightOutput);
-//
-//		// done?
-//		if (driveToLidarPID.onTarget()
-//				&& Math.abs(Hardware.lidar.getRate()) < lowEncRate) {
-//			setLeftRight(0.0, 0.0);
-//			driveToLidarPID.disable();
-//			driveStraightPID.disable();
-//			return true;
-//		}
-//		return false;
-//	}
-
-	public boolean rotateTo(double angle) { // may need to check for moving to
+	public boolean rotateTo(double angle) {
+		return rotateTo(angle, ABS_TOLERANCE_ROTATETO);
+	}
+	public boolean rotateTo(double angle, double tolerance) { // may need to check for moving to
 											// fast when pid is on target
-		
-		System.out.println("DriveTrain: DriveTo: desired = " + rotateToPID.getSetpoint() + " current = " + ahrs.getYaw());
 		if (rotateToPID == null)
 			throw new IllegalStateException("can't rotateTo when ahrs is null");
 
 		double SMALL_LARGE_THRESHOLD = 5;
 		
-		if (!rotateToPID.isEnabled() || 
-				Math.abs(Hardware.ahrs.getYaw() - angle) >= SMALL_LARGE_THRESHOLD) {
+		if (!rotateToPID.isEnabled() /*|| 
+				Math.abs(Hardware.ahrs.getYaw() - angle) >= SMALL_LARGE_THRESHOLD*/) {
 			
-			rotateToPID.setPID(ConstantsIO.kP_RotateLargeAngle,
-					ConstantsIO.kI_RotateLargeAngle,
-					ConstantsIO.kD_RotateLargeAngle);
+//			rotateToPID.setPID(ConstantsIO.kP_RotateLargeAngle,
+//					ConstantsIO.kI_RotateLargeAngle,
+//					ConstantsIO.kD_RotateLargeAngle);
 			rotateToPID.enable();
-			smallAngleMode = false;
+//			smallAngleMode = false;
+			
 			
 		}
 		
-		if (!smallAngleMode && 
-				Math.abs(Hardware.ahrs.getYaw() - angle) < SMALL_LARGE_THRESHOLD) {
-			
-			smallAngleMode = true;
-			rotateToPID.setPID(ConstantsIO.kP_RotateSmallAngle,
-					ConstantsIO.kI_RotateSmallAngle,
-					ConstantsIO.kD_RotateSmallAngle);
-			rotateToPID.reset();
-			rotateToPID.enable();
-			
-		}
+		rotateToPID.setOutputRange(-15, 15);
+//		if (!smallAngleMode && 
+//				Math.abs(Hardware.ahrs.getYaw() - angle) < SMALL_LARGE_THRESHOLD) {
+//			
+//			smallAngleMode = true;
+//			rotateToPID.setPID(ConstantsIO.kP_RotateSmallAngle,
+//					ConstantsIO.kI_RotateSmallAngle,
+//					ConstantsIO.kD_RotateSmallAngle);
+//			rotateToPID.reset();
+//			rotateToPID.enable();
+//			
+//		}
 		
 		rotateToPID.setSetpoint(angle);
 
@@ -527,7 +585,7 @@ public class DriveTrain implements Loggable {
 		double ahrsOutput = dummyRotateToOutput.get();
 
 		
-		if (Math.abs(rotateToPID.getError()) < ABS_TOLERANCE_ROTATETO) {
+		if (Math.abs(rotateToPID.getError()) < tolerance) {
 			ahrsOnTargetCounter++;
 		} else {
 			
@@ -544,7 +602,9 @@ public class DriveTrain implements Loggable {
 //		System.out.println("DriveTrain: On Target Iterations: " + ahrsOnTargetCounter);
 
 		if (ahrsOnTargetCounter >= MINIMUM_AHRS_ON_TARGET_ITERATIONS) {
-			setLeftRight(0, 0);
+			setLeftRightVelocity(0, 0);
+//			leftVelocityPID.disable();
+//			rightVelocityPID.disable();
 			rotateToPID.disable();
 			return true;
 		}
@@ -552,10 +612,51 @@ public class DriveTrain implements Loggable {
 //		System.out.println("AHRS Output: " + ahrsOutput);
 
 		// left and right are opposite on porpoise
-		setLeftRight(ahrsOutput, -ahrsOutput);
+		double leftVelocity = leftVelocityRamp.getNextValue(ahrsOutput);
+		double rightVelocity = rightVelocityRamp.getNextValue(Math.abs(rotateToPID.getError()) > SMALL_LARGE_THRESHOLD ? -ahrsOutput : 0);
+		setLeftRightVelocity(leftVelocity, rightVelocity);
 		return false;
 	}
 	
+	public boolean driveTo(double inches, double maxAbsOutput) {
+	
+		if (!driveToEncoderPID.isEnabled()) {
+			driveToEncoderPID.enable();
+			// System.out.println("|DriveTrain.driveTo| Enabling driveStraight PID in driveTo "
+			// + encoder.getDistance()
+			// + " , " + inches);
+			driveToEncoderPID.setSetpoint(inches);
+	
+			driveStraightPID.enable();
+			driveStraightPID.setSetpoint(ahrs.getYaw());
+		}
+	
+		driveToEncoderPID.setOutputRange(-maxAbsOutput, maxAbsOutput);
+	
+		// System.out.println(encPID.getError());
+	
+		double encoderOutput = dummyDriveToEncoderOutput.get();
+		double driveStraightOutput = dummyDriveStraightOutput.get();
+	
+		// System.out.println("|DriveTrain.driveTo| Encoder Output: " +
+		// encoderOutput);
+	
+		double leftOutput = encoderOutput + driveStraightOutput;
+		double rightOutput = encoderOutput - driveStraightOutput;
+	
+		setLeftRight(leftOutput, rightOutput);
+	
+		// done?
+		if (Math.abs(driveToEncoderPID.getError()) < ABS_TOLERANCE_DRIVETO
+				&& Math.abs(Hardware.leftDriveEnc.getRate()) < lowEncRate) {
+			setLeftRight(0.0, 0.0);
+			driveToEncoderPID.disable();
+			driveStraightPID.disable();
+			return true;
+		}
+		return false;
+	}
+
 	@Override
 	public Map<String, Object> getLogData() {
 
@@ -564,7 +665,7 @@ public class DriveTrain implements Loggable {
 		logData.put("Name", "DriveTrain");
 		logData.put("DriveSpeed", driveSpeed);
 		logData.put("QuickTurn", isQuickTurn);
-		logData.put("EncoderDistance", encoder.getDistance());
+//		logData.put("EncoderDistance", encoder.getDistance());
 		logData.put("Angle", getAngle());
 		logData.put("RightPWM", rightDrive.get());
 		logData.put("LeftPWM", leftDrive.get());

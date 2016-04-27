@@ -7,12 +7,12 @@ public class ZeroDriveEncoder implements SequencedItem {
 
 	@Override
 	public void run() {
-		Hardware.driveTrain.resetEncoder();
+		Hardware.driveTrain.resetEncoders();
 	}
 
 	@Override
 	public double duration() {
-		return 0.03;
+		return 0.05;
 	}
 
 }

@@ -2,7 +2,7 @@ package org.usfirst.frc.team2485.auto.sequenceditems;
 
 import org.usfirst.frc.team2485.auto.SequencedItem;
 import org.usfirst.frc.team2485.robot.Hardware;
-import org.usfirst.frc.team2485.subsystems.BoulderStager.Position;
+import org.usfirst.frc.team2485.subsystems.BoulderStager.StagerPosition;
 
 /**
  * @author Jeremy McCulloch
@@ -17,7 +17,7 @@ public class ShootHighGoal implements SequencedItem {
 		timeout = 0.5;
 	}
 
-	/*
+	/**
 	 * timeout is not working yet, will always finish instantly
 	 * @param timeout
 	 */
@@ -27,9 +27,10 @@ public class ShootHighGoal implements SequencedItem {
 
 	@Override
 	public void run() {
+
 		if (Hardware.shooter.isReadyToFire()) {
 			finished = true;
-			Hardware.boulderStager.setPosition(Position.SHOOTING);
+			Hardware.boulderStager.setPosition(StagerPosition.SHOOTING);
 		}
 	}
 

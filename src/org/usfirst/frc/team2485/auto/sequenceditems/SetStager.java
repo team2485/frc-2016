@@ -9,9 +9,9 @@ import org.usfirst.frc.team2485.subsystems.BoulderStager;
  */
 public class SetStager implements SequencedItem {
 	
-	private BoulderStager.Position position;
+	private BoulderStager.StagerPosition position;
 	
-	public SetStager(BoulderStager.Position position) {
+	public SetStager(BoulderStager.StagerPosition position) {
 		this.position = position;
 	}
 

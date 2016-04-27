@@ -5,9 +5,8 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.usfirst.frc.team2485.robot.Constants;
 import org.usfirst.frc.team2485.robot.Hardware;
-import org.usfirst.frc.team2485.subsystems.BoulderStager.Position;
+import org.usfirst.frc.team2485.subsystems.BoulderStager.StagerPosition;
 import org.usfirst.frc.team2485.util.Loggable;
 
 import edu.wpi.first.wpilibj.Ultrasonic;
@@ -71,7 +70,7 @@ public class BoulderDetector implements Loggable {
 					Hardware.intake.stopRollers();
 
 					if (Hardware.shooter.getSetpoint() == 0) {
-						Hardware.boulderStager.setPosition(Position.SHOOTING);
+						Hardware.boulderStager.setPosition(StagerPosition.SHOOTING);
 
 						if (shakeTimer == null) {
 
@@ -81,14 +80,14 @@ public class BoulderDetector implements Loggable {
 								@Override
 								public void run() {
 									Hardware.boulderStager
-											.setPosition(Position.NEUTRAL);
+											.setPosition(StagerPosition.NEUTRAL);
 									shakeTimer = null;
 								}
 							}, 500);
 
 						}
 					} else {
-						Hardware.boulderStager.setPosition(Position.NEUTRAL);
+						Hardware.boulderStager.setPosition(StagerPosition.NEUTRAL);
 					}
 
 				} else if (numTimesBoulderNotDetected > MINIMUM_BOULDER_NOT_DETECTED_ITERATIONS

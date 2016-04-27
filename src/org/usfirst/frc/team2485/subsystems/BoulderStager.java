@@ -21,9 +21,9 @@ public class BoulderStager implements Loggable {
 
 	private Solenoid solenoid1, solenoid2;
 
-	private Position position;
+	private StagerPosition position;
 
-	public enum Position {
+	public enum StagerPosition {
 		INTAKE, NEUTRAL, SHOOTING;
 	}
 
@@ -31,11 +31,11 @@ public class BoulderStager implements Loggable {
 		solenoid1 = Hardware.boulderStagerSolenoid1;
 		solenoid2 = Hardware.boulderStagerSolenoid2;
 
-		setPosition(Position.NEUTRAL);
+		setPosition(StagerPosition.NEUTRAL);
 
 	}
 
-	public void setPosition(Position position) {
+	public void setPosition(StagerPosition position) {
 		
 //		System.out.println("BoulderStager: SetPos: " + position.toString());
 
@@ -62,14 +62,14 @@ public class BoulderStager implements Loggable {
 
 	}
 
-	public Position getPosition() {
+	public StagerPosition getPosition() {
 		return position;
 	}
 
 	public String getPositionString() {
-		if (position == Position.INTAKE) {
+		if (position == StagerPosition.INTAKE) {
 			return "Intake";
-		} else if (position == Position.NEUTRAL) {
+		} else if (position == StagerPosition.NEUTRAL) {
 			return "Neutral";
 		} else {
 			return "Shooting";

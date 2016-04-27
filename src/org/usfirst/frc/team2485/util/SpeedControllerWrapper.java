@@ -96,6 +96,7 @@ public class SpeedControllerWrapper implements SpeedController {
 
 	@Override
 	public void pidWrite(double output) {
+//		System.out.println("SpeedControllerWrapper " + pdpSlotsList[0] + ": output to pidWrite " + output );
 		set(output);
 	}
 
@@ -121,7 +122,7 @@ public class SpeedControllerWrapper implements SpeedController {
 	@Override
 	public void set(double speed) {
 		speed = rampAndMonitorCurrent(speed);
-		// System.out.println("Speed after rampAndMonitorCurrent: " + speed);
+//		System.out.println("SpeedControllerWrapper " + pdpSlotsList[0] + ": Speed after rampAndMonitorCurrent: " + speed);
 		for (int i = 0; i < speedControllerList.length; i++) {
 			speedControllerList[i].set(speed * scaleFactors[i]);
 		}

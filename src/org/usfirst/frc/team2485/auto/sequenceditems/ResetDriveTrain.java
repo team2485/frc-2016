@@ -3,15 +3,11 @@ package org.usfirst.frc.team2485.auto.sequenceditems;
 import org.usfirst.frc.team2485.auto.SequencedItem;
 import org.usfirst.frc.team2485.robot.Hardware;
 
-/**
- * @author Patrick Wamsley 
- */
-
-public class ResetDriveEncoders implements SequencedItem {
+public class ResetDriveTrain implements SequencedItem {
 
 	@Override
 	public void run() {
-		Hardware.driveTrain.resetEncoders();	
+		Hardware.driveTrain.reset();
 	}
 
 	@Override

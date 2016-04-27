@@ -2,10 +2,7 @@ package org.usfirst.frc.team2485.auto.sequenceditems;
 
 import org.usfirst.frc.team2485.auto.SequencedItem;
 import org.usfirst.frc.team2485.robot.Hardware;
-import org.usfirst.frc.team2485.subsystems.BoulderStager;
-import org.usfirst.frc.team2485.subsystems.BoulderStager.Position;
-
-import com.sun.prism.shader.FillPgram_Color_Loader;
+import org.usfirst.frc.team2485.subsystems.BoulderStager.StagerPosition;
 
 public class ShootLowGoal implements SequencedItem {
 
@@ -25,7 +22,7 @@ public class ShootLowGoal implements SequencedItem {
 		long now = System.currentTimeMillis();
 
 		if (now - startTime >= 250) {
-			Hardware.boulderStager.setPosition(Position.INTAKE);
+			Hardware.boulderStager.setPosition(StagerPosition.INTAKE);
 		}
 	}
 

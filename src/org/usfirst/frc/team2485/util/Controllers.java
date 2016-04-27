@@ -1,7 +1,5 @@
 package org.usfirst.frc.team2485.util;
 
-import java.awt.SecondaryLoop;
-
 import edu.wpi.first.wpilibj.Joystick;
 
 /**

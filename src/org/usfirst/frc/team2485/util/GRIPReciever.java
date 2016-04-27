@@ -1,10 +1,10 @@
 package org.usfirst.frc.team2485.util;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
 
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.tables.ITable;
 import edu.wpi.first.wpilibj.vision.AxisCamera;
 import edu.wpi.first.wpilibj.vision.AxisCamera.ExposureControl;
@@ -19,9 +19,17 @@ import edu.wpi.first.wpilibj.vision.AxisCamera.Resolution;
 public class GRIPReciever {
 
 	private static final double FIELD_OF_VIEW = 47.0;
+	
+	private static int batterShotAlignX = 144, longShotAlignX = 145;
 
 	private static final int IMAGE_WIDTH = 320;
 	private static final int IMAGE_HEIGHT = 240;
+	private static double bestCenterX, bestCenterY;
+	
+	public static void init() {
+		SmartDashboard.putNumber("Batter Shot Alignment", batterShotAlignX);
+		SmartDashboard.putNumber("Long Shot Alignment", longShotAlignX);
+	}
 
 	public static void setUpCameraSettings() {
 		AxisCamera camera = new AxisCamera("10.24.85.11");
@@ -40,9 +48,17 @@ public class GRIPReciever {
 		camera.writeResolution(Resolution.k320x240);
 		camera.writeExposureControl(ExposureControl.kAutomatic);
 	}
+	
+	public static boolean isLongShot() {
+		return bestCenterY > 100;
+	}
 
 	public static double getAngle() throws GRIPTargetNotFoundException {
-
+		
+		NetworkTable alignmentTable = NetworkTable.getTable("SmartDashboard");
+		
+		batterShotAlignX = (int) alignmentTable.getNumber("Batter Shot Alignment", batterShotAlignX);
+		longShotAlignX = (int) alignmentTable.getNumber("Long Shot Alignment", longShotAlignX);
 		NetworkTable table = NetworkTable.getTable("GRIP");
 
 		ITable goalsTable = table.getSubTable("goals");
@@ -85,36 +101,38 @@ public class GRIPReciever {
 			throw new GRIPTargetNotFoundException("No High-Goal Found");
 		}
 
-		double bestCenterX = centerXs[widest];
-		double bestCenterY = data.get("centerY")[widest];
+		bestCenterX = centerXs[widest];
+		bestCenterY = data.get("centerY")[widest];
 
-		// make relative to center
-		// bestCenterX -= IMAGE_WIDTH / 2;
-		// bestCenterY -= IMAGE_HEIGHT / 2;
-
-		// double R = IMAGE_WIDTH / (2 * Math.sin(Math.toRadians(FIELD_OF_VIEW /
-		// 2)));
-		// double Z = Math.sqrt(R * R - bestCenterX * bestCenterX - bestCenterY
-		// * bestCenterY);
-		// angle = Math.toDegrees(Math.atan(bestCenterX / Z));
-
-		double currentCenterValue = 158; // this is the batter shot
+		double currentCenterValue = batterShotAlignX;//this is the batter shot
+		if(isLongShot())
+			currentCenterValue = longShotAlignX;//long shot worked with 152, but was slightly left
 		
-		if (bestCenterY > 120) {
-			currentCenterValue = 175; /* this is the long shot from the outer
-										works */
+		
+		//uses widest to decide if long shot, then finds closest
+		int closest = 0;
+
+		for (int i = 0; i < centerXs.length; i++) {
+			
+			if (Math.abs(centerXs[i] - currentCenterValue) <
+					Math.abs(centerXs[closest] - currentCenterValue)) {
+				closest = i;
+			}
 		}
 
-		System.out.println("GRIPReciever bestCenterX: " + bestCenterX
-				+ "\tbestCenterY: " + bestCenterY + "\tcurrentCenterValue: "
-				+ currentCenterValue);
+	
 
-		double angle = FIELD_OF_VIEW * (bestCenterX - currentCenterValue) / 320;
+		bestCenterX = centerXs[closest];
+		bestCenterY = data.get("centerY")[closest];
+		
 
+
+		double angle = FIELD_OF_VIEW * (bestCenterX - currentCenterValue) / IMAGE_WIDTH;
+		
 		return angle;
 
 	}
-
+	
 	public static class GRIPTargetNotFoundException extends Exception {
 
 		GRIPTargetNotFoundException(String message) {

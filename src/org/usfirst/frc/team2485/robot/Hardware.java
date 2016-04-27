@@ -1,5 +1,7 @@
 package org.usfirst.frc.team2485.robot;
 
+
+
 import org.usfirst.frc.team2485.auto.Sequencer;
 import org.usfirst.frc.team2485.subsystems.BoulderDetector;
 import org.usfirst.frc.team2485.subsystems.BoulderStager;
@@ -8,8 +10,8 @@ import org.usfirst.frc.team2485.subsystems.Intake;
 import org.usfirst.frc.team2485.subsystems.Shooter;
 import org.usfirst.frc.team2485.util.Battery;
 import org.usfirst.frc.team2485.util.ConstantsIO;
+import org.usfirst.frc.team2485.util.EncoderWrapperRateAndDistance;
 import org.usfirst.frc.team2485.util.InvertedAbsoluteEncoder;
-import org.usfirst.frc.team2485.util.LidarWrapper;
 import org.usfirst.frc.team2485.util.SpeedControllerWrapper;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -19,7 +21,6 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.SPI;
@@ -47,10 +48,11 @@ public class Hardware {
 
 	// Solenoids
 	public static Solenoid shooterHoodSolenoid1, shooterHoodSolenoid2,
-			boulderStagerSolenoid1, boulderStagerSolenoid2;
+	boulderStagerSolenoid1, boulderStagerSolenoid2;
 
 	// Sensors
 	public static Encoder leftDriveEnc, rightDriveEnc, shooterEnc;
+	public static EncoderWrapperRateAndDistance leftRateEncoder, rightRateEncoder, leftDistEncoder, rightDistEncoder;
 	public static InvertedAbsoluteEncoder intakeAbsEncoder;
 	public static AHRS ahrs;
 
@@ -124,6 +126,7 @@ public class Hardware {
 				Constants.kLeftDriveEncoder[1]);
 		rightDriveEnc = new Encoder(Constants.kRightDriveEncoder[0],
 				Constants.kRightDriveEncoder[1]);
+		
 		shooterEnc = new Encoder(Constants.kShooterEncoder[0], Constants.kShooterEncoder[1],
 				false, EncodingType.k1X);
 
@@ -147,6 +150,11 @@ public class Hardware {
 
 		leftDriveEnc.setDistancePerPulse(0.01295 * 4);
 		rightDriveEnc.setDistancePerPulse(0.01295 * 4);
+		
+		leftDistEncoder = new EncoderWrapperRateAndDistance(Hardware.leftDriveEnc, PIDSourceType.kDisplacement);
+		rightDistEncoder = new EncoderWrapperRateAndDistance(Hardware.rightDriveEnc, PIDSourceType.kDisplacement);
+		leftRateEncoder = new EncoderWrapperRateAndDistance(Hardware.leftDriveEnc, PIDSourceType.kRate);
+		rightRateEncoder = new EncoderWrapperRateAndDistance(Hardware.rightDriveEnc, PIDSourceType.kRate);
 
 		//		leftDriveEnc.setReverseDirection(true);
 
