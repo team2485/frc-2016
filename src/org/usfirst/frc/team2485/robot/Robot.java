@@ -8,6 +8,7 @@ import org.usfirst.frc.team2485.auto.Sequencer;
 import org.usfirst.frc.team2485.auto.SequencerFactory;
 import org.usfirst.frc.team2485.auto.SequencerFactory.AutoType;
 import org.usfirst.frc.team2485.auto.sequenceditems.ShakeBoulderStager;
+import org.usfirst.frc.team2485.auto.sequenceditems.SpinUpShooter;
 import org.usfirst.frc.team2485.subsystems.BoulderStager.StagerPosition;
 import org.usfirst.frc.team2485.subsystems.Intake;
 import org.usfirst.frc.team2485.subsystems.Shooter;
@@ -260,6 +261,9 @@ public class Robot extends IterativeRobot {
 		}
 
 		if (Controllers.getButton(Controllers.XBOX_BTN_A)) {
+			
+			SmartDashboard.putBoolean("Increase Recording FPS", true);
+			
 			if (!XBOXPressed) {
 				// Auto aim
 				if (driverTeleopSequencer == null) {
