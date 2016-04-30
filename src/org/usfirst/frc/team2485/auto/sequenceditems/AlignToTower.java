@@ -44,7 +44,7 @@ public class AlignToTower implements SequencedItem {
 
 		if (curTurnDone) {
 			
-			System.out.println("AlignToTower: Current Turn done, recalulating");
+//			System.out.println("AlignToTower: Current Turn done, recalulating");
 			
 			if (refreshTimer == null) {
 				refreshTimer = new Timer();
@@ -61,8 +61,8 @@ public class AlignToTower implements SequencedItem {
 							curTurnDone = false;
 
 							if (Math.abs(angleOffset) <= (GRIPReciever.isLongShot() ? 1 : 2)) {
-								System.out
-										.println("AlignToTower: New angle is less than 1");
+//								System.out
+//										.println("AlignToTower: New angle is less than 1");
 								finished = true;
 							}
 

@@ -20,9 +20,10 @@ public class GRIPReciever {
 
 	private static final double FIELD_OF_VIEW = 47.0;
 	
-	private static int batterShotAlignX = 144, longShotAlignX = 145;
+	private static int batterShotAlignX = 152, longShotAlignX = 155;
 
 	private static final int IMAGE_WIDTH = 320;
+	
 	private static final int IMAGE_HEIGHT = 240;
 	private static double bestCenterX, bestCenterY;
 	

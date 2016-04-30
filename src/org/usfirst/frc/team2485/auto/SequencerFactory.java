@@ -27,11 +27,16 @@ public class SequencerFactory {
 	public enum AutoType {
 		LOW_BAR_AUTO, RAMPARTS_AUTO, ROUGH_TERRAIN_AUTO, MOAT_AUTO, ROCK_WALL_AUTO,
 
-		PORTCULLIS_AUTO, CHEVAL_DE_FRISE_AUTO, REACH_AUTO, TWO_BALL_SPY_AUTO;
+		PORTCULLIS_AUTO, CHEVAL_DE_FRISE_AUTO, REACH_AUTO, TWO_BALL_SPY_AUTO, NO_AUTO;
 	}
 
 	// Auto
 	public static Sequencer createAuto(AutoType autoType, int defenseLocation) {
+		
+//		System.out.println("SequencerFactory:createAuto:autoType = " + autoType);
+//		System.out.println("SequencerFactory:createAuto:autoTypeConstants = " + ConstantsIO.autoType);
+//		System.out.println("SequencerFactory:createAuto:defenseLoc = " + defenseLocation);
+//		System.out.println("SequencerFactory:createAuto:defenseLocConstants = " + ConstantsIO.autoPos);
 
 		double distPreTurn = 150;
 		double degreesToTurn = 0.0;
@@ -44,7 +49,7 @@ public class SequencerFactory {
 			case 2:
 				distPreTurn = 175;
 				degreesToTurn = 40;
-				distPostTurn = 10;
+				distPostTurn = 22;
 				break;
 				
 			case 3:
@@ -60,6 +65,7 @@ public class SequencerFactory {
 				break;
 				
 			case 5:
+				distPreTurn = 170;
 				degreesToTurn = -30;
 				distPostTurn = 0;
 				break;
@@ -127,8 +133,6 @@ public class SequencerFactory {
 			case ROUGH_TERRAIN_AUTO:
 			case MOAT_AUTO:
 			case ROCK_WALL_AUTO:
-
-	
 				return new Sequencer(new SequencedItem[] {
 						new SequencedMultipleItem(
 								new DriveTo(distPreTurn, 8, 75, 2), // changed to 4.5 seconds from 4

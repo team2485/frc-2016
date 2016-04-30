@@ -1,5 +1,6 @@
 package org.usfirst.frc.team2485.robot;
 
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -46,7 +47,7 @@ public class Robot extends IterativeRobot {
 		Hardware.init();
 		Hardware.updateConstants();
 
-		initAutoChooser();
+//		initAutoChooser();
 
 		Controllers.set(new Joystick(0), new Joystick(1));
 
@@ -109,13 +110,13 @@ public class Robot extends IterativeRobot {
 
 		Hardware.ahrs.zeroYaw();
 
-		 autonomousSequencer = SequencerFactory.createAuto((AutoType)
-		 autoChooser.getSelected(),
-		 (Integer) autoPosChooser.getSelected());
+//		 autonomousSequencer = SequencerFactory.createAuto((AutoType)
+//		 autoChooser.getSelected(),
+//		 (Integer) autoPosChooser.getSelected());
 		 
-		// change to this if SendableChooser breaks
-//			autonomousSequencer = SequencerFactory.createAuto(
-//					AutoType.values()[ConstantsIO.autoType], ConstantsIO.autoPos);
+		
+			autonomousSequencer = SequencerFactory.createAuto(
+					AutoType.LOW_BAR_AUTO, 1);
 			
 		
 		
@@ -137,12 +138,12 @@ public class Robot extends IterativeRobot {
 				}, 60 * 1000);
 
 				while (!cameraFound) {
-					System.out.println("Trying to find the camera");
+//					System.out.println("Trying to find the camera");
 					if (!CameraServer.getInstance().isAutoCaptureStarted()) {
 						CameraServer.getInstance()
 								.startAutomaticCapture("cam0");
 						cameraFound = true;
-						System.out.println("Found the camera");
+//						System.out.println("Found the camera");
 					}
 				}
 
@@ -187,6 +188,8 @@ public class Robot extends IterativeRobot {
 		ConstantsIO.init();
 		Hardware.updateConstants();
 		Hardware.shooter.setBrakeMode(false);
+		System.out.println("Robot:teleopInit:autoPos = " + ConstantsIO.autoPos);
+		System.out.println("Robot:teleopInit:autoType = " + ConstantsIO.autoType);
 
 	}
 
@@ -308,7 +311,6 @@ public class Robot extends IterativeRobot {
 				Hardware.shooter.disableShooter();
 			}
 		}
-
 	}
 
 	private boolean joystickPressed = false;
@@ -365,6 +367,7 @@ public class Robot extends IterativeRobot {
 				Hardware.shooter.setHoodPosition(HoodPosition.HIGH_ANGLE);
 				operatorTeleopSequencer = new Sequencer(new SpinUpShooter(
 						Shooter.RPS_BATTER_SHOT));
+				Hardware.intake.startRollers(0, 0);
 				joystickPressed = true;
 			}
 		} else if (Controllers.getJoystickButton(5)) {
@@ -375,6 +378,8 @@ public class Robot extends IterativeRobot {
 			if (!joystickPressed) {
 				// Set low angle for long shot
 				Hardware.shooter.setHoodPosition(HoodPosition.LOW_ANGLE);
+				Hardware.intake.startRollers(0, 0);
+
 				operatorTeleopSequencer = new Sequencer(new SpinUpShooter(
 						Shooter.RPS_LONG_SHOT));
 				joystickPressed = true;
@@ -427,13 +432,13 @@ public class Robot extends IterativeRobot {
 	public void testInit() {
 
 		resetAndDisableSystems();
-		ConstantsIO.init();
-		Hardware.updateConstants();
+//		ConstantsIO.init();
+//		Hardware.updateConstants();
 
-		System.out.println("Robot: Intake arm position: "
-				+ Hardware.intake.getCurrentPosition());
-		System.out.println("Robot: Sonic Sensor: "
-				+ Hardware.sonic.getRangeInches());
+//		System.out.println("Robot: Intake arm position: "
+//				+ Hardware.intake.getCurrentPosition());
+//		System.out.println("Robot: Sonic Sensor: "
+//				+ Hardware.sonic.getRangeInches());
 	}
 
 	public void testPeriodic() {
@@ -451,8 +456,8 @@ public class Robot extends IterativeRobot {
 		// System.out.println(Hardware.leftDriveEnc.getDistance());
 		// System.out.println("Intake arm position: " +
 		// Hardware.intake.getCurrentPosition());
-		System.out.println("Robot: testPeriodic(): Shooter enc: "
-				+ Hardware.shooter.getRate());
+//		System.out.println("Robot: testPeriodic(): Shooter enc: "
+//				+ Hardware.shooter.getRate());
 
 		// Hardware.shooter.setPWM(ConstantsIO.kF_Shooter *
 		// Shooter.RPS_BATTER_SHOT);
@@ -463,7 +468,7 @@ public class Robot extends IterativeRobot {
 			Hardware.compressorSpike.set(Relay.Value.kForward);
 		}
 
-		updateDashboard();
+//		updateDashboard();
 	}
 
 	private void resetAndDisableSystems() {

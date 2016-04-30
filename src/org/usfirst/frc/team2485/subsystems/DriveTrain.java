@@ -313,7 +313,7 @@ public class DriveTrain implements Loggable {
 
 	public void setLeftRightVelocity(double leftOutput, double rightOutput) {
 		
-		System.out.println("Set Left Right Vel: " + leftOutput + ", " + rightOutput);
+//		System.out.println("Set Left Right Vel: " + leftOutput + ", " + rightOutput);
 		
 		leftVelocityPID.setPID(ConstantsIO.kP_DriveVelocity, ConstantsIO.kI_DriveVelocity, 
 				ConstantsIO.kD_DriveVelocity, ConstantsIO.kF_DriveVelocity);
@@ -493,12 +493,12 @@ public class DriveTrain implements Loggable {
 		double leftVelocity = encoderOutput + rotateToOutput;
 		double rightVelocity = encoderOutput - rotateToOutput;
 		
-		System.out.println("DriveTrain:driveTo: pre-ramp rightVel " + rightVelocity + "leftVel:" + leftVelocity);
+//		System.out.println("DriveTrain:driveTo: pre-ramp rightVel " + rightVelocity + "leftVel:" + leftVelocity);
 
 		leftVelocity = leftVelocityRamp.getNextValue(leftVelocity);
 		rightVelocity = rightVelocityRamp.getNextValue(rightVelocity);
 
-		System.out.println("DriveTrain:driveTo: post-ramp rightVel " + rightVelocity + "leftVel:" + leftVelocity);
+//		System.out.println("DriveTrain:driveTo: post-ramp rightVel " + rightVelocity + "leftVel:" + leftVelocity);
 		setLeftRightVelocity(leftVelocity, rightVelocity);
 		
 		if (Math.abs(rotateToPID.getError()) < ABS_TOLERANCE_DRIVESTRAIGHT) {
@@ -518,8 +518,8 @@ public class DriveTrain implements Loggable {
 		double avgVelocity = (Hardware.leftDriveEnc.getRate() + Hardware.rightDriveEnc.getRate()) / 2;
 		
 
-		System.out.println("DriveTrain:driveTo:target " + driveToEncoderPID.getSetpoint() + "error " + driveToEncoderPID.getError() );
-		System.out.println("DriveTrain:driveTo:targAngle " + rotateToPID.getSetpoint() + "error " + rotateToPID.getError() );
+//		System.out.println("DriveTrain:driveTo:target " + driveToEncoderPID.getSetpoint() + "error " + driveToEncoderPID.getError() );
+//		System.out.println("DriveTrain:driveTo:targAngle " + rotateToPID.getSetpoint() + "error " + rotateToPID.getError() );
 		if (Math.abs(driveToEncoderPID.getError()) < ABS_TOLERANCE_DRIVETO 
 				&& Math.abs(avgVelocity) < lowEncRate &&
 				ahrsOnTargetCounter >= MINIMUM_AHRS_ON_TARGET_ITERATIONS) {
