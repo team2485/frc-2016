@@ -1,3 +1,4 @@
+package org.usfirst.frc.team2485.util;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.CharArrayWriter;
@@ -13,7 +14,10 @@ import java.util.TreeSet;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
+/**
+ * Used to compile data from logger into readable format
+ * @author Jeremy McCulloch
+ */
 public class LoggerToCSV {
 	public static String jsonToCSV(JSONArray data) {
 		ArrayList<Double> times = new ArrayList<Double>();

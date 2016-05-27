@@ -5,9 +5,9 @@ import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 
 /**
- * A class with an unnecessarily long name
+ * A class that allows a single encoder to be used as a PIDSource in both
+ * rate mode and displacement mode simultaneously.  
  * @author Jeremy McCulloch
- * @see AbsoluteEncoderTwoTurns360Degrees
  */
 public class EncoderWrapperRateAndDistance implements PIDSource {
 	private Encoder encoder;

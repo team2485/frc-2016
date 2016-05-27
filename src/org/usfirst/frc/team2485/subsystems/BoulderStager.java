@@ -9,15 +9,13 @@ import org.usfirst.frc.team2485.util.Loggable;
 import edu.wpi.first.wpilibj.Solenoid;
 
 /**
- * 
+ * Mechanism that holds boulder and moves to intake or fire
  * @author Amanda Wasserman
  * @author Vicky Comunale
  * @author Ben Clark
- *
  */
 
 public class BoulderStager implements Loggable {
-	// Declare different pneumatics parts
 
 	private Solenoid solenoid1, solenoid2;
 
@@ -37,8 +35,6 @@ public class BoulderStager implements Loggable {
 
 	public void setPosition(StagerPosition position) {
 		
-//		System.out.println("BoulderStager: SetPos: " + position.toString());
-
 		this.position = position;
 
 		switch (position) {

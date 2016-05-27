@@ -3,6 +3,11 @@ package org.usfirst.frc.team2485.util;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 
+/**
+ * Represents a fake sensor
+ * @author Jeremy McCulloch
+ * @see DummyOutput
+ */
 public class DummyInput implements PIDSource {
 
 	private double input;

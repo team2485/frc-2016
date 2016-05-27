@@ -14,6 +14,12 @@ import org.usfirst.frc.team2485.util.ThresholdHandler;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.VictorSP;
 
+/**
+ * @author Amanda Wasserman
+ * @author Vicky Comunale
+ * @author Nicholas Contreras
+ * @author Jeremy McCulloch
+ */
 public class Intake implements Loggable {
 
 	private PIDController armPID;
@@ -82,20 +88,17 @@ public class Intake implements Loggable {
 		}
 
 		if (pwm > 0) {
-
 			pwm = ThresholdHandler.deadbandAndScale(pwm,
 					Constants.kMoveIntakeManuallyDeadband, 0.05, 0.6);
 		} else {
 			pwm = ThresholdHandler.deadbandAndScale(pwm,
 					Constants.kMoveIntakeManuallyDeadband, 0.00, 0.2);
 		}
-		// pwm = ThresholdHandler.deadbandAndScaleDualRamp(pwm,
-		// Constants.kMoveIntakeManuallyDeadband, 0.05, 0.8, 0.4, 1.0);
 
 		double encoderPos = absEncoder.get();
 
+		// safeguards to prevent manually driving into ground or robot
 		boolean disableDownwards = false;
-
 		if (FLOOR_POSITION > 0.1) {
 			if (encoderPos < FLOOR_POSITION
 					&& Math.abs(encoderPos - FLOOR_POSITION) < 0.1) {
@@ -136,26 +139,6 @@ public class Intake implements Loggable {
 		}
 	}
 
-	public void setManual(double i, boolean rollersOn) {
-
-		setManual(i);
-
-		if (rollersOn) {
-			startRollers(ConstantsIO.kLateralRollerSpeed,
-					ConstantsIO.kIntakeRollerSpeed);
-		} else {
-			stopRollers();
-
-		}
-
-	}
-
-	public void setPID(double p, double i, double d) {
-
-		armPID.setPID(p, i, d);
-
-	}
-
 	public void setSetpoint(double setpoint) {
 
 		armPID.enable();
@@ -173,9 +156,8 @@ public class Intake implements Loggable {
 
 	/**
 	 * Sets setpoint and turns rollers on or off
-	 * 
-	 * @param setpoint
-	 * @param rollersOn
+	 * @param setpoint setpoint for arm
+	 * @param rollersOn whether rollers should be running
 	 */
 	public void setSetpoint(double setpoint, boolean rollersOn) {
 
@@ -187,10 +169,6 @@ public class Intake implements Loggable {
 		} else {
 			stopRollers();
 		}
-	}
-
-	public boolean isOnTarget() {
-		return armPID.onTarget();
 	}
 
 	public boolean isPIDEnabled() {

@@ -11,23 +11,20 @@ import edu.wpi.first.wpilibj.vision.AxisCamera.ExposureControl;
 import edu.wpi.first.wpilibj.vision.AxisCamera.Resolution;
 
 /**
- * 
+ * Communicates with GRIP on driver station to output location of goal
  * @author Nicholas Contreras
- *
  */
 
 public class GRIPReciever {
 
 	private static final double FIELD_OF_VIEW = 47.0;
-	
-	private static int batterShotAlignX = 152, longShotAlignX = 155;
-
 	private static final int IMAGE_WIDTH = 320;
 	
-	private static final int IMAGE_HEIGHT = 240;
+	private static int batterShotAlignX = 152, longShotAlignX = 155;
+	
 	private static double bestCenterX, bestCenterY;
 	
-	public static void init() {
+	public static void init() { // add to SmartDashboard so they can be tuned
 		SmartDashboard.putNumber("Batter Shot Alignment", batterShotAlignX);
 		SmartDashboard.putNumber("Long Shot Alignment", longShotAlignX);
 	}
@@ -102,15 +99,16 @@ public class GRIPReciever {
 			throw new GRIPTargetNotFoundException("No High-Goal Found");
 		}
 
+		// first finds widest to determine if longshot
 		bestCenterX = centerXs[widest];
 		bestCenterY = data.get("centerY")[widest];
 
-		double currentCenterValue = batterShotAlignX;//this is the batter shot
+		double currentCenterValue = batterShotAlignX;
 		if(isLongShot())
-			currentCenterValue = longShotAlignX;//long shot worked with 152, but was slightly left
+			currentCenterValue = longShotAlignX; 
 		
 		
-		//uses widest to decide if long shot, then finds closest
+		//then finds closest to prevent GRIP from switching between goals
 		int closest = 0;
 
 		for (int i = 0; i < centerXs.length; i++) {
@@ -134,6 +132,7 @@ public class GRIPReciever {
 
 	}
 	
+	@SuppressWarnings("serial")
 	public static class GRIPTargetNotFoundException extends Exception {
 
 		GRIPTargetNotFoundException(String message) {

@@ -4,9 +4,7 @@ import org.usfirst.frc.team2485.robot.Hardware;
 
 import edu.wpi.first.wpilibj.Timer;
 
-/**
- * @author Jeremy McCulloch
- */
+
 public class CurrentMonitorGroup {
 	
 	private int[] pdpSlots;

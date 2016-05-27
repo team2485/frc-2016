@@ -30,14 +30,13 @@ public class SequencerFactory {
 		PORTCULLIS_AUTO, CHEVAL_DE_FRISE_AUTO, REACH_AUTO, TWO_BALL_SPY_AUTO, NO_AUTO;
 	}
 
-	// Auto
+	/**
+	 * Creates auto sequencer based on defense and position
+	 * @param autoType defense or auto type
+	 * @param defenseLocation location of defense (1 - 5 where 1 is low bar)
+	 * @return sequencer that must be run
+	 */
 	public static Sequencer createAuto(AutoType autoType, int defenseLocation) {
-		
-//		System.out.println("SequencerFactory:createAuto:autoType = " + autoType);
-//		System.out.println("SequencerFactory:createAuto:autoTypeConstants = " + ConstantsIO.autoType);
-//		System.out.println("SequencerFactory:createAuto:defenseLoc = " + defenseLocation);
-//		System.out.println("SequencerFactory:createAuto:defenseLocConstants = " + ConstantsIO.autoPos);
-
 		double distPreTurn = 150;
 		double degreesToTurn = 0.0;
 		double distPostTurn = 10;
@@ -82,7 +81,6 @@ public class SequencerFactory {
 						new SetIntakeArm(Intake.LOW_NO_INTAKE_POSITION),
 						new SequencedPause(0.5),
 						new SequencedMultipleItem(
-//								new DriveTo(140, 5, 0.5),
 								new DriveThrough(206, 10, 100, 40, 0),
 								new ShakeBoulderStager()
 							),
@@ -90,7 +88,7 @@ public class SequencerFactory {
 						new ResetDriveTrain(),
 
 						new SequencedMultipleItem(
-								new RotateTo(57, 2), // Added 2 degrees, Friday morning
+								new RotateTo(57, 2), 
 								new SetHoodPosition(HoodPosition.LOW_ANGLE)
 								),
 						new ResetDriveTrain(),
@@ -110,7 +108,7 @@ public class SequencerFactory {
 				}
 				return new Sequencer(new SequencedItem[] {
 						new SequencedMultipleItem(
-								new DriveTo(distPreTurn, 8, 0.6), // changed to 6 seconds from 4
+								new DriveTo(distPreTurn, 8, 0.6), 
 								new Hat(true),
 								new SetHoodPosition(HoodPosition.HIGH_ANGLE)
 							),
@@ -120,15 +118,14 @@ public class SequencerFactory {
 						new RotateTo(degreesToTurn, 3),
 						new ResetDriveTrain(),
 						new ZeroDriveEncoder(),
-						new DriveTo(distPostTurn, 3, 0.65), // Approaches batter, may be
-						// removed when long shot works
+						new DriveTo(distPostTurn, 3, 0.65), 
 						new ResetDriveTrain(),
-//						new SequencedMultipleItem(
-//								new SpinUpShooter(Shooter.RPS_BATTER_SHOT), 
-//								new AlignToTower(3.0)
-//							),
-//						new ResetDriveTrain(), 
-//						new ShootHighGoal(5) 
+						new SequencedMultipleItem(
+								new SpinUpShooter(Shooter.RPS_BATTER_SHOT), 
+								new AlignToTower(3.0)
+							),
+						new ResetDriveTrain(), 
+						new ShootHighGoal(5) 
 					});
 			case ROUGH_TERRAIN_AUTO:
 			case MOAT_AUTO:
@@ -166,9 +163,7 @@ public class SequencerFactory {
 				if (defenseLocation == 2) {
 					distPostTurn = 25;
 				}
-	
-				// Not zeroing drive encoders until after distPreTurn
-	
+		
 				return new Sequencer(new SequencedItem[] {
 						new SetIntakeArm(Intake.LOW_NO_INTAKE_POSITION),
 						new SetHoodPosition(HoodPosition.STOWED),
@@ -206,7 +201,6 @@ public class SequencerFactory {
 	
 			case CHEVAL_DE_FRISE_AUTO:
 	
-				// Not zeroing drive encoders until after distPreTurn
 	
 				return new Sequencer(new SequencedItem[] {
 						new DriveTo(30),
@@ -224,9 +218,9 @@ public class SequencerFactory {
 						new RotateTo(degreesToTurn), new ResetDriveTrain(),
 						new ZeroDriveEncoder(), new DriveTo(distPostTurn),
 						new ResetDriveTrain(), 
-//						new AlignToTower(),
-//						new ResetDriveTrain(), 
-//						new ShootHighGoal(5) 
+						new AlignToTower(),
+						new ResetDriveTrain(), 
+						new ShootHighGoal(5) 
 						});
 			case TWO_BALL_SPY_AUTO:
 				return new Sequencer(new SequencedItem[] {

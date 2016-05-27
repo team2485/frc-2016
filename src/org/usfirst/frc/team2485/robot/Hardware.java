@@ -2,7 +2,6 @@ package org.usfirst.frc.team2485.robot;
 
 
 
-import org.usfirst.frc.team2485.auto.Sequencer;
 import org.usfirst.frc.team2485.subsystems.BoulderDetector;
 import org.usfirst.frc.team2485.subsystems.BoulderStager;
 import org.usfirst.frc.team2485.subsystems.DriveTrain;
@@ -29,6 +28,9 @@ import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.Ultrasonic.Unit;
 import edu.wpi.first.wpilibj.VictorSP;
 
+/**
+ * Class that stored static references to the subsystems and hardware on the robot
+ */
 public class Hardware {
 
 	public static Battery battery;
@@ -47,8 +49,8 @@ public class Hardware {
 	public static VictorSP intakeVictorSP;
 
 	// Solenoids
-	public static Solenoid shooterHoodSolenoid1, shooterHoodSolenoid2,
-	boulderStagerSolenoid1, boulderStagerSolenoid2;
+	public static Solenoid lowerSolenoid, upperSolenoid,
+		boulderStagerSolenoid1, boulderStagerSolenoid2;
 
 	// Sensors
 	public static Encoder leftDriveEnc, rightDriveEnc, shooterEnc;
@@ -56,12 +58,7 @@ public class Hardware {
 	public static InvertedAbsoluteEncoder intakeAbsEncoder;
 	public static AHRS ahrs;
 
-	public static Ultrasonic sonic;
-
-//	public static LidarWrapper lidar;
-
-	// Sequences && Auto
-	public static Sequencer autoSequence;
+	public static Ultrasonic sonic; // used to detect is boulder in robot
 
 	// Compressor
 	public static Relay compressorSpike;
@@ -78,11 +75,14 @@ public class Hardware {
 
 	public static BoulderDetector boulderDetector;
 
+	/**
+	 * Run once in robotInit, constructs hardware
+	 */
 	public static void init() {
 
 		battery = new Battery();
 
-		// Victor SPs
+		// Speed Controllers
 		rightDriveVictorSPs = new VictorSP[3];
 		rightDriveVictorSPs[0] = new VictorSP(Constants.kRightDrivePWM[0]);
 		rightDriveVictorSPs[1] = new VictorSP(Constants.kRightDrivePWM[1]);
@@ -109,12 +109,14 @@ public class Hardware {
 		leftShooterMotor = new CANTalon(Constants.kLeftShooterCAN);
 		rightShooterMotor = new CANTalon(Constants.kRightShooterCAN);
 
+		// Compressor
 		compressorSpike = new Relay(Constants.kCompressorSpikePort);
 		pressureSwitch = new DigitalInput(Constants.kPressureSwitchPort);
 
-		shooterHoodSolenoid1 = new Solenoid(
+		// Solenoids
+		lowerSolenoid = new Solenoid(
 				Constants.kShooterHoodSolenoidLowerPort);
-		shooterHoodSolenoid2 = new Solenoid(
+		upperSolenoid = new Solenoid(
 				Constants.kShooterHoodSolenoidUpperPort);
 
 		boulderStagerSolenoid1 = new Solenoid(
@@ -122,6 +124,7 @@ public class Hardware {
 		boulderStagerSolenoid2 = new Solenoid(
 				Constants.kBoulderStagerSolenoid2Port);
 
+		//Sensors
 		leftDriveEnc = new Encoder(Constants.kLeftDriveEncoder[0],
 				Constants.kLeftDriveEncoder[1]);
 		rightDriveEnc = new Encoder(Constants.kRightDriveEncoder[0],
@@ -138,17 +141,16 @@ public class Hardware {
 		sonic = new Ultrasonic(Constants.kUltrasonicPING,
 				Constants.kUltrasonicECHO, Unit.kInches);
 
-//		lidar = new LidarWrapper(Port.kMXP);
-
 		boulderDetector = new BoulderDetector();
 
+		//Setup hardware
 		rightDrive.setInverted(false);
 		rightDrive.setRampMode(true);
 
 		leftDrive.setInverted(true);
 		leftDrive.setRampMode(true);
 
-		leftDriveEnc.setDistancePerPulse(0.01295 * 4);
+		leftDriveEnc.setDistancePerPulse(0.01295 * 4); //inches / tick
 		rightDriveEnc.setDistancePerPulse(0.01295 * 4);
 		
 		leftDistEncoder = new EncoderWrapperRateAndDistance(Hardware.leftDriveEnc, PIDSourceType.kDisplacement);
@@ -156,9 +158,7 @@ public class Hardware {
 		leftRateEncoder = new EncoderWrapperRateAndDistance(Hardware.leftDriveEnc, PIDSourceType.kRate);
 		rightRateEncoder = new EncoderWrapperRateAndDistance(Hardware.rightDriveEnc, PIDSourceType.kRate);
 
-		//		leftDriveEnc.setReverseDirection(true);
-
-		shooterEnc.setDistancePerPulse(1.0/250);
+		shooterEnc.setDistancePerPulse(1.0/250); //revolutions / tick
 		shooterEnc.setPIDSourceType(PIDSourceType.kRate);
 		shooterEnc.setReverseDirection(true);
 
@@ -171,15 +171,18 @@ public class Hardware {
 
 		sonic.setAutomaticMode(true);
 
-		driveTrain = new DriveTrain(true);
+		driveTrain = new DriveTrain();
 		shooter = new Shooter();
 		intake = new Intake();
 		boulderStager = new BoulderStager();
 
 	}
 	
+	/**
+	 * Run on every init (robotInit, teleopInit, autoInit, testInit).
+	 * Updates PID Gains and other constants from ConstantsIO. 
+	 */
 	public static void updateConstants() {
-		
 		
 		rightDrive.setRampRate(ConstantsIO.kDriveVoltageRamp);
 		leftDrive.setRampRate(ConstantsIO.kDriveVoltageRamp);

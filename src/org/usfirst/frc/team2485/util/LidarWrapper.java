@@ -13,9 +13,11 @@ import edu.wpi.first.wpilibj.PIDSourceType;
 public class LidarWrapper extends SensorBase implements PIDSource {
 
 	private I2C m_i2c;
+	private PIDSourceType pidSourceType;
 
 	public LidarWrapper(Port port) {
 		m_i2c = new I2C(port, 0x62);
+		pidSourceType = PIDSourceType.kDisplacement;
 	}
 
 	/**
@@ -106,24 +108,17 @@ public class LidarWrapper extends SensorBase implements PIDSource {
 
 	@Override
 	public PIDSourceType getPIDSourceType() {
-		return PIDSourceType.kDisplacement;
+		return pidSourceType;
 	}
 
 	@Override
 	public double pidGet() {
-		return getDistance();
+		return pidSourceType == PIDSourceType.kDisplacement ? getDistance() : getRate();
 	}
 
 	@Override
-	/**
-	 * Not Yet Implemented
-	 */
 	public void setPIDSourceType(PIDSourceType arg0) {
-		if (arg0 == PIDSourceType.kRate) {
-			System.err.println("Lidar does not support PIDSourceType.kRate");
-
-		}
-
+		pidSourceType = arg0;
 	}
 
 	@SuppressWarnings("serial")

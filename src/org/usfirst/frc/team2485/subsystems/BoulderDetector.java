@@ -11,6 +11,9 @@ import org.usfirst.frc.team2485.util.Loggable;
 
 import edu.wpi.first.wpilibj.Ultrasonic;
 
+/**
+ * Used to automatically stop rollers when boulder is detected by sonic sensor
+ */
 public class BoulderDetector implements Loggable {
 
 	private Ultrasonic sonic;
@@ -22,7 +25,7 @@ public class BoulderDetector implements Loggable {
 
 	private int numTimesBoulderDetected = 0, numTimesBoulderNotDetected = 0;
 	private static final int MINIMUM_BOULDER_DETECTED_ITERATIONS = 5,
-			MINIMUM_BOULDER_NOT_DETECTED_ITERATIONS = 5; // TODO tune value
+			MINIMUM_BOULDER_NOT_DETECTED_ITERATIONS = 5; 
 
 	public BoulderDetector() {
 
@@ -52,6 +55,7 @@ public class BoulderDetector implements Loggable {
 
 			while (true) {
 
+				//used to ensure that value is not just sensor noise or error
 				if (boulderDetected()) {
 					numTimesBoulderDetected++;
 					numTimesBoulderNotDetected = 0;
@@ -65,8 +69,6 @@ public class BoulderDetector implements Loggable {
 
 					hasBoulder = true;
 
-					// Hardware.intake.setSetpoint(Intake.FULL_UP_POSITION,
-					// false);
 					Hardware.intake.stopRollers();
 
 					if (Hardware.shooter.getSetpoint() == 0) {
@@ -83,7 +85,7 @@ public class BoulderDetector implements Loggable {
 											.setPosition(StagerPosition.NEUTRAL);
 									shakeTimer = null;
 								}
-							}, 500);
+							}, 500); 
 
 						}
 					} else {

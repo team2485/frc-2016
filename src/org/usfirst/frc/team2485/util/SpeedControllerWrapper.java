@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.SpeedController;
  * @author Patrick Wamsley
  * @author Anoushka Bose
  * @author Jeremy McCulloch
+ * @author Nicholas Contreras
  */
 public class SpeedControllerWrapper implements SpeedController {
 
@@ -36,7 +37,7 @@ public class SpeedControllerWrapper implements SpeedController {
 
 		for (SpeedController speedController : speedControllerList) {
 			if (speedController instanceof CANSpeedController) {
-				System.err.println("Speed Controller Wrappers cannot handle CANSpeedControllers");
+				System.err.println("Do not use current monitoring features with CANSpeedControllers");
 			}
 		}
 

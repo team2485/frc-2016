@@ -4,6 +4,11 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 
+/**
+ * Encoder wrapper that returns the minimum, maximum, or average reading from 2 or more encoders
+ * @author Jeremy McCulloch
+ *
+ */
 public class MultipleEncoderWrapper implements PIDSource {
 	public enum MultipleEncoderWrapperMode {
 		AVERAGE, MIN, MAX

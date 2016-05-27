@@ -8,9 +8,7 @@ public class WaitForBoulder implements SequencedItem {
 	private double timeout = 3;
 
 	@Override
-	public void run() {
-		System.out.println("blah");
-	}
+	public void run() {	}
 
 	@Override
 	public double duration() {

@@ -4,6 +4,9 @@ import org.usfirst.frc.team2485.auto.SequencedItem;
 import org.usfirst.frc.team2485.robot.Hardware;
 import org.usfirst.frc.team2485.subsystems.BoulderStager.StagerPosition;
 
+/**
+ * @author Nicholas Contreras
+ */
 public class ShakeBoulderStager implements SequencedItem {
 
 	private long startTime = -1;

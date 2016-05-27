@@ -13,8 +13,6 @@ public class SpinUpShooter implements SequencedItem {
 		this.rpm = rpm;
 	}
 
-//	public SpinUpShooter() {
-//	}
 
 	@Override
 	public void run() {
@@ -26,7 +24,8 @@ public class SpinUpShooter implements SequencedItem {
 		
 		long runTime = System.currentTimeMillis() - startTime;
 		
-		if (runTime < 250 && !Hardware.shooter.isPID()) {
+		//runs shooter backwards to unjam
+		if (runTime < 250 && !Hardware.shooter.isPIDEnabled()) {
 			Hardware.shooter.setPWM(-0.6);
 		} else {
 			Hardware.shooter.setTargetSpeed(rpm);

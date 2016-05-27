@@ -163,13 +163,31 @@ public class WarlordsPIDController {
 		this(kP, kI, kD, DEFAULT_PERIOD, source, outputs);
 	}
 		
-	
+	/**
+	 * Sets the gains
+	 * @param kP proportional term, multiplied by the current error
+	 * @param kI integral term, multiplied by the total (sum) error
+	 * @param kD derivative term, multiplied by the change of the error
+	 * @param kF feedforward term, multiplied by the setpoint, (usually) only used in rate control 
+	 */
 	public void setPID(double kP, double kI, double kD, double kF) {
 		this.kP = kP;
 		this.kI = kI;
 		this.kD = kD;
 		this.kF = kF;
 	}
+	
+	/**
+	 * Sets the gains
+	 * @param kP proportional term, multiplied by the current error
+	 * @param kI integral term, multiplied by the total (sum) error
+	 * @param kD derivative term, multiplied by the change of the error
+	 * @param kF feedforward term, multiplied by the setpoint, (usually) only used in rate control 
+	 */
+	public void setPID(double kP, double kI, double kD) {
+		setPID(kP, kI, kD, 0);
+	} 
+	
 	/**
 	 * @return time between PID calculations (millis)
 	 */
@@ -189,7 +207,9 @@ public class WarlordsPIDController {
 		this.enabled = true;
 	}
 	
-	
+	/**
+	 * Disables and clears integral and derivative terms
+	 */
 	public void disable() {
 		this.enabled = false;
 		this.integralTerm = 0;
@@ -205,16 +225,6 @@ public class WarlordsPIDController {
 		this.minOutput = minOutput;
 		this.maxOutput = maxOutput;
 	}
-	
-//	/**
-//	 * Clamps the integral term between minITerm and maxITerm, does not clamp if min >= max
-//	 * @param minITerm min value of integral term
-//	 * @param maxITerm max value of integral term
-//	 */
-//	public void setIZone(double minITerm, double maxITerm) {
-//		this.minITerm = minITerm;
-//		this.maxITerm = maxITerm;
-//	}
 	
 	/**
 	 * Sets input range to be used in continuous mode

@@ -17,10 +17,6 @@ public class ShootHighGoal implements SequencedItem {
 		timeout = 0.5;
 	}
 
-	/**
-	 * timeout is not working yet, will always finish instantly
-	 * @param timeout
-	 */
 	public ShootHighGoal(double timeout) {
 		this.timeout = timeout;
 	}

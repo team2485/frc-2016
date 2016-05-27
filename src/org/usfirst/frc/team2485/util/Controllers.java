@@ -347,7 +347,8 @@ public final class Controllers {
     * @see Controllers
     * @see java.lang.NullPointerException
     */
-   public static class ControllerNullException extends NullPointerException {
+   @SuppressWarnings("serial")
+public static class ControllerNullException extends NullPointerException {
 
        /**
         * Constructs a {@code ControllerNullException} with no detail message.

@@ -5,6 +5,11 @@ import java.util.HashMap;
 
 import org.usfirst.frc.team2485.util.ConstantsIO;
 
+/**
+ * Electrical ports and physical constants (note that constants like PID gains are stored in ConstantsIO)
+ * @see ConstantsIO
+ */
+
 public class Constants {
 	
 	public static final int kLeftShooterCAN = 3, kRightShooterCAN = 2;

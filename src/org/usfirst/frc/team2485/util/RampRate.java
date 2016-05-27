@@ -1,5 +1,9 @@
 package org.usfirst.frc.team2485.util;
 
+/**
+ * Generic class to ramp an output (velocity, voltage, current, etc). Has unique up and down rates. 
+ * @author Jeremy McCulloch
+ */
 public class RampRate {
 	private double lastValue, upRampRate, downRampRate;
 	public RampRate(double upRampRate, double downRampRate) {

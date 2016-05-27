@@ -19,7 +19,7 @@ public class AlignToTower implements SequencedItem {
 	private boolean firstTime = true;
 
 	// the angle, according to the AHRS, that we should be pointing towards
-	// to be on-target
+	// to be on target
 	private double angleTarget;
 
 	private Timer refreshTimer;
@@ -43,9 +43,7 @@ public class AlignToTower implements SequencedItem {
 		}
 
 		if (curTurnDone) {
-			
-//			System.out.println("AlignToTower: Current Turn done, recalulating");
-			
+						
 			if (refreshTimer == null) {
 				refreshTimer = new Timer();
 				refreshTimer.schedule(new TimerTask() {
@@ -61,8 +59,6 @@ public class AlignToTower implements SequencedItem {
 							curTurnDone = false;
 
 							if (Math.abs(angleOffset) <= (GRIPReciever.isLongShot() ? 1 : 2)) {
-//								System.out
-//										.println("AlignToTower: New angle is less than 1");
 								finished = true;
 							}
 
@@ -74,17 +70,11 @@ public class AlignToTower implements SequencedItem {
 			}
 		} else if (!finished) {
 			curTurnDone = Hardware.driveTrain.rotateTo(angleTarget, 0.7);
-
-//			System.out.println("AlignToTower: Target Angle: " + angleTarget
-//					+ " Current Angle: " + Hardware.ahrs.getYaw());
 		}
 	}
 
 	@Override
 	public double duration() {
-
-//		if (finished)
-//			System.out.println("Finished is true in AlignToTower");
 		return finished ? 0 : timeout;
 	}
 }

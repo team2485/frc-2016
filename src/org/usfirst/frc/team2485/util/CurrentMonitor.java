@@ -1,11 +1,7 @@
 package org.usfirst.frc.team2485.util;
 
-import org.usfirst.frc.team2485.robot.Constants;
-import org.usfirst.frc.team2485.robot.Hardware;
 
-/**
- * @author Jeremy McCulloch
- */
+
 public class CurrentMonitor {
 	
 	private static CurrentMonitor instance;

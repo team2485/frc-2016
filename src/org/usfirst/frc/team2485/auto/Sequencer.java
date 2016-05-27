@@ -10,13 +10,13 @@ import org.usfirst.frc.team2485.auto.SequencedPause;
  *
  * @see SequencedItem
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class Sequencer {
-    private final Vector sequenced = new Vector();
+	private final Vector sequenced = new Vector();
     private boolean started = false;
     private long startTime;
     private int currIndex;
     private long currIndexStartTime;
-
     private static Vector sequencers = new Vector();
 
     /**
@@ -50,7 +50,7 @@ public class Sequencer {
      * @see SequencedItem
      * @see SequencedPause
      */
-    public Sequencer(SequencedItem[] initial) {
+	public Sequencer(SequencedItem[] initial) {
         for (int i = 0; i < initial.length; i++) 
             sequenced.addElement(initial[i]);
     }

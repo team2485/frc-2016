@@ -5,10 +5,18 @@ import org.usfirst.frc.team2485.robot.Constants;
 import org.usfirst.frc.team2485.robot.Hardware;
 import org.usfirst.frc.team2485.subsystems.BoulderStager.StagerPosition;
 
+/**
+ * SequencedItem simlar to pressing the hat switch on the joystick. Preps for defenses. 
+ * @author Jeremy McCulloch
+ */
 public class Hat implements SequencedItem {
 	
 	private boolean start;
 	
+	/**
+	 * SequencedItem simlar to pressing the hat switch on the joystick. Preps for defenses.
+	 * @param start true if beginning to cross defense, false if finishing crossing
+	 */
 	public Hat(boolean start) {
 		this.start = start;
 	}
@@ -19,7 +27,7 @@ public class Hat implements SequencedItem {
 		if (start) {
 			
 			if (Hardware.intake.isPIDEnabled()) {
-				Hardware.intake.setManual(0); // effectively disables PID
+				Hardware.intake.setManual(0); // disables PID
 			}
 			Hardware.intakeArmSC.set(Constants.kHatPowerValue); // use SC instead of subsystem because setManual deadbands and scales
 			Hardware.boulderStager.setPosition(StagerPosition.SHOOTING);
